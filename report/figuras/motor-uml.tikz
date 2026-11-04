@@ -1,0 +1,60 @@
+% UML del motor de simulacion (solo el motor: nada de post-procesamiento ni de
+% figuras). Experiment arma los eventos desde los datos de la catedra,
+% Avoidance decide el target temporal, Model da las fuerzas del SFM sin fuerza
+% social y Simulation integra con Beeman y mide las dos metricas.
+\begin{tikzpicture}[
+    font=\footnotesize,
+    clase/.style={rectangle split, rectangle split parts=2, draw=azul,
+                  fill=white, rounded corners=1.5pt, align=left,
+                  text width=#1, inner sep=3pt},
+    rel/.style={->, >=Stealth, draw=gris, thick},
+    nota/.style={font=\scriptsize\itshape, color=gris}]
+
+  \node[clase=3.5cm] (exp) at (0,0) {
+    \textbf{Experiment}
+    \nodepart{two}
+    \texttt{framerate}, \texttt{sampling}\\
+    \texttt{events: Event[]}\\[0.15em]
+    \texttt{readExperiment()}};
+
+  \node[clase=3.4cm, right=1.1cm of exp] (evt) {
+    \textbf{Event}
+    \nodepart{two}
+    \texttt{label}, \texttt{instants}\\
+    \texttt{left}, \texttt{right}\\
+    \texttt{minimumDistance}};
+
+  \node[clase=3.9cm, right=1.1cm of evt] (ped) {
+    \textbf{Pedestrian}
+    \nodepart{two}
+    \texttt{experimental: Sample[]}\\
+    \texttt{start}, \texttt{initialVelocity}\\
+    \texttt{target}, \texttt{desiredSpeed}};
+
+  \node[clase=3.5cm, below=1.0cm of exp] (sim) {
+    \textbf{Simulation}
+    \nodepart{two}
+    \texttt{simulate()} -- Beeman\\
+    \texttt{measure()} -- $\Euno$, $\Edos$};
+
+  \node[clase=3.4cm, right=1.1cm of sim] (avo) {
+    \textbf{Avoidance}
+    \nodepart{two}
+    \texttt{anticipation} $= p_1$\\
+    \texttt{margin} $= p_2$\\[0.15em]
+    \texttt{temporaryTarget()}};
+
+  \node[clase=3.9cm, right=1.1cm of avo] (mod) {
+    \textbf{Model}
+    \nodepart{two}
+    \texttt{mass}, \texttt{radius}, \texttt{relaxation}\\
+    \texttt{normal}, \texttt{tangential}\\[0.15em]
+    \texttt{drivingForce()}, \texttt{contactForce()}};
+
+  \draw[rel] (exp) -- node[nota, above] {1..M} (evt);
+  \draw[rel] (evt) -- node[nota, above] {2} (ped);
+  \draw[rel] (sim) -- node[nota, above] {usa} (avo);
+  \draw[rel, dashed] (avo) -- node[nota, above] {sólo $\ehat_i^{\,d}$} (mod);
+  \draw[rel] (exp) -- (sim);
+  \draw[rel] (evt) -- (avo);
+\end{tikzpicture}

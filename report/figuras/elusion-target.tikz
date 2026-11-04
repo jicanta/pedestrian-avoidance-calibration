@@ -1,0 +1,44 @@
+% Capa de elusion, paso 2: el target temporal. Sobre el camino nominal al
+% target final se toma el punto q_i al que el agente llegaria en tau*
+% caminando derecho a vd, y se lo corre lateralmente lo que falta de
+% separacion, pesado por la urgencia w(tau*) = 1 - tau*/ta.
+\begin{tikzpicture}[scale=1.0, >={Stealth[length=2.4mm]}, font=\footnotesize]
+  \coordinate (ri) at (0,0);
+  \coordinate (qi) at (3.6,0.38);
+  \coordinate (Ti) at (8.6,0.91);
+  \coordinate (Ts) at (3.6,1.78);
+
+  % Camino nominal al target final
+  \draw[gris, thick, dashed] (ri) -- (Ti);
+  \fill[gris] (Ti) circle (0.09);
+  \node[gris, anchor=west] at ($(Ti)+(0.18,0)$) {target final $\vT_i$};
+  \node[gris, anchor=south, rotate=6] at (6.6,0.70) {$\ehat_i^{\,0}$};
+
+  % Agente
+  \fill[izquierda] (ri) circle (0.25);
+  \node[izquierda, anchor=east] at ($(ri)+(-0.32,0)$) {$\vr_i$};
+
+  % El otro agente en el instante del conflicto
+  \fill[derecha, opacity=0.4] (4.75,-0.42) circle (0.25);
+  \node[derecha, anchor=west] at (5.08,-0.42) {$j$ en \tdca};
+  \draw[->, derecha, thick] (4.60,-0.30) -- ($(qi)+(0.10,-0.06)$);
+  \node[derecha, anchor=south west, inner sep=1pt] at (4.26,0.02) {$\shat$};
+
+  % Punto nominal al instante del conflicto
+  \fill[black] (qi) circle (0.07);
+  \node[anchor=north east, inner sep=3pt] at ($(qi)+(-0.05,-0.10)$)
+        {$\vq_i = \vr_i + v_i^{d}\,\tdca\,\ehat_i^{\,0}$};
+  \draw[|<->|, gris] ($(ri)+(0,-1.15)$) -- ($(qi)+(0,-1.53)$)
+        node[midway, below, inner sep=2pt] {$v_i^{d}\,\tdca$};
+
+  % Corrimiento lateral
+  \draw[target, very thick, ->] (qi) -- (Ts);
+  \node[target, anchor=west, inner sep=5pt] at ($(qi)!0.55!(Ts)$)
+        {$w(\tdca)\,(\Dreq - \ddca)\,\shat$};
+  \draw[target, thick, fill=target!20] (Ts) circle (0.10);
+  \node[target, anchor=south] at ($(Ts)+(0,0.20)$) {target temporal $\vT_i^{*}$};
+
+  % Direccion deseada resultante
+  \draw[izquierda, very thick, ->] (ri) -- ($(ri)!0.42!(Ts)$);
+  \node[izquierda, anchor=south east, inner sep=1pt] at ($(ri)!0.42!(Ts)$) {$\ehat_i^{\,d}$};
+\end{tikzpicture}

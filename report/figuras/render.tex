@@ -1,0 +1,20 @@
+% Renderiza suelto uno de los fragmentos de las diapositivas (los mismos
+% archivos que \input presentacion.tex: los esquemas TikZ y la tabla de
+% parametros), con la misma tipografia y colores. Lo invoca make
+% slides-images-tikz, que define \figura antes de leer este archivo y
+% convierte el PDF a PNG en slides-images/.
+\documentclass[11pt,border=4pt]{standalone}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-noquoting,es-noshorthands]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\sisetup{output-decimal-marker={,}, per-mode=symbol}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,fit,backgrounds,calc,shapes.multipart}
+\input{../comun.tex}
+\begin{document}
+\input{\figura.tikz}
+\end{document}

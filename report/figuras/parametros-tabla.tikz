@@ -1,0 +1,27 @@
+% Tabla de parametros, en tres bloques: los del modelo (fijos, los del paper y
+% los del enunciado), los que se ajustan (la capa de elusion) y los de la
+% simulacion. Las unidades van en una sola columna, junto al valor.
+\begin{tabular}{@{}l l l@{}}
+  \multicolumn{3}{@{}l}{\rotulo{Modelo: SFM sin fuerza social}}\\
+  \midrule
+  masa                        & $m$       & \SI{80}{\kilogram}\\
+  radio                       & $r$       & \SI{0.25}{\meter}\\
+  tiempo de relajación        & $\tau$    & \SI{0.5}{\second}\\
+  const.\ normal              & $k$       & \SI{1.2e5}{\newton\per\meter}\\
+  const.\ tangencial          & $\kappa$  & \SI{2.4e5}{\kilogram\per\meter\per\second}\\
+  \addlinespace[0.5em]
+  \multicolumn{3}{@{}l}{\rotulo{Capa de elusión: lo que se calibra}}\\
+  \midrule
+  tiempo de anticipación      & $p_1 = \ta$ & \SIrange{0}{4}{\second}\\
+  margen personal             & $p_2 = \ds$ & \SIrange{0}{0.6}{\meter}\\
+  \addlinespace[0.5em]
+  \multicolumn{3}{@{}l}{\rotulo{De cada evento (del esquema de al lado)}}\\
+  \midrule
+  rapidez deseada             & $v_i^{d}$ & \SIrange{0.82}{1.30}{\meter\per\second}\\
+  \addlinespace[0.5em]
+  \multicolumn{3}{@{}l}{\rotulo{Simulación}}\\
+  \midrule
+  muestreo experimental       & $\dtexp$  & \SI{66.58}{\milli\second}\\
+  paso de integración         & $\dt$     & $\dtexp/64 = \SI{1.04}{\milli\second}$\\
+  eventos                     & $M$       & 19\\
+\end{tabular}

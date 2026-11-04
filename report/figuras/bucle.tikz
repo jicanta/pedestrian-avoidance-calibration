@@ -1,0 +1,38 @@
+% El bucle de integracion y su sincronizacion con la grilla experimental.
+% dt = dt_exp / n con n entero: cada n pasos cae un instante experimental, y
+% ahi se guarda el estado y se compara con la medicion. No hay interpolacion.
+\begin{tikzpicture}[font=\footnotesize, >={Stealth[length=2.2mm]},
+    caja/.style={rectangle, draw=azul, fill=white, rounded corners=1.5pt,
+                 align=center, inner sep=4pt, text width=2.45cm, minimum height=1.25cm},
+    flecha/.style={->, draw=gris, thick}]
+
+  \node[caja] (cond)   at (0,0)    {condiciones iniciales\\ del evento};
+  \node[caja] (capa)   at (3.1,0)  {capa de elusión:\\ $\vT_i^{*}$ de cada agente};
+  \node[caja] (fuerza) at (6.2,0)  {fuerzas del SFM:\\ conducción\\ + contacto};
+  \node[caja] (beeman) at (9.3,0)  {paso de Beeman\\ $\dt = \dtexp/n$};
+  \node[caja] (guarda) at (12.4,0) {\textquestiondown paso múltiplo de $n$?\\ se guarda el estado};
+
+  \draw[flecha] (cond)   -- (capa);
+  \draw[flecha] (capa)   -- (fuerza);
+  \draw[flecha] (fuerza) -- (beeman);
+  \draw[flecha] (beeman) -- (guarda);
+  \draw[flecha] (guarda.south) -- ++(0,-0.75) -- node[below, color=gris, pos=0.62]
+        {siguiente paso} ($(capa.south)+(0,-0.75)$) -- (capa.south);
+  \node[gris, anchor=west, align=left] at ($(guarda.east)+(0.2,0)$)
+        {al terminar el\\ último instante:\\ $\Euno$ y $\Edos$};
+
+  % La grilla temporal
+  \begin{scope}[yshift=-3.3cm, xshift=1.2cm]
+    \draw[gris, thick] (0,0) -- (9.6,0);
+    \foreach \k in {0,...,24} { \draw[gris] (0.4*\k,-0.08) -- (0.4*\k,0.08); }
+    \foreach \k in {0,8,16,24} { \draw[azul, very thick] (0.4*\k,-0.18) -- (0.4*\k,0.18); }
+    \node[anchor=north, color=azul] at (0,-0.28) {$t_0$};
+    \node[anchor=north, color=azul] at (3.2,-0.28) {$t_1$};
+    \node[anchor=north, color=azul] at (6.4,-0.28) {$t_2$};
+    \node[anchor=north, color=azul] at (9.6,-0.28) {$t_3 = 3\,\dtexp$};
+    \draw[<->, gris] (0,1.05) -- (0.4,1.05);
+    \node[anchor=west, color=gris] at (0.55,1.05) {$\dt$: un paso de integración};
+    \draw[<->, azul] (3.2,0.45) -- (6.4,0.45);
+    \node[anchor=west, color=azul] at (6.55,0.45) {$\dtexp = n\,\dt$: un instante medido};
+  \end{scope}
+\end{tikzpicture}
