@@ -78,11 +78,41 @@ Es la geometría predictiva de Karamouzas *et al.* (2009,
 espacio personal— resuelta con un target temporal en vez de con una fuerza
 evasiva, que es lo que el enunciado no permite.
 
-### Las variantes que se probaron
+### Las alternativas que se probaron
 
-Las dos decisiones de diseño tienen alternativa, y las cuatro combinaciones se
-corrieron con el mismo barrido y los mismos 19 eventos (`--sin-rampa` y
-`--mira-horizonte`):
+**¿Y con campos?** La intuición natural es que una capa basada en un campo de
+repulsión —como el término social del SFM, pero usado para decidir la
+dirección deseada y no como fuerza— tendría que funcionar. Se probaron tres,
+todas de dos parámetros y todas como target temporal, con la repulsión pesada
+por `A exp(−(d − 2r)/B)` (`--capa campo|campo-lateral|campo-predictivo`,
+`make alternativas`, `visualization/alternatives.py`):
+
+| capa | qué distancia y qué dirección usa | óptimo (métrica 2) | `<E(2)>` | corredor / fila | pareado contra la predictiva |
+|---|---|---|---|---|---|
+| **predictiva (la que corre)** | `(D − d*)` en la dirección `ŝ`, con horizonte `t_a` | 3,85 s, 0,050 m | **0,314 m² (−63 %)** | 0,081 / 0,574 | — |
+| campo isotrópico | la distancia actual, de `j` a `i` (Helbing como dirección) | A = 1,0, B = 0,66 m | 0,399 m² (−52 %) | 0,244 / 0,572 | **−0,085 ± 0,027** (peor) |
+| campo lateral | la distancia actual, perpendicular al camino, del lado contrario a `j` | A = 0,3, B = 4,5 m | 0,303 m² (−64 %) | 0,137 / 0,488 | +0,011 ± 0,026 (empata) |
+| campo predictivo | la separación predicha `d*`, en `ŝ` (Karamouzas como target) | A = 0,25, B = 0,005 m | 0,303 m² (−64 %) | 0,054 / 0,580 | +0,011 ± 0,013 (empata) |
+
+- El **campo isotrópico queda lejos**: de frente, la repulsión apunta hacia
+  atrás y no tiene componente lateral, así que el agente frena en vez de
+  correrse. Es exactamente el problema que señala la Teórica 7 para los
+  modelos "particle-based" y que motiva a Karamouzas.
+- Los otros dos **empatan** con la predictiva dentro de la diferencia pareada,
+  pero sus óptimos **degeneran**: el predictivo se va a `B → 0`, donde el peso
+  exponencial es un escalón sobre el contacto predicho (y en el corredor es un
+  30 % mejor, 0,054 contra 0,081, a costa de la fila); el lateral se va a
+  `B = 4,5 m`, que es empujar de costado siempre que haya alguien adelante, y
+  "gana" sólo con la métrica 1 (`+0,20 ± 0,08`) porque en los eventos de la
+  fila veer temprano se parece a subir por la fila: no es mejor elusión.
+- La predictiva se queda porque hace lo mismo con dos parámetros que tienen
+  **unidades y lectura directa** (un tiempo de anticipación y un margen de
+  espacio personal, el par de la Teórica 7) y porque es continua en los dos
+  bordes del disparo.
+
+Dentro de la predictiva, las dos decisiones de diseño también tienen
+alternativa, y las cuatro combinaciones se corrieron con el mismo barrido y
+los mismos 19 eventos (`--sin-rampa` y `--mira-horizonte`):
 
 | variante | peso de urgencia | punto de mira | `<E(1)>` mín. | `<E(2)>` mín. |
 |---|---|---|---|---|
@@ -113,7 +143,7 @@ tp-5/
 ├── experimental/       # los datos de la cátedra, sin tocar, y la tabla de eventos del LEEME
 ├── engine/             # C++17: el motor (va en el zip de entrega con animate.py y common.py)
 ├── visualization/      # Python: post-procesamiento, figuras y animaciones
-├── report/             # presentacion.tex (beamer 16:9), comun.tex y figuras/*.tikz; build/ ignorado
+├── report/             # presentacion.tex (beamer 16:9), comun.tex, figuras/*.tikz y guion.md (qué decir en cada una, con tiempos); build/ ignorado
 ├── slides-images/      # todas las imágenes de la presentación, numeradas por diapositiva
 ├── youtube/            # titulos.md con el título y la descripción de cada video (los .mp4 no se versionan)
 ├── gif/                # los videos como GIF, para embeber en la presentación en vivo
@@ -134,7 +164,9 @@ make eventos               # lee los datos de la cátedra y escribe el resumen d
 make eventos-figuras       # las 38 trayectorias medidas y d(t) de cada evento
 make convergencia          # barrido del paso de integración
 make convergencia-figuras  # apartamiento de <E> contra dt
-make barrido               # ítems b, c y d: la grilla gruesa (4 s) y la fina (62 s)
+make barrido               # ítems b, c y d: la grilla gruesa (4 s), la fina (62 s) y el barrido largo de p1
+make alternativas          # las tres capas de campo, cada una en su grilla (2 min)
+make alternativas-figuras  # la comparación de las cuatro capas
 make corridas              # los 19 eventos con cada óptimo y con la capa apagada
 make check                 # validación: métricas recalculadas en Python, contactos, grilla temporal
 make poblacional-figuras   # ítem b: superficie <E>(p1,p2) y cortes, por métrica
@@ -269,6 +301,7 @@ informó el motor, para que el camino corto esté verificado contra el largo.
 | `population.py` | b | mapa de `<E>(p1,p2)` con escala de color de potencia y curvas de nivel en múltiplos del mínimo, el óptimo y el contorno de la región compatible; los dos cortes por el óptimo con barras de error y la franja de los valores que empatan |
 | `individual.py` | c | los 19 óptimos individuales en el plano `(p1,p2)` con el poblacional marcado, y el error de cada evento con los parámetros poblacionales contra los propios |
 | `residual.py` | c | de dónde viene el error que queda: las **dos poblaciones** de eventos (los que ya caminan por el corredor y los que salen de la fila, separadas por el ángulo entre `v(0)` y el camino nominal), `E(1)_m` abierto en la componente a lo largo del camino nominal (ritmo, o ruta en los de la fila) y la perpendicular (forma), y el desvío lateral en el cruce medido contra simulado, que dice si el modelo eludió por el mismo lado |
+| `alternatives.py` | capa | la tabla y la figura de las tres capas de campo contra la predictiva: óptimo de cada una en su grilla, error por población y diferencia pareada |
 | `support.py` | apoyo | las animaciones de apoyo: un cruce sintético cabeza a cabeza con tres `p2` a la vez, dibujando lo que la capa calcula (posiciones predichas en `τ*`, `d*`, target temporal), y el evento 10 con cada parámetro recorriendo su rango al lado del corte de `<E>` (video y resumen estático con cuatro valores superpuestos) |
 | `crossval.py` | d | validación cruzada: distribución del error de validación contra el del ítem b, el par calibrado en cada partición y el error contra el tamaño del conjunto de entrenamiento; también deja-uno-afuera |
 | `check.py` | — | validación de las corridas: recalcula las dos métricas, verifica que la grilla temporal sea la experimental y que las condiciones iniciales sean las medidas, e informa el solapamiento y el exceso de rapidez (que miden cuánto contacto queda) |
@@ -413,7 +446,10 @@ declaración de uso de agentes de IA al final.
 
 Como pide el enunciado, **a la capa de elusión se le dedican tres diapositivas
 seguidas** (la detección del conflicto, el target temporal y los casos límite),
-que es más de lo habitual para una introducción matemática.
+más la animación de apoyo y la comparación con las capas de campo (`8b`), que
+es más de lo habitual para una introducción matemática. `report/guion.md`
+tiene qué decir en cada diapositiva, con el tiempo de cada una (13:00 en
+total) y un reparto entre los tres expositores.
 
 Los esquemas de las diapositivas (el experimento, los dos de la capa de
 elusión, el UML, el bucle, la tabla de parámetros y el esquema del evento)

@@ -43,3 +43,9 @@ Experiment experimentFromArguments(const Arguments& arguments) {
   return readExperiment(trajectories, table, labels,
                         arguments.number("arranque", 0.3));
 }
+
+void configureLayer(Avoidance& layer, const Arguments& arguments) {
+  layer.kind = kindFromName(arguments.text("capa", "predictiva"));
+  layer.ramp = !arguments.flag("sin-rampa");
+  layer.leadIsHorizon = arguments.flag("mira-horizonte");
+}

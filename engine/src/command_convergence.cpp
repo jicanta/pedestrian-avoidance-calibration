@@ -19,8 +19,7 @@ int runConvergence(const Arguments& arguments) {
   const Model model = modelFromArguments(arguments);
   Avoidance layer;
   layer.anticipation = arguments.number("p1", 2.0);
-  layer.ramp = !arguments.flag("sin-rampa");
-  layer.leadIsHorizon = arguments.flag("mira-horizonte");
+  configureLayer(layer, arguments);
   layer.margin = arguments.number("p2", 0.4);
   const std::vector<int> subdivisions =
       integerList("subdivisiones", arguments.text("subdivisiones", "1,2,4,8,16,32,64,128,256,512"));

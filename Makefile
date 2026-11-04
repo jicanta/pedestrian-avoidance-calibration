@@ -100,13 +100,14 @@ COMUN    := --datos $(DATOS) --eventos $(EVENTOS) --arranque $(ARRANQUE)
 
 .PHONY: all todo build eventos eventos-figuras convergencia convergencia-figuras \
         barrido corridas poblacional-figuras individual-figuras residuo-figuras \
-        validacion-figuras trayectorias-figuras check animations apoyo youtube gifs \
+        validacion-figuras trayectorias-figuras alternativas alternativas-figuras \
+        check animations apoyo youtube gifs \
         figuras figuras-diapositivas slides-images slides-images-tikz documentos \
         entrega clean-figures
 
 all: todo
 
-todo: eventos convergencia barrido corridas
+todo: eventos convergencia barrido alternativas corridas
 
 build:
 	$(MAKE) -C engine
@@ -153,6 +154,22 @@ barrido: build
 	    --subdivisiones $(SUBDIV) --dir $(BARRIDO)/fino
 	$(ELUSION) sweep $(COMUN) --p1 $(P1_LARGO) --p2 $(P2_LARGO) \
 	    --subdivisiones $(SUBDIV) --dir $(BARRIDO)/p1largo
+
+# Las alternativas de capa que se probaron contra la predictiva (README, "Las
+# alternativas que se probaron"): tres variantes de campo, cada una en su
+# grilla. La isotropica en una grilla gruesa alcanza (queda lejos); las otras
+# dos en una fina, porque empatan.
+alternativas: build
+	$(ELUSION) sweep $(COMUN) --capa campo --p1 0:6:31 --p2 0.02:1.5:31 \
+	    --subdivisiones $(SUBDIV) --dir $(BARRIDO)/alternativas/campo
+	$(ELUSION) sweep $(COMUN) --capa campo-lateral --p1 0.1:3:30 --p2 0.1:5:50 \
+	    --subdivisiones $(SUBDIV) --dir $(BARRIDO)/alternativas/campo-lateral-fino
+	$(ELUSION) sweep $(COMUN) --capa campo-predictivo --p1 0.05:2:40 --p2 0.005:0.2:40 \
+	    --subdivisiones $(SUBDIV) --dir $(BARRIDO)/alternativas/campo-predictivo-fino
+
+alternativas-figuras:
+	$(PY) visualization/alternatives.py
+	$(PY) visualization/alternatives.py --figures $(SLIDES) --estilo diapositiva
 
 # Las tres corridas con cuadros de los 19 eventos: con el optimo de cada
 # metrica y con la capa apagada (p1 = 0), que es el SFM puro y la referencia
@@ -202,7 +219,7 @@ check:
 	$(PY) visualization/check.py --runs $(RUNS)/sin-capa
 
 figuras: eventos-figuras convergencia-figuras poblacional-figuras individual-figuras \
-         residuo-figuras validacion-figuras trayectorias-figuras
+         residuo-figuras validacion-figuras trayectorias-figuras alternativas-figuras
 
 figuras-diapositivas: figuras
 
@@ -275,6 +292,7 @@ slides-images:
 	rm -rf $(FIGS) && mkdir -p $(FIGS)
 	cp $(SL)/0_datos_experimentales/eventos_trayectorias_diapositiva.png      $(FIGS)/slide-03-eventos-trayectorias.png
 	cp $(SL)/animaciones/apoyo_cabeza_a_cabeza_t2.4.png                       $(FIGS)/slide-08-capa-en-accion.png
+	cp $(SL)/a_capa_de_elusion/alternativas_metrica2_diapositiva.png          $(FIGS)/slide-08b-alternativas.png
 	cp $(SL)/0_datos_experimentales/eventos_distancia_vs_t_diapositiva.png    $(FIGS)/slide-13-eventos-distancia-vs-t.png
 	cp $(SL)/a_capa_de_elusion/convergencia_dt_diapositiva.png                $(FIGS)/slide-14-convergencia-dt.png
 	cp $(SL)/animaciones/evento10-sin-capa_cuadro_cruce.png                   $(FIGS)/slide-15-animacion-evento10-sin-capa.png

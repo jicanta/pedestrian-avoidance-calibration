@@ -87,6 +87,9 @@ void writeStatic(const std::string& path, const Event& event, const Model& model
        << "distancia_minima " << event.minimumDistance << "\n"
        << "dt " << run.step << "\n"
        << "subdivisiones " << run.subdivisions << "\n"
+       << "capa " << (layer.kind == Kind::Predictive ? "predictiva" :
+                      layer.kind == Kind::Field ? "campo" :
+                      layer.kind == Kind::LateralField ? "campo-lateral" : "campo-predictivo") << "\n"
        << "p1 " << layer.anticipation << "\n"
        << "p2 " << layer.margin << "\n"
        << "instantes_en_conflicto " << run.conflictInstants << "\n"

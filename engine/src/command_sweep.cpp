@@ -23,7 +23,8 @@ int runSweep(const Arguments& arguments) {
   const std::string directory = arguments.text("dir", "../data/barrido");
 
   std::ofstream file = openOutput(directory + "/errores.txt");
-  file << "# SFM sin fuerza social, m " << model.mass << " r " << model.radius << " tau "
+  file << "# capa " << arguments.text("capa", "predictiva") << "\n"
+       << "# SFM sin fuerza social, m " << model.mass << " r " << model.radius << " tau "
        << model.relaxation << " kn " << model.normal << " kt " << model.tangential
        << " dt " << experiment.sampling / subdivisions << " subdivisiones " << subdivisions
        << "\n"
@@ -39,8 +40,7 @@ int runSweep(const Arguments& arguments) {
       Avoidance layer;
       layer.anticipation = anticipation;
       layer.margin = margin;
-      layer.ramp = !arguments.flag("sin-rampa");
-      layer.leadIsHorizon = arguments.flag("mira-horizonte");
+      configureLayer(layer, arguments);
       for (const Event& event : experiment.events) {
         const Run run = simulate(event, model, layer, experiment.sampling, subdivisions);
         const Errors left = measure(event.left, run, 0);

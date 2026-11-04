@@ -154,7 +154,15 @@ y la velocidad deseada pasa a ser `v_i^d ê_i^d` con
   indefinida; se usa la normal a `ê_i^0` del lado en el que *no* está el otro, y
   si eso también es cero, la derecha.
 
-### 3.6 Variantes probadas (y por qué corre ésta)
+### 3.6 Alternativas y variantes probadas (y por qué corre ésta)
+
+Contra la predictiva se probaron tres capas basadas en **campos** de
+repulsión (`A exp(−(d − 2r)/B)` como dirección, nunca como fuerza): isotrópica
+(Helbing como dirección), lateral y predictiva (en `d*`, Karamouzas como
+target). La isotrópica queda lejos (−52 % contra −63 %: de frente no tiene
+componente lateral); las otras dos empatan dentro de la diferencia pareada
+pero sus óptimos degeneran (`B → 0` y `B = 4,5 m`). La tabla completa está en
+el README.
 
 Las dos decisiones de diseño se probaron contra sus alternativas, con el mismo
 barrido y los mismos 19 eventos (`--sin-rampa` y `--mira-horizonte` en el
@@ -269,6 +277,7 @@ tp-5/
 
 ### Ítem a — implementación y animaciones
 
+- `report/guion.md`: qué decir en cada diapositiva, con tiempos y reparto.
 - `make eventos` verifica la lectura de los datos contra el LEEME.
 - `make corridas` corre los 19 eventos con los dos óptimos y con la capa
   apagada.

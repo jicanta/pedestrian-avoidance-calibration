@@ -15,8 +15,7 @@ int runSingle(const Arguments& arguments) {
   const Model model = modelFromArguments(arguments);
   Avoidance layer;
   layer.anticipation = arguments.number("p1", 0.0);
-  layer.ramp = !arguments.flag("sin-rampa");
-  layer.leadIsHorizon = arguments.flag("mira-horizonte");
+  configureLayer(layer, arguments);
   layer.margin = arguments.number("p2", 0.0);
   const int subdivisions = arguments.integer("subdivisiones", 64);
   const std::string directory = arguments.text("dir", "../data/runs/prueba");
