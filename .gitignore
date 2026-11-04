@@ -1,0 +1,37 @@
+# C++
+build/
+*.o
+
+# Python
+__pycache__/
+.venv/
+.ruff_cache/
+
+# Los zip originales de la biblioteca de la catedra: su contenido ya esta
+# descomprimido al lado, en docs/bibliografia/
+docs/bibliografia/*.zip
+
+# Datos y figuras generadas
+data/*
+!data/.gitkeep
+
+# LaTeX
+report/build/
+report/.check/
+# temporales de make slides-images-tikz (se borran solos salvo que falle tectonic)
+report/figuras/_*.tex
+report/*.pdf
+report/*.log
+report/*.aux
+report/*.out
+report/*.toc
+report/*.synctex.gz
+report/*.fls
+report/*.fdb_latexmk
+
+# Videos para subir a YouTube
+youtube/*.mp4
+
+# Entregables generados
+SdS_TP5_*.zip
+SdS_TP5_*.pdf

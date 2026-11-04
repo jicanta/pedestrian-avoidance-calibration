@@ -1,0 +1,33 @@
+# Tabla de eventos de "elusion 1 contra 1 de frente", copiada del LEEME de la
+# catedra (LEEME_elusion1contra1.txt). Una linea por prueba:
+#
+#   m  id_izquierda  id_derecha  cuadro_inicial  cuadro_final
+#
+# "sale izquierda" es el peaton que sale de la fila izquierda y "sale derecha"
+# el que sale de la fila de abajo a la derecha. La prueba 2 tiene el peaton de
+# la izquierda sin identificar en el LEEME ("V?"): en los datos es el id 1000,
+# la unica trayectoria de esa ventana que va de x = 0,75 m a x = 10,8 m (de
+# izquierda a derecha) y que no esta asignada a ninguna otra prueba.
+#
+# El motor usa estos cuadros solo como recorte exterior: la ventana de cada
+# evento es la interseccion con los intervalos en que los dos peatones estan
+# seguidos (ver experiment.cpp).
+ 1    3   36   20068  20261
+ 2 1000   25   20208  20391
+ 3   43    1   20370  20540
+ 4   10    5   20527  20734
+ 5    4   12   20632  20853
+ 6    9    6   20778  20971
+ 7   20   44   20910  21142
+ 8   27   37   21066  21298
+ 9   16   39   21228  21380
+10   17   42   21435  21635
+11   23   24   21536  21804
+12   22   18   21760  21960
+13   15   35   21877  22098
+14   30   28   22011  22206
+15   46   34   22278  22481
+16   47   48   22402  22639
+17    2   45   22561  22726
+18   26   21   22722  23000
+19   29   38   22902  23074
