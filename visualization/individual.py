@@ -43,8 +43,17 @@ def scatter(rows, best, labels, metric, p1, p2, figures, style):
     figure, axes = plt.subplots()
     axes.plot(rows[:, 0], rows[:, 1], linestyle="none", marker=marker, color=color,
               markersize=8, alpha=0.8, label="óptimo de cada evento")
+    # Varios eventos caen en el mismo par (o casi): una etiqueta por cumulo
+    # con todos sus numeros, para que no se pisen.
+    groups: dict[tuple[float, float], list[int]] = {}
     for (a, b, _, _), label in zip(rows, labels):
-        axes.annotate(str(int(label)), (a, b), textcoords="offset points", xytext=(6, 4),
+        key = (round(a / 0.25) * 0.25, round(b / 0.06) * 0.06)
+        groups.setdefault(key, []).append(int(label))
+    for (a, b), members in groups.items():
+        text = ", ".join(str(member) for member in sorted(members))
+        axes.annotate(text, (a, b), textcoords="offset points",
+                      xytext=(-6 if a > 0.8 * p1.max() else 6, 5),
+                      ha="right" if a > 0.8 * p1.max() else "left",
                       fontsize=matplotlib.rcParams["legend.fontsize"] - 2, color="#6e7680")
     axes.plot([best[0]], [best[1]], marker="*", color="#2ca02c", markersize=18,
               linestyle="none", markeredgecolor="#1a1a1a", markeredgewidth=0.8,
@@ -76,6 +85,7 @@ def comparison(rows, labels, metric, figures, style):
                  label=f"promedio individual {common.decimal(rows[:, 2].mean(), 2)} m$^2$")
     axes.set_xticks(positions)
     axes.set_xticklabels([str(int(labels[k])) for k in order])
+    axes.tick_params(axis="x", labelsize=matplotlib.rcParams["xtick.labelsize"] - 3)
     axes.set_xlabel(common.AXIS_EVENT)
     axes.set_ylabel(common.METRIC_EVENT[metric])
     common.legend_inside(axes, ncol=2)
@@ -103,6 +113,10 @@ def main() -> None:
               f"(de {rows[:, 1].min():.3f} a {rows[:, 1].max():.3f})")
         print(f"  eventos con p1_m = 0 (la capa no les sirve): "
               f"{int((rows[:, 0] == 0).sum())} de {len(rows)}")
+        edge = (rows[:, 0] >= p1.max() - 1e-9) | (rows[:, 1] >= p2.max() - 1e-9)
+        print(f"  optimos en el borde de la grilla (p1 = {p1.max():g} s o p2 = {p2.max():g} m): "
+              f"{int(edge.sum())} de {len(rows)}, eventos "
+              f"{', '.join(str(int(labels[k])) for k in np.where(edge)[0])}")
         print(f"  <E_m> poblacional {rows[:, 3].mean():.4f} m2, individual "
               f"{rows[:, 2].mean():.4f} m2: individualizar gana {gain:.1f} %")
         print(f"  el evento que mas gana: m = {int(labels[np.argmax(rows[:, 3] - rows[:, 2])])} "

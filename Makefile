@@ -14,6 +14,7 @@
 #   make trayectorias-figuras  item a: trayectorias, observable primario y d(t) de los eventos elegidos
 #   make check          validacion de las corridas (metricas recalculadas, contactos)
 #   make animations     videos de los eventos elegidos y el cuadro fijo de cada uno
+#   make apoyo          animaciones de apoyo: la capa cabeza a cabeza y que hace cada parametro
 #   make youtube        copia los videos con nombres legibles en youtube/
 #   make gifs           los videos como GIF en gif/ (para embeber en la presentacion en vivo)
 #   make figuras-diapositivas  todas las figuras con tipografia de presentacion
@@ -54,15 +55,17 @@ TOLERANCIA ?= 1e-4
 # Formato "desde:hasta:cantidad". La gruesa explora el plano entero y la fina
 # es la que se usa para calibrar (items b, c y d).
 #
-# p1 = tiempo de anticipacion. El techo son 4 s: la mediana del tiempo al
-# cruce en el instante inicial de los eventos es 4,3 s, asi que con p1 mayor
-# el conflicto ya se detecta desde el primer instante y nada cambia.
+# p1 = tiempo de anticipacion. El techo son 4 s: un barrido aparte hasta 8 s
+# (P1_LARGO, en la p2 de cada optimo) muestra que mas alla de 4 s <E> no se
+# mueve mas que su error pareado (metrica 2: 0,000 +- 0,007 m2 entre 4 y 8 s).
 # p2 = margen de espacio personal. El techo de la gruesa es 1 m (dos veces la
 # distancia de contacto) y el de la fina, 0,6 m: mas alla <E> sube monotono.
 P1_GRUESO ?= 0:4:17
 P2_GRUESO ?= 0:1:21
 P1_FINO   ?= 0:4:81
 P2_FINO   ?= 0:0.6:61
+P1_LARGO  ?= 0:8:33
+P2_LARGO  ?= 0.07,0.05
 
 # --- optimos (salen de make poblacional-figuras) ---------------------------
 P1_M1    ?= 2.5
@@ -71,9 +74,11 @@ P1_M2    ?= 3.85
 P2_M2    ?= 0.05
 
 # --- eventos con animacion y figuras propias -------------------------------
-# 10: el que mas gana con la capa; 5: uno tipico; 14: el peor, donde el error
-# de ritmo domina; 19: donde el modelo elude por el lado opuesto.
-EVENTOS_FIG ?= 10 5 14 19
+# 10: el que mas gana con la capa; 5: el de menor distancia de paso medida;
+# 14: uno de los que salen de la fila, donde la recta al target es la ruta
+# equivocada; 3: uno del corredor en el que el modelo elude por el lado
+# opuesto.
+EVENTOS_FIG ?= 10 5 14 3
 # El cuadro fijo de cada animacion se toma en el instante de minima
 # aproximacion simulada, que es donde se ve la elusion.
 FPS         ?= 15
@@ -95,7 +100,7 @@ COMUN    := --datos $(DATOS) --eventos $(EVENTOS) --arranque $(ARRANQUE)
 
 .PHONY: all todo build eventos eventos-figuras convergencia convergencia-figuras \
         barrido corridas poblacional-figuras individual-figuras residuo-figuras \
-        validacion-figuras trayectorias-figuras check animations youtube gifs \
+        validacion-figuras trayectorias-figuras check animations apoyo youtube gifs \
         figuras figuras-diapositivas slides-images slides-images-tikz documentos \
         entrega clean-figures
 
@@ -146,6 +151,8 @@ barrido: build
 	    --subdivisiones $(SUBDIV) --dir $(BARRIDO)/grueso
 	$(ELUSION) sweep $(COMUN) --p1 $(P1_FINO) --p2 $(P2_FINO) \
 	    --subdivisiones $(SUBDIV) --dir $(BARRIDO)/fino
+	$(ELUSION) sweep $(COMUN) --p1 $(P1_LARGO) --p2 $(P2_LARGO) \
+	    --subdivisiones $(SUBDIV) --dir $(BARRIDO)/p1largo
 
 # Las tres corridas con cuadros de los 19 eventos: con el optimo de cada
 # metrica y con la capa apagada (p1 = 0), que es el SFM puro y la referencia
@@ -157,9 +164,15 @@ corridas: build
 	    --dir $(RUNS)/optimo-metrica2
 	$(ELUSION) run $(COMUN) --p1 0 --p2 0 --subdivisiones $(SUBDIV) --dir $(RUNS)/sin-capa
 
+# Ademas de los 19 eventos, la calibracion con cada poblacion por separado
+# (los que ya caminan por el corredor y los que salen de la fila), que es lo
+# que muestra que la capa funciona donde la ruta del enunciado es la real.
 poblacional-figuras:
 	$(PY) visualization/population.py
 	$(PY) visualization/population.py --figures $(SLIDES) --estilo diapositiva
+	$(PY) visualization/population.py --clase corredor
+	$(PY) visualization/population.py --clase corredor --figures $(SLIDES) --estilo diapositiva
+	$(PY) visualization/population.py --clase fila
 
 individual-figuras:
 	$(PY) visualization/individual.py
@@ -212,16 +225,37 @@ animations:
 	$(PY) visualization/animate.py --run $(RUNS)/sin-capa/m10 --cruce \
 	    --name evento10-sin-capa --figures $(SLIDES) --estilo diapositiva
 
+# Las animaciones de apoyo: la capa mirada de cerca en un cruce sintetico
+# cabeza a cabeza con tres p2 a la vez, y el evento 10 con cada parametro
+# recorriendo su rango al lado del corte de <E>. Con los cuadros fijos que
+# van en el PDF.
+apoyo:
+	$(PY) visualization/support.py cabeza-a-cabeza --p1 $(P1_M1) --p2s 0,0.2,0.5 \
+	    --figures $(SLIDES) --estilo diapositiva
+	$(PY) visualization/support.py cabeza-a-cabeza --p1 $(P1_M1) --p2s 0,0.2,0.5 \
+	    --cuadro 2.4 --figures $(SLIDES) --estilo diapositiva
+	$(PY) visualization/support.py barrido --parametro p2 --evento 10 --cada 1 \
+	    --figures $(SLIDES) --estilo diapositiva
+	$(PY) visualization/support.py barrido --parametro p2 --evento 10 --cada 1 \
+	    --cuadros 0,0.07,0.3,0.6 --figures $(SLIDES) --estilo diapositiva
+	$(PY) visualization/support.py barrido --parametro p1 --evento 10 \
+	    --figures $(SLIDES) --estilo diapositiva
+	$(PY) visualization/support.py barrido --parametro p1 --evento 10 \
+	    --cuadros 0.5,1,2.5,4 --figures $(SLIDES) --estilo diapositiva
+
 youtube:
-	mkdir -p youtube
+	mkdir -p youtube && rm -f youtube/*.mp4
 	cp "$(SLIDES)/animaciones/evento10.mp4" "youtube/01 - SdS TP5 G10 - Evento 10 con capa de elusion.mp4"
 	cp "$(SLIDES)/animaciones/evento10-sin-capa.mp4" "youtube/02 - SdS TP5 G10 - Evento 10 sin capa de elusion.mp4"
 	cp "$(SLIDES)/animaciones/evento05.mp4" "youtube/03 - SdS TP5 G10 - Evento 5.mp4"
-	cp "$(SLIDES)/animaciones/evento14.mp4" "youtube/04 - SdS TP5 G10 - Evento 14 error de ritmo.mp4"
-	cp "$(SLIDES)/animaciones/evento19.mp4" "youtube/05 - SdS TP5 G10 - Evento 19 lado opuesto.mp4"
+	cp "$(SLIDES)/animaciones/evento14.mp4" "youtube/04 - SdS TP5 G10 - Evento 14 sale de la fila.mp4"
+	cp "$(SLIDES)/animaciones/evento03.mp4" "youtube/05 - SdS TP5 G10 - Evento 3 lado opuesto.mp4"
+	cp "$(SLIDES)/animaciones/apoyo_cabeza_a_cabeza.mp4" "youtube/06 - SdS TP5 G10 - Apoyo - La capa de elusion cabeza a cabeza.mp4"
+	cp "$(SLIDES)/animaciones/apoyo_barrido_p2_evento10.mp4" "youtube/07 - SdS TP5 G10 - Apoyo - Que hace p2.mp4"
+	cp "$(SLIDES)/animaciones/apoyo_barrido_p1_evento10.mp4" "youtube/08 - SdS TP5 G10 - Apoyo - Que hace p1.mp4"
 
 gifs:
-	mkdir -p gif
+	mkdir -p gif && rm -f gif/*.gif
 	@for f in youtube/*.mp4; do \
 	  name=$$(basename "$$f" .mp4); \
 	  ffmpeg -loglevel error -y -i "$$f" -vf "fps=12,scale=900:-1:flags=lanczos,split[a][b];[a]palettegen[p];[b][p]paletteuse" "gif/$$name.gif"; \
@@ -240,33 +274,41 @@ SL := $(SLIDES)
 slides-images:
 	rm -rf $(FIGS) && mkdir -p $(FIGS)
 	cp $(SL)/0_datos_experimentales/eventos_trayectorias_diapositiva.png      $(FIGS)/slide-03-eventos-trayectorias.png
-	cp $(SL)/0_datos_experimentales/eventos_distancia_vs_t_diapositiva.png    $(FIGS)/slide-12-eventos-distancia-vs-t.png
-	cp $(SL)/a_capa_de_elusion/convergencia_dt_diapositiva.png                $(FIGS)/slide-13-convergencia-dt.png
-	cp $(SL)/animaciones/evento10-sin-capa_cuadro_cruce.png                 $(FIGS)/slide-14-animacion-evento10-sin-capa.png
-	cp $(SL)/animaciones/evento10_cuadro_cruce.png                          $(FIGS)/slide-15-animacion-evento10.png
-	cp $(SL)/a_capa_de_elusion/evento10_trayectorias_diapositiva.png          $(FIGS)/slide-16-evento10-trayectorias.png
-	cp $(SL)/a_capa_de_elusion/evento10_observable_diapositiva.png            $(FIGS)/slide-17-evento10-observable.png
-	cp $(SL)/a_capa_de_elusion/evento10_distancia_diapositiva.png             $(FIGS)/slide-18-evento10-distancia.png
-	cp $(SL)/b_calibracion_poblacional/superficie_metrica1_diapositiva.png    $(FIGS)/slide-19-superficie-metrica1.png
-	cp $(SL)/b_calibracion_poblacional/cortes_metrica1_diapositiva.png        $(FIGS)/slide-20-cortes-metrica1.png
-	cp $(SL)/b_calibracion_poblacional/superficie_metrica2_diapositiva.png    $(FIGS)/slide-21-superficie-metrica2.png
-	cp $(SL)/b_calibracion_poblacional/cortes_metrica2_diapositiva.png        $(FIGS)/slide-22-cortes-metrica2.png
-	cp $(SL)/c_calibracion_individual/optimos_metrica1_diapositiva.png        $(FIGS)/slide-23-optimos-individuales.png
-	cp $(SL)/c_calibracion_individual/errores_metrica1_diapositiva.png        $(FIGS)/slide-24-errores-por-evento.png
-	cp $(SL)/c_calibracion_individual/residuo_descomposicion_diapositiva.png  $(FIGS)/slide-25-residuo-descomposicion.png
-	cp $(SL)/c_calibracion_individual/residuo_lado_diapositiva.png            $(FIGS)/slide-26-residuo-lado.png
-	cp $(SL)/animaciones/evento19_cuadro_cruce.png                          $(FIGS)/slide-27-animacion-evento19.png
-	cp $(SL)/d_validacion_cruzada/error_metrica1_diapositiva.png              $(FIGS)/slide-28-validacion-error.png
-	cp $(SL)/d_validacion_cruzada/parametros_metrica1_diapositiva.png         $(FIGS)/slide-29-validacion-parametros.png
-	cp $(SL)/d_validacion_cruzada/tamano_metrica1_diapositiva.png             $(FIGS)/slide-29b-validacion-tamano.png
+	cp $(SL)/animaciones/apoyo_cabeza_a_cabeza_t2.4.png                       $(FIGS)/slide-08-capa-en-accion.png
+	cp $(SL)/0_datos_experimentales/eventos_distancia_vs_t_diapositiva.png    $(FIGS)/slide-13-eventos-distancia-vs-t.png
+	cp $(SL)/a_capa_de_elusion/convergencia_dt_diapositiva.png                $(FIGS)/slide-14-convergencia-dt.png
+	cp $(SL)/animaciones/evento10-sin-capa_cuadro_cruce.png                   $(FIGS)/slide-15-animacion-evento10-sin-capa.png
+	cp $(SL)/animaciones/evento10_cuadro_cruce.png                            $(FIGS)/slide-16-animacion-evento10.png
+	cp $(SL)/a_capa_de_elusion/evento10_trayectorias_diapositiva.png          $(FIGS)/slide-17-evento10-trayectorias.png
+	cp $(SL)/a_capa_de_elusion/evento10_observable_diapositiva.png            $(FIGS)/slide-18-evento10-observable.png
+	cp $(SL)/a_capa_de_elusion/evento10_distancia_diapositiva.png             $(FIGS)/slide-19-evento10-distancia.png
+	cp $(SL)/animaciones/apoyo_barrido_p2_evento10_resumen.png                $(FIGS)/slide-20-que-hace-p2.png
+	cp $(SL)/animaciones/apoyo_barrido_p1_evento10_resumen.png                $(FIGS)/slide-20b-que-hace-p1.png
+	cp $(SL)/b_calibracion_poblacional/superficie_metrica1_diapositiva.png    $(FIGS)/slide-21-superficie-metrica1.png
+	cp $(SL)/b_calibracion_poblacional/techo_p1_diapositiva.png               $(FIGS)/slide-21b-techo-p1.png
+	cp $(SL)/b_calibracion_poblacional/cortes_metrica1_diapositiva.png        $(FIGS)/slide-22-cortes-metrica1.png
+	cp $(SL)/b_calibracion_poblacional/superficie_metrica2_diapositiva.png    $(FIGS)/slide-23-superficie-metrica2.png
+	cp $(SL)/b_calibracion_poblacional/cortes_metrica2_diapositiva.png        $(FIGS)/slide-24-cortes-metrica2.png
+	cp $(SL)/c_calibracion_individual/optimos_metrica1_diapositiva.png        $(FIGS)/slide-25-optimos-individuales.png
+	cp $(SL)/c_calibracion_individual/errores_metrica1_diapositiva.png        $(FIGS)/slide-26-errores-por-evento.png
+	cp $(SL)/c_calibracion_individual/residuo_poblaciones_metrica2_diapositiva.png $(FIGS)/slide-27-dos-poblaciones.png
+	cp $(SL)/c_calibracion_individual/residuo_poblaciones_metrica1_diapositiva.png $(FIGS)/slide-27b-dos-poblaciones-metrica1.png
+	cp $(SL)/b_calibracion_poblacional/superficie_metrica2_corredor_diapositiva.png $(FIGS)/slide-27c-superficie-metrica2-corredor.png
+	cp $(SL)/animaciones/evento14_cuadro_cruce.png                            $(FIGS)/slide-28-animacion-evento14.png
+	cp $(SL)/c_calibracion_individual/residuo_descomposicion_diapositiva.png  $(FIGS)/slide-29-residuo-descomposicion.png
+	cp $(SL)/c_calibracion_individual/residuo_lado_diapositiva.png            $(FIGS)/slide-30-residuo-lado.png
+	cp $(SL)/animaciones/evento03_cuadro_cruce.png                            $(FIGS)/slide-31-animacion-evento03.png
+	cp $(SL)/d_validacion_cruzada/error_metrica1_diapositiva.png              $(FIGS)/slide-32-validacion-error.png
+	cp $(SL)/d_validacion_cruzada/parametros_metrica1_diapositiva.png         $(FIGS)/slide-33-validacion-parametros.png
+	cp $(SL)/d_validacion_cruzada/tamano_metrica1_diapositiva.png             $(FIGS)/slide-33b-validacion-tamano.png
 	$(MAKE) slides-images-tikz
 	@echo "$$(ls $(FIGS) | wc -l) imágenes en $(FIGS)/"
 
 # Los fragmentos de las diapositivas escritos en LaTeX (report/figuras/*.tikz,
 # los mismos que \input presentacion.tex) renderizados sueltos a PNG con la
 # misma tipografia y los mismos colores, numerados por diapositiva.
-TIKZ_FIGS := 02-experimento 05-elusion-deteccion 06-elusion-target 08-motor-uml \
-             09-bucle 10-parametros-tabla 10-parametros-evento
+TIKZ_FIGS := 02-experimento 05-elusion-deteccion 06-elusion-target 09-motor-uml \
+             10-bucle 11-parametros-tabla 11-parametros-evento
 slides-images-tikz:
 	mkdir -p $(DOCS)/figuras $(FIGS)
 	@for f in $(TIKZ_FIGS); do \

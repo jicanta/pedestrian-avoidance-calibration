@@ -142,11 +142,12 @@ make individual-figuras    # ítem c: óptimos individuales y error por evento
 make residuo-figuras       # de dónde viene el error que queda: ritmo/forma y lado
 make validacion-figuras    # ítem d: validación cruzada
 make trayectorias-figuras  # ítem a: trayectorias, observable primario y d(t) de los eventos elegidos
-make animations            # videos y el cuadro fijo de cada uno, congelado en el cruce simulado
+make animations            # videos y el cuadro fijo de cada uno, congelado en el último instante en conflicto antes del cruce simulado
+make apoyo                 # animaciones de apoyo: la capa cabeza a cabeza con tres p2, y qué hace cada parámetro en el evento 10
 make youtube               # copia los videos con nombres legibles en youtube/
 make gifs                  # los videos como GIF en gif/
 make figuras               # todas las figuras de análisis, en los dos estilos
-make slides-images         # las 27 imágenes de la presentación, numeradas por diapositiva
+make slides-images         # las 35 imágenes de la presentación, numeradas por diapositiva
 make documentos            # report/presentacion.tex -> report/build/presentacion.pdf
 make entrega               # SdS_TP5_2026Q2G10S2_Codigo.zip y ..._Presentación.pdf
 make todo                  # eventos + convergencia + barrido + corridas
@@ -230,6 +231,8 @@ hace que el barrido fino entero tarde un minuto.
 
 ### Salida
 
+- `sweep` con `--p1 0:8:33` (`make barrido` lo corre aparte, en la `p2` de cada
+  óptimo) es el barrido largo con el que se justifica el techo de la grilla.
 - `events` escribe `eventos_resumen.txt`: una línea por evento con la ventana,
   las muestras de cada peatón y sus condiciones iniciales, target y rapidez
   deseada.
@@ -265,7 +268,8 @@ informó el motor, para que el camino corto esté verificado contra el largo.
 | `animate.py` | a | animación del evento (un cuadro por instante medido: a 15 cuadros por segundo corre en tiempo real) y cuadro fijo con `--cruce`, congelado en el instante de mínima aproximación simulada |
 | `population.py` | b | mapa de `<E>(p1,p2)` con escala de color de potencia y curvas de nivel en múltiplos del mínimo, el óptimo y el contorno de la región compatible; los dos cortes por el óptimo con barras de error y la franja de los valores que empatan |
 | `individual.py` | c | los 19 óptimos individuales en el plano `(p1,p2)` con el poblacional marcado, y el error de cada evento con los parámetros poblacionales contra los propios |
-| `residual.py` | c | de dónde viene el error que queda: `E(1)_m` abierto en ritmo (a lo largo del camino nominal) y forma (perpendicular), y el desvío lateral en el cruce medido contra simulado, que dice si el modelo eludió por el mismo lado |
+| `residual.py` | c | de dónde viene el error que queda: las **dos poblaciones** de eventos (los que ya caminan por el corredor y los que salen de la fila, separadas por el ángulo entre `v(0)` y el camino nominal), `E(1)_m` abierto en la componente a lo largo del camino nominal (ritmo, o ruta en los de la fila) y la perpendicular (forma), y el desvío lateral en el cruce medido contra simulado, que dice si el modelo eludió por el mismo lado |
+| `support.py` | apoyo | las animaciones de apoyo: un cruce sintético cabeza a cabeza con tres `p2` a la vez, dibujando lo que la capa calcula (posiciones predichas en `τ*`, `d*`, target temporal), y el evento 10 con cada parámetro recorriendo su rango al lado del corte de `<E>` (video y resumen estático con cuatro valores superpuestos) |
 | `crossval.py` | d | validación cruzada: distribución del error de validación contra el del ítem b, el par calibrado en cada partición y el error contra el tamaño del conjunto de entrenamiento; también deja-uno-afuera |
 | `check.py` | — | validación de las corridas: recalcula las dos métricas, verifica que la grilla temporal sea la experimental y que las condiciones iniciales sean las medidas, e informa el solapamiento y el exceso de rapidez (que miden cuánto contacto queda) |
 
@@ -301,6 +305,14 @@ esencialmente la misma capa. La diferencia es estadísticamente significativa
 con el test pareado —las dos superficies se miden sobre los mismos 19
 eventos— pero irrelevante en magnitud.
 
+El techo de la grilla, `p1 = 4 s`, se verifica con un barrido aparte hasta 8 s
+(`data/barrido/p1largo`, figura `techo_p1`): entre 4 y 8 s la diferencia
+pareada de `<E>` es `+0,05 ± 0,04 m²` con la métrica 1 y `0,000 ± 0,007 m²`
+con la 2, compatible con cero. Con la rampa de urgencia `p1` sigue entrando en
+`w` aunque el conflicto ya se detecte desde el primer instante, así que la
+superficie nunca es exactamente plana; pero lo que se mueve es menos que lo que
+se puede resolver con 19 eventos.
+
 `p1` queda determinado **sólo por abajo**: `<E>` cae de 2,73 a 1,5 m² entre 0 y
 1,2 s y después es plano dentro del error pareado. Es físico y no un artefacto
 de la parametrización: con más de un segundo de anticipación el agente ya llega
@@ -325,20 +337,49 @@ los parámetros**.
 
 ### De dónde viene el error que queda
 
-Con los parámetros poblacionales de la métrica 1:
+**Los eventos son dos poblaciones.** El ángulo entre la velocidad inicial
+medida de cada peatón y su camino nominal (del arranque al target final) es
+bimodal: o es menor que 32° o mayor que 60°, sin nada en el medio. En 10
+eventos los dos peatones **ya caminan por el corredor** y en 9 al menos uno
+**sale de la fila**, perpendicular al corredor (eventos 6, 7, 8, 9, 11, 13, 14,
+18 y 19; el recorte de la ventana a `|v| ≥ 0,3 m/s` saca el tiempo parado,
+pero no el tramo en que caminan por la fila). En los segundos la recta al
+target es la **ruta equivocada** —la persona sube por la fila y recién
+después dobla al corredor— y eso lo fija la condición del enunciado para el
+target, no la capa de elusión:
 
-- **El 77 % de `<E(1)>` es error de ritmo** (1,14 de 1,48 m²) y sólo el 23 % es
-  de forma. El agente camina a velocidad deseada constante y las personas
-  aceleran, frenan y vuelven a acelerar. La capa de elusión decide la forma,
-  que es justo la parte chica de la métrica 1; por eso la métrica 2, que ignora
-  el tiempo de paso, determina mucho mejor los parámetros (su región compatible
-  es diez veces más chica).
+| con los parámetros poblacionales | ya en el corredor (10) | sale de la fila (9) |
+|---|---|---|
+| `<E(1)>` | 0,78 m² | 2,25 m² |
+| `<E(2)>` | **0,08 m²** | **0,57 m²** |
+| mismo lado que las personas | 6 de 10 | 6 de 9 |
+
+Calibrando **sólo con los 10 del corredor** (`population.py --clase corredor`),
+el óptimo de la métrica 2 es `(4,00 s, 0,070 m)` con `<E(2)> = 0,078 m²` (RMS
+0,28 m), **un 92 % menos que sin capa**, y el de la métrica 1 `(4,00 s, 0,080
+m)` con 0,663 m² (−78 %): el mismo `p2` que con los 19, y la capa hace casi
+todo el trabajo. Sólo con los 9 de la fila, la capa apenas baja el error un 19 %
+y el óptimo se va a `p2 ≈ 0`. Como referencia, la calibración del AA-CPM de la
+cátedra sobre su propio experimento de dos peatones da un error medio de 0,24 m
+(Martin y Parisi 2024, distancia media al punto más cercano): el mismo orden
+que el RMS de 0,28 m del corredor.
+
+Con los parámetros poblacionales de la métrica 1, además:
+
+- **En el corredor, el 88 % de `<E(1)>` va a lo largo del camino nominal** (0,69
+  de 0,78 m²): es **ritmo**, el agente camina a velocidad deseada constante y las
+  personas aceleran, frenan y vuelven a acelerar. La forma —lo que la capa
+  decide— es el 12 %. En los de la fila la componente longitudinal también
+  lleva la ruta (73 %) y la perpendicular es cinco veces mayor que en el
+  corredor. Sobre los 19, 77 % y 23 %.
 - **El modelo elude por el mismo lado que las personas en 12 de los 19
-  eventos.** Esos 12 tienen `<E(1)> = 1,32 m²` y los otros 7, 1,75 m². La capa
-  decide el lado con la geometría recíproca a partir de las velocidades del
-  momento; las personas lo deciden antes y por otros motivos: en 14 de los 19
-  cruces pasaron **cada uno por su derecha**, que es una convención que el
-  modelo no tiene.
+  eventos** (6 de 10 en el corredor). Esos 12 tienen `<E(1)> = 1,32 m²` y los
+  otros 7, 1,75 m². La capa decide el lado con la geometría recíproca a partir
+  de las velocidades del momento, y de frente lo decide un corrimiento de
+  centímetros; las personas lo deciden antes y por otros motivos: en 14 de los
+  19 cruces pasaron **cada uno por su derecha**, que es una convención que el
+  modelo no tiene. El evento 3 es el caso limpio: en el corredor, la elusión
+  correcta (pasan a 0,57 m contra 0,60 m medidos) pero en espejo.
 - **Contacto.** Sin la capa hay contacto en 17 de los 19 eventos (solapamiento
   de hasta 4,4 cm); con la capa calibrada, en 7 (hasta 0,7 cm). En los datos,
   un solo evento tiene distancia mínima por debajo de `2r`.
@@ -383,11 +424,20 @@ imagen que aparece en la charla, numerada por la diapositiva en la que va: es
 la carpeta con la que se arma la presentación a mano en Google Slides.
 
 **La presentación que se expone** se arma en Google Slides con esas imágenes y
-los GIF de `gif/`. Si hay que recortar para entrar en 13 minutos, las
-diapositivas prescindibles son, en este orden: 18 (distancia del evento 10), 22
-(cortes de la métrica 2, dejando la comparación de óptimos en viñetas), 29
-(parámetros por partición) y 27 (evento 19, que se puede contar sobre la figura
-del lado).
+los GIF de `gif/`. La beamer de referencia tiene 34 diapositivas de contenido,
+más de lo que entra en 13 minutos: las prescindibles son, en este orden, 19
+(distancia del evento 10), 24 (cortes de la métrica 2, dejando la comparación
+de óptimos en viñetas), 33 (parámetros por partición), 31 (evento 3, que se
+puede contar sobre la figura del lado), 29 (ritmo y forma, cuya cifra cabe en
+la de las dos poblaciones) y 14 (paso de integración, que puede ser una
+viñeta). Las imágenes con sufijo `b` y `c` (`20b`, `21b`, `27b`, `27c`, `33b`)
+son opcionales: no van en la beamer y están por si hacen falta en una pregunta.
+
+Las **animaciones de apoyo** (`make apoyo`) son tres: el cruce sintético cabeza
+a cabeza con tres `p2` a la vez, que muestra en vivo lo que la capa calcula
+(diapositiva 8), y el evento 10 con `p2` y con `p1` recorriendo su rango al
+lado del corte de `<E>` (diapositiva 20). Son GIF para la charla en vivo, igual
+que las cinco animaciones de eventos.
 
 Los links de YouTube de la beamer dicen `PENDIENTE-0n`: hay que reemplazarlos
 por los reales en `report/presentacion.tex` (y en la presentación de Google

@@ -90,7 +90,7 @@
 
 % Link a la animacion, debajo del cuadro fijo. En la version en vivo esta
 % diapositiva se proyecta con el video embebido y sin link (D12 del TP2).
-\newcommand{\video}[1]{{\scriptsize\href{#1}{\texttt{\detokenize{#1}}}}}
+\newcommand{\video}[1]{{\tiny\href{#1}{\texttt{\detokenize{#1}}}}}
 
 % Figura principal a la izquierda y dos o tres vinetas cortas a la derecha.
 \newcommand{\figbul}[2]{%
@@ -113,7 +113,7 @@
     \begin{columns}[c,onlytextwidth]
         \begin{column}{0.55\textwidth}
             \centering
-            \includegraphics[width=\linewidth,height=0.76\textheight,keepaspectratio]{#2}
+            \includegraphics[width=\linewidth,height=0.72\textheight,keepaspectratio]{#2}
         \end{column}\hfill
         \begin{column}{0.43\textwidth}
             \small
@@ -129,7 +129,7 @@
 \newcommand{\figancha}[3][0.90]{%
     \vspace{-0.4em}
     \begin{center}
-        \includegraphics[width=#1\textwidth,height=0.50\textheight,keepaspectratio]{#2}
+        \includegraphics[width=#1\textwidth,height=0.46\textheight,keepaspectratio]{#2}
     \end{center}
     \vspace{-0.3em}
     {\footnotesize\begin{columns}[t,onlytextwidth]#3\end{columns}}}
@@ -345,10 +345,29 @@
               lado en el que \textbf{no} está el otro, y si eso también es cero,
               la derecha.
         \item \rotulo{Familia.} Es la geometría predictiva de Karamouzas \emph{et
-              al.} (2009) --- el mismo par tiempo de anticipación / espacio
-              personal --- pero resuelta con un \textbf{target temporal} y no
-              con una fuerza evasiva, que acá no está permitida.
+              al.} (2009, Teórica 7) --- el mismo par tiempo de anticipación /
+              espacio personal --- resuelta con un \textbf{target temporal} (el
+              ``goal temporario'' de la Teórica 7) y no con una fuerza evasiva.
+              Una diferencia: se predice con las velocidades \textbf{actuales} de
+              los dos (Karamouzas usa la deseada para $i$), así los dos ven lo
+              mismo y la elusión sale recíproca.
     \end{itemize}
+\end{frame}
+
+\begin{frame}{La capa en acción: un cruce de frente con tres márgenes}
+    \figbulw[0.4em]{slide-08-capa-en-accion.png}{%
+        \item Cruce sintético: dos agentes a \SI{1}{\meter\per\second},
+              \SI{8}{\meter} aparte, corridos \SI{4}{\centi\meter}; un carril por
+              $p_2$, mismo $p_1$.
+        \item Discos punteados: posiciones \textbf{predichas} en $\tdca$; el
+              trazo entre ellos es $\ddca$; la cruz, el target temporal, unida
+              al agente.
+        \item A igual $\tdca$, cuanto mayor es $p_2$ más lejos del camino nominal
+              queda el target: falta más separación, $\Dreq - \ddca$. Es la
+              diapositiva anterior, en movimiento.
+        \cond{$p_1 = \SI{2.5}{\second}$; $t = \SI{2.4}{\second}$, con el conflicto ya declarado en los tres carriles}
+    }
+    \begin{center}\video{https://youtu.be/PENDIENTE-06}\end{center}
 \end{frame}
 
 % =========================================================
@@ -444,15 +463,17 @@
 \end{frame}
 
 \begin{frame}{Casos estudiados}
-    \figbulw[0.45em]{slide-12-eventos-distancia-vs-t.png}{%
+    \figbulw[0.25em]{slide-13-eventos-distancia-vs-t.png}{%
         \item \textbf{Ventana de cada evento}: la parte en que los \textbf{dos}
               peatones ya caminan ($|\vv| \ge \SI{0.3}{\meter\per\second}$). Al
               principio de varias pruebas uno todavía hace la fila, parado, y su
               rapidez media --- que es $v^d$ --- quedaría muy por debajo de la que
-              camina. Se pierde el \SI{9}{\percent} de los instantes y las 19
-              distancias mínimas \textbf{siguen adentro}.
-        \item \textbf{Barrido}: $p_1$ en 81 valores $\times$ $p_2$ en 61 $\times$ 19
-              eventos: \num{93879} corridas, \SI{62}{\second}.
+              camina. Se pierde el \SI{9}{\percent} de los instantes; los 19
+              cruces \textbf{siguen adentro}.
+        \item \textbf{Barrido}: $p_1$ de 0 a \SI{4}{\second} en 81 valores $\times$
+              $p_2$ de 0 a \SI{0.6}{\meter} en 61 $\times$ 19 eventos:
+              \num{93879} corridas, \SI{62}{\second}; el techo de $p_1$ se
+              verifica aparte hasta \SI{8}{\second}.
         \item \textbf{Validación cruzada}: 500 particiones de 13/6, más dejando
               uno afuera.
         \cond{una curva por evento; la horizontal es $2r$}
@@ -464,7 +485,7 @@
 % =========================================================
 
 \begin{frame}{Paso de integración}
-    \figbulw[0.5em]{slide-13-convergencia-dt.png}{%
+    \figbulw[0.5em]{slide-14-convergencia-dt.png}{%
         \item $\dt$ no es libre: tiene que dividir \dtexp{} en un número entero
               $n$ de partes. Se mide cuánto se aparta \mEuno{} y \mEdos{} del
               valor que dan con el paso más fino ($n = 512$).
@@ -479,7 +500,7 @@
 \end{frame}
 
 \begin{frame}{Evento 10 sin capa de elusión}
-    \figancha{slide-14-animacion-evento10-sin-capa.png}{%
+    \figancha{slide-15-animacion-evento10-sin-capa.png}{%
         \colvin{%
             \item Los dos van derecho a su target y \alert{se chocan de frente}:
                   llegan a \SI{0.49}{\meter}, menos que $2r$, y el contacto los
@@ -489,36 +510,37 @@
         \colvin{%
             \item $\Euno_m = \SI{7.90}{\meter\squared}$ y
                   $\Edos_m = \SI{4.02}{\meter\squared}$: el peor de los 19.
-            \cond{$p_1 = 0$ (capa apagada); congelada en el cruce simulado, $t = \SI{3.46}{\second}$. Disco lleno: simulado; punteado: medido}}
+            \cond{$p_1 = 0$ (capa apagada); congelada justo antes del choque simulado, $t = \SI{3.46}{\second}$. Disco lleno: simulado; punteado: medido}}
     }
     \begin{center}\video{https://youtu.be/PENDIENTE-02}\end{center}
 \end{frame}
 
 \begin{frame}{Evento 10 con la capa calibrada}
-    \figancha{slide-15-animacion-evento10.png}{%
+    \figancha{slide-16-animacion-evento10.png}{%
         \colvin{%
             \item La capa declara conflicto en 36 de los 140 instantes y los dos
                   se corren \textbf{de costado}: se cruzan uno arriba y otro
                   abajo, no de frente.
-            \item En el cruce el target temporal (cruz verde) es
+            \item Cerca del cruce el target temporal (cruz verde) queda casi
                   \textbf{puramente lateral}: es el límite $\tdca \to 0$.}
         \colvin{%
             \item \alert{$\Euno_m$ baja de $7{,}90$ a
                   \SI{1.40}{\meter\squared} y $\Edos_m$ de $4{,}02$ a
                   \SI{0.07}{\meter\squared}}.
-            \cond{$p_1 = \SI{2.5}{\second}$, $p_2 = \SI{0.07}{\meter}$; congelada en el cruce simulado, $t = \SI{3.60}{\second}$}}
+            \cond{$p_1 = \SI{2.5}{\second}$, $p_2 = \SI{0.07}{\meter}$; congelada en el último instante en conflicto antes del cruce simulado, $t = \SI{3.60}{\second}$}}
     }
     \begin{center}\video{https://youtu.be/PENDIENTE-01}\end{center}
 \end{frame}
 
 \begin{frame}{Evento 10: trayectorias}
-    \figancha[0.98]{slide-16-evento10-trayectorias.png}{%
+    \figancha[0.98]{slide-17-evento10-trayectorias.png}{%
         \colvin{%
-            \item Con la capa, las dos simuladas (punteadas) siguen la
+            \item Con la capa, las dos simuladas (punteadas) tienen la
                   \textbf{forma} de las medidas: el arco de elusión aparece en
-                  el lugar y con la amplitud correctos.
+                  el lugar y con la amplitud correctos --- aunque \textbf{en
+                  espejo}: el modelo cruza por el otro lado (se ve al final).
             \item Sin la capa (gris) el desvío lo produce el \textbf{choque},
-                  tarde y del lado equivocado.}
+                  tarde y más brusco.}
         \colvin{%
             \item Lo que queda es el \textbf{retraso}: la simulada camina a
                   $v^d$ constante y las personas aceleran y frenan.
@@ -527,7 +549,7 @@
 \end{frame}
 
 \begin{frame}{Evento 10: observable primario}
-    \figbulw[0.5em]{slide-17-evento10-observable.png}{%
+    \figbulw[0.5em]{slide-18-evento10-observable.png}{%
         \item $e(t)$ promediado sobre los 2 peatones del evento, para las dos
               métricas. El \textbf{escalar} de cada una es el promedio temporal
               de su curva: las horizontales punteadas.
@@ -542,7 +564,7 @@
 \end{frame}
 
 \begin{frame}{Evento 10: distancia entre los dos peatones}
-    \figbulw[0.5em]{slide-18-evento10-distancia.png}{%
+    \figbulw[0.5em]{slide-19-evento10-distancia.png}{%
         \item La distancia simulada toca el fondo en \SI{0.50}{\meter}, cerca de
               la que pide la capa, $\Dreq = 2r + p_2 = \SI{0.57}{\meter}$: el
               agente \textbf{llega a la separación que la capa le fijó}.
@@ -554,8 +576,33 @@
     }
 \end{frame}
 
+\begin{frame}{Qué hace cada parámetro, antes de mirar la superficie}
+    \vspace{-0.45em}
+    \begin{columns}[c,onlytextwidth]
+        \begin{column}{0.62\textwidth}
+            \centering
+            \includegraphics[width=\linewidth,height=0.70\textheight,keepaspectratio]{slide-20-que-hace-p2.png}
+        \end{column}\hfill
+        \begin{column}{0.36\textwidth}
+            \small
+            \begin{itemize}\setlength{\itemsep}{0.25em}
+                \item El evento 10 con $p_2$ recorriendo su rango; al lado, el
+                      corte de \mEdos{} con el punto donde está.
+                \item $p_2$ fija \textbf{por dónde se pasa}: con $0{,}07$ pasan
+                      rozándose como las personas; con $0{,}3$ y $0{,}6$ se abren
+                      de más y \mEdos{} sube.
+                \item $p_1$ (animación aparte) decide \textbf{si llegan a
+                      correrse}: con \SI{0.5}{\second} reaccionan tarde; desde
+                      $\approx \SI{1.2}{\second}$ ya no cambia nada.
+                \cond{$p_1 = \SI{3.85}{\second}$; $p_2 = 0$, $0{,}07$, $0{,}3$ y \SI{0.6}{\meter}, un punto por valor en el corte}
+            \end{itemize}
+        \end{column}
+    \end{columns}
+    \begin{center}\video{https://youtu.be/PENDIENTE-07}\quad\video{https://youtu.be/PENDIENTE-08}\end{center}
+\end{frame}
+
 \begin{frame}{Ítem b: \mEuno{} sobre la grilla de parámetros}
-    \figbulw[0.45em]{slide-19-superficie-metrica1.png}{%
+    \figbulw[0.45em]{slide-21-superficie-metrica1.png}{%
         \item El color va con escala de potencia y las curvas de nivel son
               múltiplos del mínimo: en escala lineal todo el valle queda del
               mismo tono.
@@ -564,15 +611,17 @@
               $\mEuno = 1{,}48 \pm \SI{0.25}{\meter\squared}$ (RMS
               \SI{1.22}{\meter}); sin capa, \SI{2.73}{\meter\squared}:
               \textbf{la capa baja el error un \SI{46}{\percent}}.
-        \item La línea blanca encierra los pares que \textbf{empatan} con el
+        \item El velo blanco marca los pares que \textbf{empatan} con el
               óptimo: $p_1$ de $0{,}85$ a \SI{4}{\second} y $p_2$ de $0{,}05$ a
-              \SI{0.42}{\meter}.
+              \SI{0.42}{\meter}. Más allá de $p_1 = \SI{4}{\second}$ nada cambia:
+              hasta \SI{8}{\second} la diferencia pareada es $0{,}05 \pm
+              \SI{0.04}{\meter\squared}$.
         \cond{19 eventos, $81 \times 61$ pares, $\dt = \dtexp/64$}
     }
 \end{frame}
 
 \begin{frame}{Ítem b: cortes por el óptimo, métrica 1}
-    \figancha[0.86]{slide-20-cortes-metrica1.png}{%
+    \figancha[0.86]{slide-22-cortes-metrica1.png}{%
         \colvin{%
             \item $p_1$ \textbf{sólo queda determinado por abajo}: \mEuno{} cae
                   de $2{,}73$ a \SI{1.5}{\meter\squared} entre 0 y
@@ -588,23 +637,24 @@
 \end{frame}
 
 \begin{frame}{Ítem b: \mEdos{} sobre la grilla de parámetros}
-    \figbulw[0.45em]{slide-21-superficie-metrica2.png}{%
-        \item Misma forma de valle, pero \textbf{mucho más profundo}: sin capa
+    \figbulw[0.45em]{slide-23-superficie-metrica2.png}{%
+        \item Mismo valle, \textbf{más profundo}: sin capa
               $\mEdos = \SI{0.84}{\meter\squared}$ y en el óptimo
               $0{,}314 \pm \SI{0.074}{\meter\squared}$ (RMS \SI{0.56}{\meter}),
               \alert{un \SI{63}{\percent} menos}.
         \item \alert{Óptimo en $p_1 = \SI{3.85}{\second}$,
               $p_2 = \SI{0.05}{\meter}$}; la región que empata es mucho más
               chica (129 pares contra 1482): sacando el tiempo de paso, la
-              métrica determina mejor los parámetros.
-        \item La distancia de paso que piden los dos óptimos es casi la misma:
+              métrica determina mejor los parámetros. Hasta \SI{8}{\second} la
+              diferencia pareada es $0{,}000 \pm \SI{0.007}{\meter\squared}$.
+        \item Los dos óptimos piden casi la misma distancia de paso:
               $\Dreq = 0{,}57$ y \SI{0.55}{\meter}.
         \cond{19 eventos, $81 \times 61$ pares, $\dt = \dtexp/64$}
     }
 \end{frame}
 
 \begin{frame}{Ítem b: cortes de la métrica 2 y comparación de los óptimos}
-    \figancha[0.86]{slide-22-cortes-metrica2.png}{%
+    \figancha[0.86]{slide-24-cortes-metrica2.png}{%
         \colvin{%
             \item Los dos óptimos coinciden en $p_2$ ($0{,}07$ contra
                   \SI{0.05}{\meter}) y difieren en $p_1$ ($2{,}50$ contra
@@ -621,13 +671,13 @@
 \end{frame}
 
 \begin{frame}{Ítem c: óptimos individuales}
-    \figbulw[0.45em]{slide-23-optimos-individuales.png}{%
+    \figbulw[0.45em]{slide-25-optimos-individuales.png}{%
         \item Cada punto es el par que minimiza el error de \textbf{ese} evento;
               la estrella es el poblacional.
         \item En $p_2$ están todos juntos: mediana \SI{0.05}{\meter}, y 15 de 19
               por debajo de \SI{0.1}{\meter}. En $p_1$ están \textbf{desparramados
-              por todo el rango}, que es lo que se espera de un parámetro cuya
-              dirección es plana.
+              por todo el rango}, y 8 caen en el borde $p_1 = \SI{4}{\second}$:
+              es lo que se espera de un parámetro cuya dirección es plana.
         \item \alert{4 de los 19 eligen $p_1 = 0$}: a esos eventos la capa no
               les sirve. Son los que las personas resolvieron de una manera que
               el modelo no reproduce.
@@ -636,7 +686,7 @@
 \end{frame}
 
 \begin{frame}{Ítem c: cuánto se gana al individualizar}
-    \figbulw[0.45em]{slide-24-errores-por-evento.png}{%
+    \figbulw[0.45em]{slide-26-errores-por-evento.png}{%
         \item Evento por evento, el error con los parámetros poblacionales y con
               los propios. \textbf{Los eventos son muy desparejos}: de $0{,}38$ a
               \SI{4.0}{\meter\squared} con los mismos parámetros.
@@ -650,54 +700,89 @@
     }
 \end{frame}
 
-\begin{frame}{De dónde viene el error: ritmo y forma}
-    \figbulw[0.45em]{slide-25-residuo-descomposicion.png}{%
-        \item Con los parámetros poblacionales, $\Euno_m$ abierto en sus dos
-              componentes sobre el camino nominal de cada peatón.
-        \item \alert{El \SI{77}{\percent} de \mEuno{} es ritmo} ($1{,}14$ de
-              \SI{1.48}{\meter\squared}): el agente camina a $v^d$ constante y
-              las personas aceleran y frenan.
-        \item La capa decide la \textbf{forma}, que es sólo el \SI{23}{\percent}.
-              Por eso la métrica 2, que ignora el tiempo de paso, determina mucho
-              mejor los parámetros.
-        \cond{$p_1 = \SI{2.5}{\second}$, $p_2 = \SI{0.07}{\meter}$; eventos ordenados por $\Euno_m$}
+\begin{frame}{De dónde viene el error (1/3): dos poblaciones de eventos}
+    \figbulw[0.25em]{slide-27-dos-poblaciones.png}{%
+        \item Se separan solos por el ángulo entre $\vv(0)$ y el camino nominal:
+              menor que $32^\circ$ (los dos \textbf{ya en el corredor}, 10
+              eventos) o mayor que $60^\circ$ (alguno \textbf{sale de la fila},
+              9 eventos).
+        \item \alert{\mEdos{}: $0{,}08$ contra \SI{0.57}{\meter\squared}}. En
+              los de la fila la recta al target es la \textbf{ruta equivocada}, y
+              eso lo fija el enunciado, no la capa.
+        \item Calibrando sólo con los 10 del corredor: $(\SI{4.0}{\second},\
+              \SI{0.07}{\meter})$ y $\mEdos = \SI{0.078}{\meter\squared}$ (RMS
+              \SI{0.28}{\meter}), \textbf{un \SI{92}{\percent} menos que sin
+              capa}; sólo con los 9 de la fila, un \SI{19}{\percent}.
+        \cond{métrica 2 con su óptimo poblacional; con la métrica 1: $0{,}78$ contra \SI{2.25}{\meter\squared}}
     }
 \end{frame}
 
-\begin{frame}{De dónde viene el error: el lado por el que se eluden}
-    \figbulw[0.35em]{slide-26-residuo-lado.png}{%
+\begin{frame}{Evento 14: los dos salen de la fila}
+    \figancha{slide-28-animacion-evento14.png}{%
+        \colvin{%
+            \item Las personas caminan primero \textbf{por la fila}, hacia arriba,
+                  y doblan al corredor en $y \approx \SI{2}{\meter}$: su distancia
+                  no baja hasta los \SI{3.5}{\second}.
+            \item Los agentes van derecho al target desde $t = 0$, en diagonal, y
+                  se cruzan a los \SI{4.7}{\second}, con las personas aún a
+                  \SI{5.6}{\meter}.}
+        \colvin{%
+            \item $\Euno_m = \SI{3.44}{\meter\squared}$, el segundo peor. La capa
+                  no puede arreglarlo: la ruta no es suya.
+            \cond{$p_1 = \SI{2.5}{\second}$, $p_2 = \SI{0.07}{\meter}$; congelada en el último instante en conflicto, $t = \SI{4.66}{\second}$}}
+    }
+    \begin{center}\video{https://youtu.be/PENDIENTE-04}\end{center}
+\end{frame}
+
+\begin{frame}{De dónde viene el error (2/3): ritmo y forma}
+    \figbulw[0.4em]{slide-29-residuo-descomposicion.png}{%
+        \item $\Euno_m$ abierto en la componente \textbf{a lo largo} del camino
+              nominal y la \textbf{perpendicular}, agrupado por población.
+        \item En el corredor, \alert{el \SI{88}{\percent} es longitudinal}: es
+              \textbf{ritmo}, el agente camina a $v^d$ constante y la persona
+              acelera y frena. La forma --- lo que la capa decide --- es el
+              \SI{12}{\percent}.
+        \item En la fila la componente longitudinal también lleva la \textbf{ruta}
+              (\SI{73}{\percent}), y la perpendicular es cinco veces mayor que en
+              el corredor.
+        \cond{$p_1 = \SI{2.5}{\second}$, $p_2 = \SI{0.07}{\meter}$; cada grupo ordenado por $\Euno_m$}
+    }
+\end{frame}
+
+\begin{frame}{De dónde viene el error (3/3): el lado por el que se eluden}
+    \figbulw[0.2em]{slide-30-residuo-lado.png}{%
         \item Desvío lateral entre los dos peatones en el cruce, medido contra
               simulado. En el fondo rojo el modelo eludió \textbf{por el lado
               opuesto}.
-        \item \alert{Coincide en 12 de 19}: esos tienen
-              $\mEuno = \SI{1.32}{\meter\squared}$ y los otros 7,
-              \SI{1.75}{\meter\squared}.
-        \item La capa decide el lado con las velocidades del momento; las
-              personas lo deciden antes: en 14 de 19 cruces pasaron
-              \textbf{cada uno por su derecha}.
+        \item \alert{Acierta en 12 de 19}: 6 de 10 en el corredor y 6 de 9 en la
+              fila. Los que acierta tienen $\mEuno = \SI{1.32}{\meter\squared}$; los
+              otros, $1{,}75$.
+        \item La capa decide el lado con las velocidades del momento, y de
+              frente lo decide un corrimiento de centímetros. Las personas lo
+              deciden antes: en 14 de 19 cruces pasaron \textbf{cada uno por su
+              derecha}.
         \cond{$p_1 = \SI{2.5}{\second}$, $p_2 = \SI{0.07}{\meter}$; el simulado está acotado por \Dreq}
     }
 \end{frame}
 
-\begin{frame}{Evento 19: el modelo elude por el lado opuesto}
-    \vspace{-0.3em}
-    \figancha[0.88]{slide-27-animacion-evento19.png}{%
+\begin{frame}{Evento 3: en el corredor, pero por el lado opuesto}
+    \figancha{slide-31-animacion-evento03.png}{%
         \colvin{%
             \item Las personas se cruzaron con el de la izquierda por abajo
-                  ($\Delta y = \SI{-0.61}{\meter}$) y el modelo los cruza al
-                  revés ($+0{,}54$).
-            \item La elusión en sí es correcta --- pasan a
-                  \SI{0.57}{\meter} --- pero del lado equivocado.}
+                  ($\Delta y = \SI{-0.57}{\meter}$); el modelo, al revés
+                  ($+0{,}57$).
+            \item La elusión en sí es la correcta: pasan a \SI{0.57}{\meter}
+                  contra \SI{0.60}{\meter} medidos.}
         \colvin{%
-            \item Es el peor de los 19:
-                  $\Euno_m = \SI{4.0}{\meter\squared}$, y $3{,}2$ son de ritmo.
-            \cond{$p_1 = \SI{2.5}{\second}$, $p_2 = \SI{0.07}{\meter}$; congelada en el cruce simulado, $t = \SI{4.66}{\second}$}}
+            \item $\Edos_m = \SI{0.31}{\meter\squared}$, el mayor del corredor:
+                  todo el error es \textbf{el lado}.
+            \cond{$p_1 = \SI{2.5}{\second}$, $p_2 = \SI{0.07}{\meter}$; congelada en el último instante en conflicto, $t = \SI{3.60}{\second}$}}
     }
     \begin{center}\video{https://youtu.be/PENDIENTE-05}\end{center}
 \end{frame}
 
 \begin{frame}{Ítem d: validación cruzada}
-    \figbulw[0.45em]{slide-28-validacion-error.png}{%
+    \figbulw[0.45em]{slide-32-validacion-error.png}{%
         \item 500 particiones al azar: se calibra con 13 eventos y se mide sobre
               los otros 6, que no se usaron para calibrar.
         \item \alert{El error de validación queda un \SI{5.2}{\percent} por
@@ -712,7 +797,7 @@
 \end{frame}
 
 \begin{frame}{Ítem d: qué par elige cada partición}
-    \figbulw[0.45em]{slide-29-validacion-parametros.png}{%
+    \figbulw[0.45em]{slide-33-validacion-parametros.png}{%
         \item El par calibrado cambia de partición en partición: 52 pares
               distintos en 500 particiones, y el más frecuente aparece en el
               \SI{26}{\percent}.
@@ -732,26 +817,26 @@
 \begin{frame}{Conclusiones}
     \vspace{0.1em}
     \small
-    \begin{itemize}\setlength{\itemsep}{0.6em}
+    \begin{itemize}\setlength{\itemsep}{0.55em}
         \item Una capa de elusión de \textbf{dos parámetros} que sólo reemplaza el
               target baja el error poblacional un \SI{46}{\percent} con la métrica
               1 ($2{,}73 \to \SI{1.48}{\meter\squared}$) y un \SI{63}{\percent} con
               la métrica 2 ($0{,}84 \to \SI{0.31}{\meter\squared}$).
         \item Los óptimos son $(\SI{2.50}{\second},\ \SI{0.07}{\meter})$ y
-              $(\SI{3.85}{\second},\ \SI{0.05}{\meter})$. Las dos métricas piden la
+              $(\SI{3.85}{\second},\ \SI{0.05}{\meter})$: las dos métricas piden la
               \textbf{misma distancia de paso}, $\Dreq \approx \SI{0.56}{\meter}$, e
-              intercambiar los óptimos cuesta menos del \SI{2}{\percent}.
+              intercambiarlos cuesta menos del \SI{2}{\percent}.
         \item $p_2$ queda bien determinado y \textbf{$p_1$ sólo por abajo}: con más
               de \SI{1.2}{\second} de anticipación la superficie es plana dentro del
-              error pareado, tanto en el ítem b como en las 500 particiones del
-              ítem d.
-        \item Individualizar los parámetros gana un \SI{17}{\percent} con la métrica
-              1 y un \SI{6}{\percent} con la 2: \textbf{poco para 19 pares contra
-              uno}. El error que queda no está en los parámetros.
-        \item Está en lo que el modelo no describe: el \SI{77}{\percent} de \mEuno{}
-              es \textbf{ritmo} (velocidad deseada constante contra personas que
-              aceleran y frenan) y el modelo acierta el \textbf{lado} en 12 de los
-              19 cruces.
+              error pareado, hasta \SI{8}{\second}.
+        \item Los eventos son \textbf{dos poblaciones}: en los 10 en que los dos ya
+              caminan por el corredor, $\mEdos = \SI{0.08}{\meter\squared}$ y la capa
+              baja el error un \SI{92}{\percent}; en los 9 que salen de la fila,
+              $0{,}57$, porque la recta al target es la ruta equivocada.
+        \item Individualizar los parámetros gana un \SI{17}{\percent} y un
+              \SI{6}{\percent}: el error que queda no está en los parámetros. En el
+              corredor es \textbf{ritmo} (\SI{88}{\percent}) y \textbf{el lado}, que
+              el modelo acierta en 6 de 10.
         \item La validación cruzada da un error apenas un \SI{5.2}{\percent} mayor
               que el del ítem b (\SI{0.2}{\percent} con la métrica 2): con dos
               parámetros y 19 eventos \textbf{no hay sobreajuste}.
@@ -764,8 +849,8 @@
     \begin{minipage}{0.88\textwidth}
         \normalsize
         \begin{itemize}\setlength{\itemsep}{0.9em}
-            \item \textbf{Agente y modelo}: Claude Code (Anthropic), modelo Claude
-                  Opus~5.
+            \item \textbf{Agente y modelo}: Claude Code (Anthropic), modelos Claude
+                  Opus~5 y Claude Fable~5.1.
             \item \textbf{En qué se usó}: asistencia en la programación del motor en
                   C++, de los \textit{scripts} de post-procesamiento en Python y del
                   código \LaTeX{} de estas diapositivas, y revisión de código.

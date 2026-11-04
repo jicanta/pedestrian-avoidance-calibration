@@ -362,6 +362,47 @@ def population(event_error: np.ndarray):
     return mean, deviation / np.sqrt(event_error.shape[2])
 
 
+# --------------------------------------------------------------------------
+# Las dos poblaciones de eventos
+# --------------------------------------------------------------------------
+
+# Angulo (grados) entre la velocidad inicial medida de un peaton y su camino
+# nominal (del arranque a su target final). En los datos la distribucion es
+# bimodal: o es menor que 32 grados (el peaton ya camina por el corredor) o
+# mayor que 60 (todavia esta saliendo de la fila, perpendicular al corredor).
+# El umbral cae en el hueco entre los dos grupos.
+QUEUE_ANGLE = 45.0
+CLASS_LABEL = {"corredor": "ya en el corredor", "fila": "sale de la fila"}
+CLASS_COLOR = {"corredor": "#1f5fbf", "fila": "#c55a11"}
+
+
+def initial_angles(event: dict) -> tuple[float, float]:
+    """Angulo entre v(0) y el camino nominal, para el peaton izquierdo y el
+    derecho de un evento de read_events()."""
+    angles = []
+    for side in ("izquierda", "derecha"):
+        pedestrian = event[side]
+        velocity = np.array([pedestrian["vx0"], pedestrian["vy0"]])
+        nominal = np.array([pedestrian["tx"] - pedestrian["x0"],
+                            pedestrian["ty"] - pedestrian["y0"]])
+        cosine = velocity @ nominal / (np.linalg.norm(velocity) * np.linalg.norm(nominal))
+        angles.append(float(np.degrees(np.arccos(np.clip(cosine, -1.0, 1.0)))))
+    return angles[0], angles[1]
+
+
+def event_class(event: dict) -> str:
+    """'fila' si alguno de los dos peatones arranca saliendo de la fila
+    (angulo mayor que QUEUE_ANGLE), 'corredor' si los dos ya caminan por el."""
+    return "fila" if max(initial_angles(event)) > QUEUE_ANGLE else "corredor"
+
+
+def classes(labels, events: list[dict] | None = None) -> np.ndarray:
+    """La clase de cada evento de `labels` (en ese orden), como array de str."""
+    events = events if events is not None else read_events()
+    by_label = {event["m"]: event_class(event) for event in events}
+    return np.array([by_label[int(label)] for label in labels])
+
+
 def optimum(surface: np.ndarray, p1: np.ndarray, p2: np.ndarray):
     """(i, j, p1*, p2*, valor) del minimo de la superficie."""
     i, j = np.unravel_index(np.argmin(surface), surface.shape)

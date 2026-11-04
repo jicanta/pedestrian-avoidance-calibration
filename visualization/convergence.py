@@ -14,6 +14,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
+import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -39,14 +40,17 @@ def main() -> None:
     enough = int(subdivisions[accepted[0]]) if accepted.size else int(subdivisions[-1])
     chosen = arguments.elegido
 
-    common.use_style(arguments.estilo)
+    common.use_style(style := arguments.estilo)
     figure, axes = plt.subplots()
+    # El paso mas fino es la referencia: su apartamiento es cero por definicion
+    # y no entra en la curva (en escala logaritmica no se puede dibujar).
+    shown = slice(0, len(step) - 1)
     for metric in (1, 2):
         color, marker = common.METRIC_STYLE[metric]
-        axes.plot(step, relative[metric], marker=marker, color=color,
+        axes.plot(step[shown], relative[metric][shown], marker=marker, color=color,
                   label=common.METRIC_LABEL[metric])
     axes.axhline(arguments.tolerancia, color="#6e7680", linestyle="--", linewidth=1.4,
-                 label=f"tolerancia {common.decimal(100 * arguments.tolerancia, 1)} %")
+                 label=f"tolerancia {common.decimal(100 * arguments.tolerancia)} %")
     index = int(np.argmin(np.abs(subdivisions - chosen)))
     axes.axvline(step[index], color="#2ca02c", linestyle=":", linewidth=1.8,
                  label=f"$\\Delta t$ elegido = $\\Delta t_{{exp}}/{chosen}$")
@@ -54,6 +58,8 @@ def main() -> None:
     axes.set_yscale("log")
     axes.set_xlabel(common.AXIS_STEP)
     axes.set_ylabel("apartamiento relativo de $\\langle E \\rangle$")
+    axes.set_title(f"referencia: $\\Delta t_{{exp}}/{int(subdivisions[-1])}$",
+                   fontsize=matplotlib.rcParams["legend.fontsize"], color="#6e7680", loc="right")
     common.legend_inside(axes)
     common.save(figure, common.folder("a", arguments.figures) /
                 f"convergencia_dt_{arguments.estilo}.png")

@@ -131,8 +131,9 @@ def main() -> None:
     parser.add_argument("--cuadro", type=float, default=-1.0,
                         help="instante (s) de un cuadro unico con el lienzo del video")
     parser.add_argument("--cruce", action="store_true",
-                        help="el cuadro unico, en el instante de minima aproximacion "
-                             "SIMULADA: es el momento en el que se ve la elusion")
+                        help="el cuadro unico, en el ultimo instante en conflicto antes de la "
+                             "minima aproximacion SIMULADA (o en ella, si no hubo conflicto): "
+                             "es el momento en el que se ve la elusion y su target temporal")
     parser.add_argument("--name", type=str, default="")
     common.add_common_arguments(parser)
     arguments = parser.parse_args()
@@ -151,6 +152,9 @@ def main() -> None:
             gap = np.hypot(simulated[:, 0, 0] - simulated[:, 1, 0],
                            simulated[:, 0, 1] - simulated[:, 1, 1])
             index = int(np.argmin(gap))
+            conflicts = np.where(simulated[:index + 1, :, 6].max(axis=1) > 0.5)[0]
+            if conflicts.size:
+                index = int(conflicts[-1])
             tag = "cruce"
         else:
             index = frame_index(time, arguments.cuadro)

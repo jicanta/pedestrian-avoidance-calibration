@@ -281,10 +281,10 @@ tp-5/
 
 Proceso en dos etapas: una grilla gruesa (17 × 21) para acotar el plano y una
 fina (81 × 61) sobre `p1 ∈ [0, 4] s` y `p2 ∈ [0, 0,6] m`, que es la que se usa.
-El techo de `p1` sale de los datos: la mediana del tiempo al cruce en el
-instante inicial de los eventos es 4,3 s, así que con `p1` mayor el conflicto
-ya se detecta desde el primer instante y nada cambia. El de `p2` sale de la
-grilla gruesa: más allá de 0,6 m `<E>` sube monótono.
+El techo de `p1` se verifica con un barrido aparte hasta 8 s en la `p2` de
+cada óptimo: entre 4 y 8 s la diferencia pareada de `<E>` es `+0,05 ± 0,04 m²`
+(métrica 1) y `0,000 ± 0,007 m²` (métrica 2), compatible con cero. El de `p2`
+sale de la grilla gruesa: más allá de 0,6 m `<E>` sube monótono.
 
 La **región compatible** con el óptimo no se calcula con el error estándar de
 la media (que mide la dispersión entre eventos y es enorme comparada con las
@@ -297,6 +297,18 @@ evalúan sobre los mismos 19 eventos, así que lo que importa es si
 El mismo archivo del barrido: para cada evento, el mínimo de su propia
 superficie. Se comparan los 19 pares con el poblacional y los 19 errores con
 los que da el poblacional.
+
+### De dónde viene el error que queda
+
+Los eventos se separan solos en **dos poblaciones** por el ángulo entre la
+velocidad inicial medida y el camino nominal (bimodal: < 32° o > 60°): en 10
+los dos ya caminan por el corredor y en 9 alguno sale de la fila,
+perpendicular. En los segundos la recta al target es la ruta equivocada (la
+persona sube por la fila y después dobla), y la capa no tiene cómo arreglarlo.
+Se reporta el error por población, la calibración con cada una por separado
+(`population.py --clase corredor|fila`), la descomposición del residuo a lo
+largo y perpendicular al camino nominal, y el lado del cruce medido contra
+simulado.
 
 ### Ítem d — validación cruzada
 
@@ -317,11 +329,8 @@ declaración de uso de agentes de IA y "Muchas gracias".
 
 La beamer de `report/` es la **versión de referencia**: la presentación que se
 expone se arma a mano en Google Slides con las imágenes de `slides-images/` y
-los GIF de `gif/`. Si hay que recortar para entrar en 13 minutos, las
-diapositivas prescindibles son, en este orden: 18 (distancia del evento 10), 22
-(cortes de la métrica 2, dejando sólo la comparación de óptimos en viñetas),
-29 (parámetros por partición) y 27 (evento 19, que se puede contar sobre la
-figura del lado).
+los GIF de `gif/`. Tiene 34 diapositivas de contenido, más de lo que entra en
+13 minutos; la lista de prescindibles está en el README.
 
 ---
 
@@ -343,3 +352,9 @@ figura del lado).
 6. **Región compatible.** ¿Les parece razonable informar, además del óptimo, el
    conjunto de pares que empatan con él según la diferencia pareada? Con la
    barra de error estándar de la media, el 70 % de la grilla "empata".
+7. **Las dos poblaciones.** En 9 de las 19 pruebas al menos un peatón arranca
+   caminando por la fila, perpendicular al corredor, y la recta al target final
+   no es su ruta. ¿Esperan que esos eventos entren en la calibración tal cual
+   (es lo que se hace, y se muestra qué pasa calibrando sólo con los otros 10),
+   o preferirían que la ventana arranque cuando los dos ya caminan por el
+   corredor?

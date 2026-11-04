@@ -87,6 +87,14 @@ vuelve a revisar contra las diapositivas antes de entregar.
   evolución temporal del observable primario y cómo se calcula el observable
   escalar**. Está en ese orden: animación sin capa, animación con capa,
   trayectorias, `e(t)` y recién después las superficies de `<E>`.
+- Como en el TP4, hay **animaciones de apoyo** además de las de resultados: la
+  capa mirada de cerca en un cruce sintético (para las diapositivas que la
+  explican) y cada parámetro recorriendo su rango (para la de qué hace cada
+  uno). Igual que las otras, cada una tiene su cuadro fijo en el PDF y su GIF
+  para la charla.
+- El cuadro fijo de cada animación se congela en el **último instante en
+  conflicto antes del cruce simulado**, que es el momento en el que se ve la
+  elusión y su target temporal, y la viñeta gris de la diapositiva lo dice.
 - El observable escalar (las dos métricas) está definido **matemáticamente** en
   la diapositiva de observables, junto con cómo se promedia sobre peatones y
   sobre eventos y qué es la barra de error.
