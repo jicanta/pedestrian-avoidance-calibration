@@ -876,7 +876,8 @@
                   de los resultados y las conclusiones son del grupo, a partir de las
                   Teóricas 5 a 7 y de la bibliografía de la cátedra.
             \item Todo lo generado se revisó y se verificó contra las figuras
-                  mostradas.
+                  mostradas. Las \textbf{libertades que se tomó el agente y que
+                  hubo que corregir} están una por una en el apéndice.
         \end{itemize}
     \end{minipage}
     \end{center}
@@ -891,5 +892,111 @@
     \end{center}
     \vfill
 \end{frame}
+
+
+% =========================================================
+% APENDICE -- libertades de la IA corregidas por el grupo
+% Lo pide la catedra para el TP5: "un apendice donde describan todas las
+% libertades tomadas por la IA que ustedes tuvieron que corregir".
+% El registro completo, con el commit de cada correccion, esta en IA.md.
+% =========================================================
+
+\appendix
+
+\begin{frame}[noframenumbering]{Apéndice: libertades de la IA corregidas (1/3)}
+    \vspace{-0.2em}
+    {\scriptsize\color{gris} Metodología y modelado. Registro completo, con el
+     commit de cada corrección, en \texttt{IA.md}.}
+    \vspace{0.4em}
+    \footnotesize
+    \begin{itemize}\setlength{\itemsep}{0.42em}
+        \item \rotulo{Justificó el techo de $p_1$ con un argumento falso}
+              (la mediana del tiempo al cruce inicial). Con la rampa de urgencia
+              $p_1$ entra aunque el conflicto se detecte en $t = 0$, así que no
+              acota nada. $\to$ Barrido aparte hasta \SI{8}{\second}: entre 4 y
+              8 s la diferencia pareada es $+0{,}05 \pm \SI{0.04}{\meter\squared}$.
+        \item \rotulo{Promedió los 19 eventos como una sola población.} El
+              resultado quedaba dominado por un defecto del planteo. $\to$ Revisados
+              uno por uno: son \textbf{dos poblaciones} (10 en el corredor, 9 que
+              salen de la fila); en el corredor la capa baja el error un
+              \SI{92}{\percent}, no el \SI{63}{\percent} agregado.
+        \item \rotulo{Decidió qué pares empatan con la barra de error de
+              $\langle E \rangle$.} Esa barra mide la dispersión \emph{entre
+              eventos} y con ella empata el \SI{70}{\percent} de la grilla.
+              $\to$ \textbf{Diferencia pareada} evento por evento.
+        \item \rotulo{Dio por buena la capa predictiva sin medir alternativas.}
+              $\to$ Tres capas de campos implementadas y comparadas: la
+              predictiva se queda con el argumento medido, no con la intuición.
+        \item \rotulo{Eligió una combinación de rampa y punto de mira sin decir
+              por qué.} Las cuatro dan lo mismo dentro del \SI{2}{\percent}: el
+              número no alcanza. $\to$ Criterio explícito, \textbf{la única
+              continua en los dos bordes del disparo}.
+        \item \rotulo{Tomó como buenas las métricas que informa el motor.}
+              $\to$ \texttt{check.py} las recalcula desde las trayectorias y
+              verifica grilla temporal y condiciones iniciales.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Apéndice: libertades de la IA corregidas (2/3)}
+    \vspace{-0.5em}
+    {\scriptsize\color{gris} Afirmaciones sobre las figuras, atribución y defectos de figura.}
+    \vspace{0.3em}
+    \footnotesize
+    \begin{itemize}\setlength{\itemsep}{0.3em}
+        \item \rotulo{Una viñeta afirmaba lo contrario de lo que muestra la
+              figura}: que el arco de elusión del evento 10 sale correcto, y sale
+              \textbf{en espejo}. $\to$ Corregida, y el lado del cruce pasó a ser
+              parte del análisis del residuo (acertado en 6 de 10).
+        \item \rotulo{Atribuyó la predicción a Karamouzas \emph{et al.} sin la
+              diferencia}: acá se extrapola con las velocidades \textbf{actuales}
+              de los dos, y Karamouzas usa la \textbf{deseada} para $i$. $\to$ La
+              diapositiva lo dice.
+        \item \rotulo{Eligió como caso ilustrativo un evento que mezcla las dos
+              poblaciones} (el 19). $\to$ Reemplazado por el 14 (sale de la fila)
+              y el 3 (en el corredor, lado opuesto).
+        \item \rotulo{La leyenda de la convergencia daba la tolerancia como
+              \SI{0.0}{\percent}} (es \SI{0.01}{\percent}), y la curva incluía el
+              punto de referencia, que por construcción vale cero.
+        \item \rotulo{Dibujó la región de pares que empatan como curva de
+              contorno}: las celdas no forman región conexa y el mapa quedaba
+              lleno de islas. $\to$ Velo sobre las celdas.
+        \item \rotulo{Puso los mapas de $\langle E \rangle(p_1,p_2)$ en escala de
+              color lineal}, donde los gobierna la franja de $p_1$ chico y todo
+              el valle queda de un tono. $\to$ Escala de potencia y curvas de
+              nivel rotuladas en múltiplos del mínimo.
+        \item \rotulo{Superpuso etiquetas repetidas en los óptimos
+              individuales} (varios caen en el mismo par). $\to$ Una sola
+              etiqueta, y se informa cuántos caen en el borde de la grilla.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Apéndice: libertades de la IA corregidas (3/3)}
+    \vspace{-0.2em}
+    {\scriptsize\color{gris} Proceso de entrega, y qué se le fijó por adelantado
+     en vez de corregírselo después.}
+    \vspace{0.4em}
+    \footnotesize
+    \begin{itemize}\setlength{\itemsep}{0.5em}
+        \item \rotulo{Dejó GIF de una lista de videos anterior en la carpeta de
+              entrega}: copiaba los nuevos encima sin borrar los viejos.
+              $\to$ \texttt{make youtube} y \texttt{make gifs} vacían la carpeta
+              antes de copiar. Importa porque la devolución fuerte del TP4 fue
+              sobre las animaciones de la entrega.
+    \end{itemize}
+    \vspace{0.8em}
+    {\scriptsize\color{gris} Límites fijados por adelantado (no son correcciones):}
+    \vspace{0.2em}
+    \footnotesize
+    \begin{itemize}\setlength{\itemsep}{0.42em}
+        \item El diseño de la capa, la ventana de cada evento, el esquema de
+              integración y el criterio de compatibilidad entre pares los decidió
+              el grupo, de las Teóricas 5 a 7 y de la bibliografía.
+        \item El motor calcula métricas, pero \textbf{ningún promedio y ninguna
+              decisión}: eso sale del post-procesamiento.
+        \item Ninguna conclusión entra sin la cifra de una figura ya mostrada, y
+              nada se muestra que no se pueda explicar entero en la diapositiva.
+    \end{itemize}
+\end{frame}
+
 
 \end{document}

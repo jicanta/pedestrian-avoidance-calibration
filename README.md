@@ -135,6 +135,7 @@ tp-5/
 ├── README.md           # este documento
 ├── PLAN.md             # qué pide el enunciado, cómo se resuelve, decisiones y dudas a la cátedra
 ├── FEEDBACK.md         # devoluciones de la cátedra (TP2, TP3 y TP4) aplicadas al TP5
+├── IA.md               # las libertades que se tomó el agente y cómo se corrigió cada una (de ahí sale el apéndice)
 ├── requirements.txt    # matplotlib, numpy
 ├── docs/
 │   ├── enunciado/      # TP5_Enunciado.pdf
@@ -468,6 +469,13 @@ puede contar sobre la figura del lado), 29 (ritmo y forma, cuya cifra cabe en
 la de las dos poblaciones) y 14 (paso de integración, que puede ser una
 viñeta). Las imágenes con sufijo `b` y `c` (`20b`, `21b`, `27b`, `27c`, `33b`)
 son opcionales: no van en la beamer y están por si hacen falta en una pregunta.
+
+Después de "Muchas gracias" van **tres diapositivas de apéndice** con las
+libertades que se tomó el agente de IA y que hubo que corregir, una por una,
+como pidió la cátedra en el aviso del 04/11. El registro completo —qué hizo por
+su cuenta, por qué está mal, con qué quedó y el commit de cada corrección— está
+en `IA.md`, y de ahí sale el apéndice. Cada corrección nueva se anota ahí **en
+el momento**: el detalle se pierde rápido.
 
 Las **animaciones de apoyo** (`make apoyo`) son tres: el cruce sintético cabeza
 a cabeza con tres `p2` a la vez, que muestra en vivo lo que la capa calcula

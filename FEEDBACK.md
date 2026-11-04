@@ -102,3 +102,25 @@ vuelve a revisar contra las diapositivas antes de entregar.
   corre aparte, sobre esos archivos.
 - El zip de entrega lleva **sólo el motor final** (unos pocos kB), más el
   código con el que se hacen las animaciones, como pidió la cátedra en el TP3.
+
+---
+
+## Lo que la cátedra agregó sobre el TP5 (aviso del 04/11/2026)
+
+- **No hay solución pre-establecida.** La formulación del problema y la
+  estrategia de solución son lo más interesante del TP, así que la presentación
+  está **centrada en la metodología**: por qué una capa de dos parámetros, qué
+  se probó y se descartó (las cuatro variantes de diseño y las tres capas de
+  campos, diapositiva 8b), con qué criterio se decide que dos pares de
+  parámetros empatan (diferencia pareada, no barra de error) y cómo se separan
+  las dos poblaciones de eventos.
+- **Hay que llevar ideas y propuestas a clase, no esperar al resultado final.**
+  Las seis dudas de `PLAN.md` §8 son para eso, y la primera —si está bien
+  recortar la ventana de cada prueba a la parte en que los dos peatones ya
+  caminan— cambia los números de todo el trabajo si la respuesta es que no.
+- **La declaración de uso de IA cambia de forma:** ya no es una diapositiva
+  sola, sino un **apéndice que describe todas las libertades que se tomó la IA y
+  que el grupo tuvo que corregir**. Cuantas más correcciones se reporten, mejor.
+  El registro está en `IA.md` y baja al apéndice A1–A3 de
+  `report/presentacion.tex`; la diapositiva de uso de agentes de IA se mantiene
+  y remite al apéndice.

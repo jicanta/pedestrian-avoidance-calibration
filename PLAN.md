@@ -334,7 +334,10 @@ Secciones de la guía: Introducción (el experimento, el modelo y **tres
 diapositivas de capa de elusión**, como pide el enunciado), Implementación (UML
 del motor y el bucle), Simulaciones (parámetros, observables y casos),
 Resultados (ítems a, b, c y d en ese orden) y Conclusiones. Cierre con la
-declaración de uso de agentes de IA y "Muchas gracias".
+declaración de uso de agentes de IA y "Muchas gracias", y después de ésa, el
+**apéndice de tres diapositivas con las libertades que se tomó el agente y que
+hubo que corregir** (el registro completo está en `IA.md`), que es lo que la
+cátedra agregó al pedido del TP5.
 
 La beamer de `report/` es la **versión de referencia**: la presentación que se
 expone se arma a mano en Google Slides con las imágenes de `slides-images/` y
