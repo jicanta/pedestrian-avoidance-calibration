@@ -25,6 +25,12 @@
 //   p2 = ds : margen de espacio personal (m). El agente quiere pasar a mas de
 //             r_i + r_j + ds del otro; ds = 0 es querer pasar justo rozandolo.
 //
+// Mas un tercer numero, alfa, que reparte la elusion entre los dos peatones del
+// par y que NO se calibra junto con los otros dos: la version simetrica lo deja
+// fijo en 0,5 (y entonces la capa es la de dos parametros de siempre) y la
+// version asimetrica fija t_a y calibra el par (d_s, alfa). Ver "REPARTO DE LA
+// ELUSION" mas abajo.
+//
 // La geometria es la de los modelos predictivos de elusion (Karamouzas et al.
 // 2009, que usan el mismo par tiempo de anticipacion / espacio personal pero
 // lo resuelven con una fuerza evasiva, que aca no esta permitida).
@@ -52,8 +58,30 @@
 // q_i es donde estaria el agente al momento del conflicto si siguiera derecho
 // a su target; s es la direccion en la que los dos ya van a estar separados en
 // ese momento, de modo que cada uno acentua el lado al que ya esta corrido y
-// los dos se eluden de manera reciproca y simetrica; (D - d*) es exactamente
-// la separacion que falta.
+// los dos se eluden de manera reciproca; (D - d*) es exactamente la separacion
+// que falta.
+//
+// REPARTO DE LA ELUSION. Tal como esta escrito arriba, los DOS agentes se
+// corren (D - d*) para el lado que les toca, asi que el par cubre dos veces la
+// separacion que falta y la cubre mitad y mitad. En los datos de la catedra eso
+// no es lo que pasa: midiendo el desvio lateral de cada peaton respecto de su
+// propia recta de arranque a target, en el instante del cruce, la fraccion que
+// se lleva el que sale de la izquierda tiene media 0,53 (no hay un lado que
+// ceda sistematicamente) pero desvio 0,26 y va de 0,11 a 1,00: en cada par uno
+// de los dos cede casi todo y cual de los dos es parece sorteado. Un par de
+// parametros simetrico no puede reproducir eso.
+//
+// Por eso la capa lleva un tercer numero, `share` = alfa, la fraccion de la
+// separacion que falta que se lleva el peaton que sale de la IZQUIERDA:
+//
+//   T_i^* = q_i + w(tau*) * 2 alfa_i * (D - d*) s,   alfa_izq = alfa,
+//                                                   alfa_der = 1 - alfa
+//
+// El factor 2 esta para que alfa = 0,5 sea exactamente la capa simetrica de
+// antes. alfa = 1 es "el de la izquierda se corre todo y el de la derecha
+// sigue derecho" y alfa = 0, lo contrario. Sigue habiendo dos parametros a
+// calibrar: la catedra sugirio fijar uno de los dos originales -- t_a, que el
+// barrido determina solo por abajo -- y usar el lugar que queda para alfa.
 //
 // w(tau*) es un peso de urgencia que hace la capa CONTINUA en los dos bordes
 // del disparo: en tau* = ta vale 0 y el target temporal coincide con q_i, que
@@ -97,6 +125,10 @@ struct Avoidance {
   // instante del conflicto, que es la variante que corre) o a vd*ta (el
   // horizonte de anticipacion). Ver README.
   bool leadIsHorizon = false;
+  // alfa: fraccion de la separacion que falta que se lleva el peaton de la
+  // IZQUIERDA (el otro se lleva 1 - alfa). 0,5 es la capa simetrica. Ver el
+  // encabezado, "REPARTO DE LA ELUSION".
+  double share = 0.5;
 
   bool enabled() const { return anticipation > 0.0; }
 };
@@ -178,11 +210,16 @@ inline AvoidanceDecision fieldTarget(const Avoidance& layer, double contactDista
 
 // Target temporal del agente i frente al agente j. `finalTarget` es T_i y
 // `desiredSpeed` el modulo de su velocidad deseada, que la capa no toca.
+// `share` es la fraccion de la separacion que falta que se lleva ESTE agente:
+// layer.share para el de la izquierda y 1 - layer.share para el de la derecha
+// (ver "REPARTO DE LA ELUSION" en el encabezado). Con 0,5 en los dos, la capa
+// es la simetrica.
 inline AvoidanceDecision temporaryTarget(const Avoidance& layer, double contactDistance,
                                          const Vec2& position, const Vec2& velocity,
                                          const Vec2& otherPosition,
                                          const Vec2& otherVelocity,
-                                         const Vec2& finalTarget, double desiredSpeed) {
+                                         const Vec2& finalTarget, double desiredSpeed,
+                                         double share) {
   AvoidanceDecision decision;
   decision.target = finalTarget;
   if (!layer.enabled()) {
@@ -239,6 +276,7 @@ inline AvoidanceDecision temporaryTarget(const Avoidance& layer, double contactD
   const double urgency = layer.ramp ? 1.0 - timeToClosest / layer.anticipation : 1.0;
   const double lead = layer.leadIsHorizon ? layer.anticipation : timeToClosest;
   const Vec2 nominalPoint = position + nominalDirection * (desiredSpeed * lead);
-  decision.target = nominalPoint + sideways * (urgency * (required - predicted));
+  decision.target =
+      nominalPoint + sideways * (2.0 * share * urgency * (required - predicted));
   return decision;
 }

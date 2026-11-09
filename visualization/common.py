@@ -271,6 +271,15 @@ def read_raw_tracks(path: Path = ROOT / "experimental" / "elusion_1_contra_1.txt
     return tracks, framerate
 
 
+def _number_or_text(value: str):
+    """Los valores de static.txt son numeros, menos 'capa', que es el nombre de
+    la variante de capa; se deja como texto en vez de romper la lectura."""
+    try:
+        return float(value)
+    except ValueError:
+        return value
+
+
 def read_static(run: Path) -> dict:
     """static.txt: 'clave valor' por linea; los pares x y quedan como tupla."""
     info: dict = {}
@@ -280,9 +289,9 @@ def read_static(run: Path) -> dict:
             continue
         key, values = pieces[0], pieces[1:]
         if len(values) == 1:
-            info[key] = float(values[0])
+            info[key] = _number_or_text(values[0])
         else:
-            info[key] = tuple(float(value) for value in values)
+            info[key] = tuple(_number_or_text(value) for value in values)
     for key in ("evento", "instantes", "subdivisiones", "instantes_en_conflicto",
                 "cuadro_inicial"):
         if key in info:

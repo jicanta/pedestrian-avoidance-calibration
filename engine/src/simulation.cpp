@@ -35,15 +35,18 @@ Vec2 desiredVelocity(const Model& model, const Agent& agent) {
 // Decide el target de los dos agentes con la capa de elusion y despues calcula
 // la aceleracion de cada uno: conduccion mas contacto. La capa se evalua con
 // las posiciones y velocidades del mismo instante para los dos, de modo que la
-// elusion es reciproca.
+// elusion es reciproca. El agente 0 es el que sale de la izquierda y se lleva
+// alfa de la separacion que falta; el 1 es el de la derecha y se lleva 1 - alfa
+// (con alfa = 0,5 los dos se llevan lo mismo y la capa es la simetrica).
 void accelerations(const Model& model, const Avoidance& layer, std::array<Agent, 2>& agents) {
   const double contactDistance = 2.0 * model.radius;
   for (int i = 0; i < 2; ++i) {
     const Agent& other = agents[1 - i];
+    const double share = i == 0 ? layer.share : 1.0 - layer.share;
     const AvoidanceDecision decision =
         temporaryTarget(layer, contactDistance, agents[i].position, agents[i].velocity,
                         other.position, other.velocity, agents[i].target,
-                        agents[i].desiredSpeed);
+                        agents[i].desiredSpeed, share);
     agents[i].temporaryTarget = decision.target;
     agents[i].conflict = decision.conflict;
   }

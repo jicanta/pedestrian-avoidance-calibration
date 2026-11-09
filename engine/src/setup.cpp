@@ -40,12 +40,15 @@ Experiment experimentFromArguments(const Arguments& arguments) {
   if (arguments.has("pruebas")) {
     labels = integerList("pruebas", arguments.text("pruebas", ""));
   }
-  return readExperiment(trajectories, table, labels,
-                        arguments.number("arranque", 0.3));
+  // --arranque: umbral absoluto (m/s); --ritmo: fraccion del ritmo de crucero
+  // de cada peaton. El recorte usa el mayor de los dos (experiment.cpp).
+  return readExperiment(trajectories, table, labels, arguments.number("arranque", 0.3),
+                        arguments.number("ritmo", 0.0));
 }
 
 void configureLayer(Avoidance& layer, const Arguments& arguments) {
   layer.kind = kindFromName(arguments.text("capa", "predictiva"));
   layer.ramp = !arguments.flag("sin-rampa");
   layer.leadIsHorizon = arguments.flag("mira-horizonte");
+  layer.share = arguments.number("alfa", 0.5);
 }

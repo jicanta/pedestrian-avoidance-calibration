@@ -348,10 +348,18 @@ los GIF de `gif/`. Tiene 34 diapositivas de contenido, más de lo que entra en
 
 ## 8. Dudas para plantear a los docentes
 
-1. **Ventana de los eventos.** ¿Está bien recortar cada prueba a la parte en
-   que los dos peatones ya caminan (§4.2)? Con la ventana completa del LEEME,
-   la rapidez media de varios peatones queda muy por debajo de la que caminan
-   porque incluye el tiempo que estuvieron parados en la fila.
+1. **Ventana de los eventos.** La cátedra ya marcó que el recorte que había
+   **no recorta los extremos**, y por eso los targets quedan mal definidos. Está
+   medido y corregido en `ESTUDIO.md` §1: el umbral absoluto de `0,3 m/s` saca
+   el 9 % de los instantes, la rapidez deseada queda en el 76 % de la que el
+   peatón camina y hay targets a 52° de su recorrido. El umbral pasó a ser una
+   fracción `β` del ritmo de crucero de cada peatón, con `β = 0,75` elegido
+   porque es el que hace que la rapidez media de la ventana sea la rapidez con
+   la que el peatón camina. Lo que queda por preguntar: **(a)** si ese criterio
+   para elegir `β` les cierra, **(b)** si molesta quedarse con el 44 % de los
+   instantes, y **(c)** si con el recorte —18 de 19 eventos pasan a ser una sola
+   población— la separación en dos poblaciones sigue siendo un resultado o pasa
+   a ser parte de la justificación del recorte (ver también la duda 8).
 2. **Peatón sin identificar.** ¿Confirman que el "V?" de la prueba 2 es el id
    1000 del archivo (§4.1)?
 3. **Huecos de seguimiento.** ¿Está bien no interpolarlos y evaluar el error
@@ -364,7 +372,18 @@ los GIF de `gif/`. Tiene 34 diapositivas de contenido, más de lo que entra en
 6. **Región compatible.** ¿Les parece razonable informar, además del óptimo, el
    conjunto de pares que empatan con él según la diferencia pareada? Con la
    barra de error estándar de la media, el 70 % de la grilla "empata".
-7. **Las dos poblaciones.** En 9 de las 19 pruebas al menos un peatón arranca
+7. **El reparto de la elusión.** La cátedra sugirió dejar fijo uno de los dos
+   parámetros y usar el lugar que queda para modelar la asimetría del par. Está
+   hecho y medido en `ESTUDIO.md` §2: `t_a` fijo (el barrido lo determina sólo
+   por abajo) y el par calibrado es `(d_s, α)`, con `α` la fracción de la
+   separación que falta que se lleva el peatón de la izquierda. El `α`
+   poblacional es 0,5, pero par por par baja `<E(2)>` un 26 % y correlaciona con
+   el `α` medido en las trayectorias con `r = 0,91`. Lo que queda por preguntar:
+   si alcanza como respuesta al 2 c) opcional (**un** parámetro por par en lugar
+   de cuatro) y si prefieren que `α` se presente como tercer parámetro declarado
+   o como el segundo del par calibrado con `t_a` fijo.
+
+8. **Las dos poblaciones.** En 9 de las 19 pruebas al menos un peatón arranca
    caminando por la fila, perpendicular al corredor, y la recta al target final
    no es su ruta. ¿Esperan que esos eventos entren en la calibración tal cual
    (es lo que se hace, y se muestra qué pasa calibrando sólo con los otros 10),

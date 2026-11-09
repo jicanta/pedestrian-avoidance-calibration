@@ -92,6 +92,7 @@ void writeStatic(const std::string& path, const Event& event, const Model& model
                       layer.kind == Kind::LateralField ? "campo-lateral" : "campo-predictivo") << "\n"
        << "p1 " << layer.anticipation << "\n"
        << "p2 " << layer.margin << "\n"
+       << "alfa " << layer.share << "\n"
        << "instantes_en_conflicto " << run.conflictInstants << "\n"
        << "m " << model.mass << "\n"
        << "r " << model.radius << "\n"

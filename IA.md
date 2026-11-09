@@ -11,8 +11,10 @@ Fable 5.1, sobre este repositorio.
 **Cómo se lleva.** Una entrada por corrección, con qué hizo el agente por su
 cuenta, por qué está mal y con qué quedó, más el commit o el archivo donde se ve
 el cambio. Las entradas 1 a 14 son las que quedaron documentadas en la historia
-del repositorio (`git log`, `PLAN.md`, `README.md`); de acá en adelante cada
-corrección se anota **en el momento**, porque el detalle se pierde rápido.
+del repositorio (`git log`, `PLAN.md`, `README.md`); de la 15 en adelante se
+anotan **en el momento**, porque el detalle se pierde rápido. Las entradas 15 a
+17 salen de la revisión posterior a la entrega, con lo que marcó la cátedra
+sobre el recorte de la ventana y sobre la asimetría del par (`ESTUDIO.md`).
 
 ---
 
@@ -85,6 +87,41 @@ condiciones iniciales sean las medidas, e informa cuánto contacto queda
 (17 de 19 eventos sin la capa, 7 con la capa calibrada).
 *(commit `4b5fef7`; `visualization/check.py`)*
 
+**15. Recortó la ventana de cada evento con un umbral absoluto, que no recorta
+nada.**
+Para sacar de la ventana la parte en que un peatón todavía hace la fila puso un
+umbral de rapidez **absoluto** (`0,3 m/s`) e igual para los dos. Los peatones
+caminan entre 1,2 y 1,6 m/s, así que ese umbral es el 20 % del ritmo de uno y el
+25 % del de otro: se perdía el 9 % de los instantes y los dos extremos quedaban
+adentro. Las consecuencias no eran cosméticas: la rapidez deseada quedaba en el
+**76 %** de la rapidez con la que el peatón camina, y el target final —que es la
+última posición medida— caía donde el peatón ya había frenado y doblado hacia la
+fila siguiente (hasta **52°** fuera de su recorrido, con targets en `y = 3,5`
+cuando el corredor está en `y ≈ 2`), así que el agente apuntaba de costado desde
+`t = 0`. El umbral pasó a ser una **fracción del ritmo de crucero de cada
+peatón** (`--ritmo`), elegida por un criterio independiente del error: la que
+hace que la rapidez media de la ventana sea la rapidez con la que el peatón
+camina (`β = 0,75`). Con eso la capa explica el **96 %** del error en lugar del
+63 %, las dos métricas coinciden en el óptimo, el contacto entre agentes pasa de
+10 eventos de 19 a **0**, y 18 de los 19 eventos resultan una sola población: la
+segunda población era en buena parte un artefacto de que la ventana arrancaba
+mientras el peatón todavía estaba doblando para salir de la fila.
+*(`ESTUDIO.md` §1; `engine/src/experiment.cpp`)*
+
+**16. Escribió una capa simétrica sobre datos que no lo son.**
+La capa hace que los dos peatones del par se corran lo mismo, mitad y mitad de
+la separación que falta, y eso se dio por bueno sin medirlo. Midiéndolo —el
+desvío lateral de cada peatón respecto de su propia recta, en el instante del
+cruce— la fracción que se lleva el de la izquierda tiene media 0,53 pero desvío
+**0,26** y va de **0,17 a 1,00**: en cada par uno de los dos cede casi todo. Se
+le agregó a la capa el reparto `α` (`--alfa`), con `t_a` fijo porque el barrido
+lo determina sólo por abajo, y el par calibrado pasó a ser `(d_s, α)`. El `α`
+poblacional sigue siendo 0,5 (no hay un lado que ceda), pero par por par baja
+`<E(2)>` un **26 %**, y el `α` que calibra el barrido correlaciona con el `α`
+medido en las trayectorias con **r = 0,91**: no es un parámetro que absorbe
+residuo.
+*(`ESTUDIO.md` §2; `engine/include/avoidance.hpp`)*
+
 ## Afirmaciones sobre las figuras y atribución
 
 **7. Una viñeta afirmaba lo contrario de lo que muestra la figura.**
@@ -144,6 +181,16 @@ evento 19 y el del 14 con el nombre anterior. Los dos objetivos **vacían la
 carpeta antes de copiar**. Importa porque la devolución fuerte del TP4 fue
 justamente sobre las animaciones de la entrega.
 *(commit `5f926fe`; `Makefile`)*
+
+**17. Dejó que el motor escribiera en `static.txt` un campo de texto que el
+lector de Python no sabe leer.**
+Al agregar la variante de capa al archivo de parámetros de cada corrida
+(`capa predictiva`), no tocó el lector, que convertía **todo** valor a número.
+El error no se disparaba porque las corridas entregadas son anteriores a esa
+línea: al regenerar `make corridas` se habrían roto `make check` y todas las
+figuras que leen una corrida. El lector ahora deja como texto lo que no es
+número.
+*(`visualization/common.py`, `read_static`)*
 
 ---
 

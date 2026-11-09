@@ -7,6 +7,7 @@
 #include <map>
 #include <sstream>
 #include <stdexcept>
+#include <vector>
 
 namespace {
 
@@ -97,26 +98,71 @@ double measuredSpeed(const Track& track, int frame, int from, int to, double sam
   return norm(b->second - a->second) / ((high - low) * sampling);
 }
 
+// Ritmo de crucero de una trayectoria sobre la ventana: el percentil 75 de la
+// rapidez medida. No se usa el maximo (es el ruido del seguimiento en el
+// cuadro mas desafortunado) ni la media (que es justamente lo que el arranque
+// y la frenada ensucian): el percentil 75 es la rapidez de la parte en que el
+// peaton ya camina parejo.
+double cruiseSpeed(const Track& track, int from, int to, double sampling) {
+  std::vector<double> speeds;
+  for (int frame = from; frame <= to; ++frame) {
+    const double speed = measuredSpeed(track, frame, from, to, sampling, 2);
+    if (speed > 0.0) {
+      speeds.push_back(speed);
+    }
+  }
+  if (speeds.empty()) {
+    return -1.0;
+  }
+  std::sort(speeds.begin(), speeds.end());
+  const double position = 0.75 * (static_cast<double>(speeds.size()) - 1.0);
+  const std::size_t low = static_cast<std::size_t>(position);
+  const std::size_t high = std::min(low + 1, speeds.size() - 1);
+  return speeds[low] + (position - static_cast<double>(low)) * (speeds[high] - speeds[low]);
+}
+
 // Recorte de la ventana a la parte en que los DOS peatones ya estan caminando:
 // el primero y el ultimo cuadro en que los dos miden una rapidez de al menos
-// `threshold`. El enunciado habla de dos peatones "que caminan en curso de
-// colision", y al principio de varias pruebas uno de los dos todavia esta
-// haciendo la fila, parado: con el peaton quieto adentro de la ventana la
-// rapidez media (que es el modulo de la velocidad deseada) baja muy por debajo
-// de la rapidez con la que camina, y el agente simulado arranca a caminar en
-// t = 0 contra un peaton que no se movio en cuatro segundos. Con threshold = 0
-// no se recorta nada.
-void trimToWalking(const Track& left, const Track& right, double threshold,
+// su umbral. El enunciado habla de dos peatones "que caminan en curso de
+// colision", y la ventana que declara el LEEME es mas larga que eso por los
+// DOS extremos: al principio de varias pruebas uno de los dos todavia esta
+// haciendo la fila, parado, y al final casi todos frenan y doblan hacia la
+// fila de la vuelta siguiente. Los dos extremos rompen las condiciones que el
+// enunciado fija a partir de la trayectoria:
+//
+//   * la rapidez media (que es el modulo de la velocidad deseada) baja muy por
+//     debajo de la rapidez con la que el peaton camina, porque promedia el
+//     arranque y la frenada;
+//   * el target final, que es la ULTIMA posicion medida, cae donde el peaton
+//     ya dejo el corredor, asi que el agente simulado apunta de costado desde
+//     t = 0 y la recta al target no es la ruta que el peaton caminaba.
+//
+// El umbral de cada peaton es el mayor entre `threshold` (absoluto, m/s) y
+// `fraction` veces su propio ritmo de crucero. El relativo es el que hace el
+// trabajo: los peatones caminan entre 1,2 y 1,6 m/s, asi que un mismo umbral
+// absoluto recorta mucho a uno y nada al otro. Con los dos en 0 no se recorta.
+void trimToWalking(const Track& left, const Track& right, double threshold, double fraction,
                    double sampling, int& first, int& last) {
-  if (threshold <= 0.0) {
+  if (threshold <= 0.0 && fraction <= 0.0) {
     return;
+  }
+  double leftThreshold = threshold;
+  double rightThreshold = threshold;
+  if (fraction > 0.0) {
+    const double leftCruise = cruiseSpeed(left, first, last, sampling);
+    const double rightCruise = cruiseSpeed(right, first, last, sampling);
+    if (leftCruise <= 0.0 || rightCruise <= 0.0) {
+      return;
+    }
+    leftThreshold = std::max(leftThreshold, fraction * leftCruise);
+    rightThreshold = std::max(rightThreshold, fraction * rightCruise);
   }
   int walkingFirst = -1;
   int walkingLast = -1;
   for (int frame = first; frame <= last; ++frame) {
     const double a = measuredSpeed(left, frame, first, last, sampling, 2);
     const double b = measuredSpeed(right, frame, first, last, sampling, 2);
-    if (a >= threshold && b >= threshold) {
+    if (a >= leftThreshold && b >= rightThreshold) {
       if (walkingFirst < 0) {
         walkingFirst = frame;
       }
@@ -234,7 +280,8 @@ Pedestrian build(int id, const Track& track, int first, int last, double samplin
 }
 
 Experiment readExperiment(const std::string& trajectories, const std::string& table,
-                          const std::vector<int>& labels, double walkingThreshold) {
+                          const std::vector<int>& labels, double walkingThreshold,
+                          double walkingFraction) {
   Experiment experiment;
   const std::map<int, Track> tracks = readTracks(trajectories, experiment.framerate);
   experiment.sampling = 1.0 / experiment.framerate;
@@ -273,8 +320,8 @@ Experiment readExperiment(const std::string& trajectories, const std::string& ta
 
     int firstFrame = first;
     int lastFrame = last;
-    trimToWalking(left->second, right->second, walkingThreshold, experiment.sampling,
-                  firstFrame, lastFrame);
+    trimToWalking(left->second, right->second, walkingThreshold, walkingFraction,
+                  experiment.sampling, firstFrame, lastFrame);
 
     Event event;
     event.label = row.label;

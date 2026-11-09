@@ -60,7 +60,10 @@ struct Experiment {
 
 // Lee el archivo crudo de trayectorias y la tabla de eventos y arma los M
 // eventos. `labels` vacio toma todos; si no, solo esas pruebas.
-// `walkingThreshold` (m/s) recorta la ventana de cada evento a la parte en que
-// los dos peatones ya estan caminando; con 0 no se recorta.
+// `walkingThreshold` (m/s, absoluto) y `walkingFraction` (fraccion del ritmo de
+// crucero de cada peaton) recortan la ventana de cada evento a la parte en que
+// los dos peatones ya estan caminando: el umbral de cada uno es el mayor de los
+// dos. Con los dos en 0 no se recorta (ver trimToWalking en experiment.cpp).
 Experiment readExperiment(const std::string& trajectories, const std::string& table,
-                          const std::vector<int>& labels, double walkingThreshold);
+                          const std::vector<int>& labels, double walkingThreshold,
+                          double walkingFraction);

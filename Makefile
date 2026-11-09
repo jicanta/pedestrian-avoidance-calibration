@@ -5,6 +5,9 @@
 #   make eventos-figuras  las trayectorias medidas de los 19 eventos y d(t) de cada uno
 #   make convergencia   eleccion del paso de integracion (barrido de subdivisiones de dt_exp)
 #   make convergencia-figuras  apartamiento de <E> contra dt
+#   make recorte        efecto de recortar la ventana: barrido de beta
+#   make barrido-recorte  la calibracion completa con la ventana recortada
+#   make asimetria      t_a fijo y barrido del par (d_s, alfa)
 #   make barrido        items b, c y d: la grilla gruesa y la fina de (p1, p2)
 #   make corridas       las corridas con cuadros: los dos optimos y la capa apagada
 #   make poblacional-figuras   item b: superficie <E>(p1,p2) y cortes, por metrica
@@ -42,6 +45,16 @@ EVENTOS  ?= experimental/eventos.txt
 # Con 0,3 m/s se pierde el 9 % de los instantes y las 19 distancias minimas
 # siguen adentro de la ventana: el cruce nunca se recorta.
 ARRANQUE ?= 0.3
+# Recorte RELATIVO: fraccion del ritmo de crucero de cada peaton (percentil 75
+# de su rapidez medida). Es el que recorta los DOS extremos, que es lo que el
+# umbral absoluto no hace: los peatones caminan entre 1,2 y 1,6 m/s, asi que
+# 0,3 m/s es el 20 % del ritmo de uno y el 25 % del de otro y practicamente no
+# saca nada. Con 0 esta apagado y la ventana es la de la entrega (el default,
+# para que los numeros entregados sigan saliendo iguales); make recorte barre
+# beta y make barrido-recorte calibra con RITMO_NUEVO. Ver README, "El recorte
+# de la ventana".
+RITMO       ?= 0
+RITMO_NUEVO ?= 0.75
 
 # --- integracion -----------------------------------------------------------
 # dt = dt_exp / SUBDIV, con SUBDIV entero: asi cada instante experimental cae
@@ -96,10 +109,23 @@ COMISION ?= S2
 ENTREGA  := SdS_TP5_2026Q2G$(GRUPO)$(COMISION)
 ZIP      := $(ENTREGA)_Codigo.zip
 
-COMUN    := --datos $(DATOS) --eventos $(EVENTOS) --arranque $(ARRANQUE)
+COMUN    := --datos $(DATOS) --eventos $(EVENTOS) --arranque $(ARRANQUE) --ritmo $(RITMO)
+
+# --- reparto de la elusion (make asimetria) --------------------------------
+# alfa reparte la separacion que falta entre los dos peatones del par: el de la
+# izquierda se lleva alfa y el de la derecha 1 - alfa, y con 0,5 la capa es la
+# simetrica de dos parametros. Como el barrido determina t_a solo por abajo
+# (<E> no se mueve mas alla de 3 s), se lo deja fijo y se calibra el par
+# (d_s, alfa), que es lo que sugirio la catedra.
+TA_FIJO  ?= 4
+P2_ASIM  ?= 0:0.6:61
+ALFAS    ?= 0:1:41
+ASIM     := $(DATA)/asimetria
+COMUN_NUEVO := --datos $(DATOS) --eventos $(EVENTOS) --arranque $(ARRANQUE) \
+               --ritmo $(RITMO_NUEVO)
 
 .PHONY: all todo build eventos eventos-figuras convergencia convergencia-figuras \
-        barrido corridas poblacional-figuras individual-figuras residuo-figuras \
+        recorte barrido-recorte asimetria barrido corridas poblacional-figuras individual-figuras residuo-figuras \
         validacion-figuras trayectorias-figuras alternativas alternativas-figuras \
         check animations apoyo youtube gifs \
         figuras figuras-diapositivas slides-images slides-images-tikz documentos \
@@ -138,6 +164,40 @@ convergencia-figuras:
 	$(PY) visualization/convergence.py --tolerancia $(TOLERANCIA) --elegido $(SUBDIV)
 	$(PY) visualization/convergence.py --tolerancia $(TOLERANCIA) --elegido $(SUBDIV) \
 	    --figures $(SLIDES) --estilo diapositiva
+
+# --------------------------------------------------------------------------
+# El recorte de la ventana
+# --------------------------------------------------------------------------
+
+# La ventana que declara el LEEME es mas larga que el cruce por los DOS
+# extremos (uno de los dos todavia hace la fila; al final los dos frenan y
+# doblan), y eso rompe las dos condiciones que el enunciado fija a partir de la
+# trayectoria: la rapidez media queda por debajo de la que el peaton camina y
+# el target final (la ultima posicion medida) cae donde ya dejo el corredor.
+# Este barrido muestra el efecto de recortar: por cada beta, el resumen de los
+# eventos y la calibracion completa.
+recorte: build
+	for beta in 0 0.4 0.5 0.6 0.65 0.7 0.75 0.8 0.85 0.9; do 	    $(ELUSION) events --datos $(DATOS) --eventos $(EVENTOS) 	        --arranque $(ARRANQUE) --ritmo $$beta --dir $(DATA)/recorte/beta-$$beta; 	    $(ELUSION) sweep --datos $(DATOS) --eventos $(EVENTOS) 	        --arranque $(ARRANQUE) --ritmo $$beta --p1 $(P1_FINO) --p2 $(P2_FINO) 	        --subdivisiones $(SUBDIV) --dir $(DATA)/recorte/beta-$$beta; 	done
+
+# La calibracion completa con la ventana recortada, en su propia carpeta: la
+# grilla fina, el barrido largo de p1 y las corridas con cuadros.
+barrido-recorte: build
+	$(ELUSION) events $(COMUN_NUEVO) --dir $(DATA)/recorte/elegido
+	$(ELUSION) sweep $(COMUN_NUEVO) --p1 $(P1_FINO) --p2 $(P2_FINO) 	    --subdivisiones $(SUBDIV) --dir $(DATA)/recorte/elegido
+	$(ELUSION) sweep $(COMUN_NUEVO) --p1 0:12:49 --p2 0.09,0.12 	    --subdivisiones $(SUBDIV) --dir $(DATA)/recorte/elegido/p1largo
+
+# --------------------------------------------------------------------------
+# Reparto de la elusion entre los dos peatones del par
+# --------------------------------------------------------------------------
+
+# t_a fijo y barrido del par (d_s, alfa), sobre la ventana recortada y sobre la
+# de la entrega: el optimo poblacional de alfa dice si hay un lado que cede
+# sistematicamente y el optimo de cada evento, cuanto se gana describiendo el
+# reparto par por par (item 2c opcional, con UN parametro por par en lugar de
+# cuatro).
+asimetria: build
+	$(ELUSION) asymmetry $(COMUN_NUEVO) --p1 $(TA_FIJO) --p2 $(P2_ASIM) 	    --alfas $(ALFAS) --subdivisiones $(SUBDIV) --dir $(ASIM)/recortada
+	$(ELUSION) asymmetry $(COMUN) --p1 $(P1_M2) --p2 $(P2_ASIM) 	    --alfas $(ALFAS) --subdivisiones $(SUBDIV) --dir $(ASIM)/entregada
 
 # --------------------------------------------------------------------------
 # Barrido de la grilla de parametros (items b, c y d)
