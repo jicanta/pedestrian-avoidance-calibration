@@ -365,9 +365,19 @@ youtube:
 
 # Los GIF del estudio van en gif/estudio/, que `make gifs` no toca: son los
 # mismos eventos con la ventana recortada (ESTUDIO.md secciones 1 y 3), para
-# llevar a la consulta al lado de los de la entrega.
+# llevar a la consulta al lado de los de la entrega. Ademas de los cuatro
+# eventos de la presentacion van los DIECINUEVE sueltos (gif/estudio/todos/,
+# para la verificacion a ojo) y las dos vistas de conjunto -- la grilla de los
+# 19 paneles y las tandas de cinco superpuestas -- con las DOS ventanas, que
+# es lo que deja comparar de un saque.
+MOSAICO := $(PY) visualization/mosaico.py --figures $(DATA)/corredor/figuras \
+           --estilo diapositiva
+ANIM    := $(DATA)/corredor/figuras/animaciones
+AGIF     = ffmpeg -loglevel error -y -i
+PALETA   = split[a][b];[a]palettegen[p];[b][p]paletteuse
+
 gifs-corredor:
-	mkdir -p gif/estudio && rm -f gif/estudio/*.gif
+	mkdir -p gif/estudio/todos && rm -f gif/estudio/*.gif gif/estudio/todos/*.gif
 	@for m in $(EVENTOS_FIG); do \
 	  $(PY) visualization/animate.py \
 	      --run $(DATA)/corredor/elegido/optimo-metrica1/m$$m --fps $(FPS) \
@@ -378,14 +388,34 @@ gifs-corredor:
 	      --name evento$$(printf %02d $$m)-corredor \
 	      --figures $(DATA)/corredor/figuras --estilo diapositiva ; \
 	done
-	@i=9; for m in 14 3 10 5; do \
-	  src=$(DATA)/corredor/figuras/animaciones/evento$$(printf %02d $$m)-corredor.mp4; \
-	  ffmpeg -loglevel error -y -i "$$src" \
-	      -vf "fps=12,scale=900:-1:flags=lanczos,split[a][b];[a]palettegen[p];[b][p]paletteuse" \
+	@i=9; for m in $(EVENTOS_FIG); do \
+	  $(AGIF) "$(ANIM)/evento$$(printf %02d $$m)-corredor.mp4" \
+	      -vf "fps=12,scale=900:-1:flags=lanczos,$(PALETA)" \
 	      "gif/estudio/$$(printf %02d $$i) - SdS TP5 G10 - Estudio - Evento $$m con el recorte del corredor.gif"; \
 	  i=$$((i+1)); \
 	done
-	@ls -lh gif/estudio
+	$(MOSAICO) --runs $(RUNS)/optimo-metrica1              --modo grilla --name entrega
+	$(MOSAICO) --runs $(DATA)/corredor/elegido/optimo-metrica1 --modo grilla --name recortada
+	$(MOSAICO) --runs $(RUNS)/optimo-metrica1              --modo tandas --name entrega
+	$(MOSAICO) --runs $(DATA)/corredor/elegido/optimo-metrica1 --modo tandas --name recortada
+	@$(AGIF) "$(ANIM)/entrega_grilla.mp4"   -vf "fps=10,scale=1400:-1:flags=lanczos,$(PALETA)" \
+	    "gif/estudio/13 - SdS TP5 G10 - Estudio - Los 19 eventos con la ventana de la entrega.gif"
+	@$(AGIF) "$(ANIM)/recortada_grilla.mp4" -vf "fps=10,scale=1400:-1:flags=lanczos,$(PALETA)" \
+	    "gif/estudio/14 - SdS TP5 G10 - Estudio - Los 19 eventos con la ventana recortada.gif"
+	@$(AGIF) "$(ANIM)/entrega_tandas.mp4"   -vf "fps=12,scale=900:-1:flags=lanczos,$(PALETA)" \
+	    "gif/estudio/15 - SdS TP5 G10 - Estudio - Tandas de cinco con la ventana de la entrega.gif"
+	@$(AGIF) "$(ANIM)/recortada_tandas.mp4" -vf "fps=12,scale=900:-1:flags=lanczos,$(PALETA)" \
+	    "gif/estudio/16 - SdS TP5 G10 - Estudio - Tandas de cinco con la ventana recortada.gif"
+	@for m in $$(seq 1 19); do \
+	  $(PY) visualization/animate.py \
+	      --run $(DATA)/corredor/elegido/optimo-metrica1/m$$m --fps $(FPS) \
+	      --name todos-evento$$(printf %02d $$m) \
+	      --figures $(DATA)/corredor/figuras --estilo diapositiva >/dev/null; \
+	  $(AGIF) "$(ANIM)/todos-evento$$(printf %02d $$m).mp4" \
+	      -vf "fps=12,scale=760:-1:flags=lanczos,$(PALETA)" \
+	      "gif/estudio/todos/evento-$$(printf %02d $$m).gif"; \
+	done
+	@ls -lh gif/estudio gif/estudio/todos
 
 gifs:
 	mkdir -p gif && rm -f gif/*.gif
