@@ -137,7 +137,7 @@ COMUN_NUEVO := --datos $(DATOS) --eventos $(EVENTOS) --arranque $(ARRANQUE) \
 COMUN_CORREDOR := $(COMUN_NUEVO) --corredor $(CORREDOR_NUEVO)
 
 .PHONY: all todo build eventos eventos-figuras convergencia convergencia-figuras \
-        recorte barrido-recorte corredor asimetria barrido corridas poblacional-figuras individual-figuras residuo-figuras \
+        recorte barrido-recorte corredor asimetria pares pares-figuras barrido corridas poblacional-figuras individual-figuras residuo-figuras \
         validacion-figuras trayectorias-figuras alternativas alternativas-figuras \
         check animations apoyo youtube gifs gifs-corredor \
         figuras figuras-diapositivas slides-images slides-images-tikz documentos \
@@ -230,6 +230,39 @@ corredor: build
 asimetria: build
 	$(ELUSION) asymmetry $(COMUN_NUEVO) --p1 $(TA_FIJO) --p2 $(P2_ASIM) 	    --alfas $(ALFAS) --subdivisiones $(SUBDIV) --dir $(ASIM)/recortada
 	$(ELUSION) asymmetry $(COMUN) --p1 $(P1_M2) --p2 $(P2_ASIM) 	    --alfas $(ALFAS) --subdivisiones $(SUBDIV) --dir $(ASIM)/entregada
+
+# --------------------------------------------------------------------------
+# Item 2 c) OPCIONAL: los parametros por peaton (cuatro por evento)
+# --------------------------------------------------------------------------
+
+# "Optimizar parametros por cada peaton (en lugar de 1 juego de parametros por
+# cada par de peatones). Notar que el caso opcional requiere hallar 4
+# parametros en lugar de solo 2." Como los dos agentes estan acoplados, el
+# minimo se busca en la grilla de los cuatro a la vez (G x G por evento), y de
+# la MISMA grilla sale el optimo de dos parametros con el que se compara.
+#
+# La grilla es mas gruesa que la de la calibracion poblacional porque el costo
+# va al cuadrado: 17 x 25 = 425 pares por agente son 180.625 combinaciones por
+# evento. Se corre sobre las dos ventanas, la de la entrega y la recortada.
+P1_PARES ?= 0:4:17
+P2_PARES ?= 0:0.6:25
+PARES    := $(DATA)/individual
+
+pares: build
+	$(ELUSION) pairs $(COMUN) --p1 $(P1_PARES) --p2 $(P2_PARES) \
+	    --subdivisiones $(SUBDIV) --dir $(PARES)/entregada
+	$(ELUSION) pairs $(COMUN_CORREDOR) --p1 $(P1_PARES) --p2 $(P2_PARES) \
+	    --subdivisiones $(SUBDIV) --dir $(PARES)/recortada
+	$(ELUSION) sweep $(COMUN) --p1 $(P1_PARES) --p2 $(P2_PARES) \
+	    --subdivisiones $(SUBDIV) --dir $(PARES)/entregada
+	$(ELUSION) sweep $(COMUN_CORREDOR) --p1 $(P1_PARES) --p2 $(P2_PARES) \
+	    --subdivisiones $(SUBDIV) --dir $(PARES)/recortada
+
+pares-figuras:
+	$(PY) visualization/pares.py --pares $(PARES)/entregada --name entregada
+	$(PY) visualization/pares.py --pares $(PARES)/recortada --name recortada
+	$(PY) visualization/pares.py --pares $(PARES)/recortada --name recortada \
+	    --figures $(SLIDES) --estilo diapositiva
 
 # --------------------------------------------------------------------------
 # Barrido de la grilla de parametros (items b, c y d)

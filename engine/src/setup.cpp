@@ -28,7 +28,6 @@ Model modelFromArguments(const Arguments& arguments) {
   model.relaxation = arguments.number("tau", model.relaxation);
   model.normal = arguments.number("kn", model.normal);
   model.tangential = arguments.number("kt", model.tangential);
-  model.arrival = arguments.number("llegada", model.arrival);
   return model;
 }
 

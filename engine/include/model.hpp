@@ -25,11 +25,6 @@ struct Model {
   double relaxation = 0.5;  // s, tau del paper
   double normal = 1.2e5;    // k, N/m
   double tangential = 2.4e5;  // kappa, kg/(m s)
-  // El agente se detiene al llegar al target final: a menos de `arrival`
-  // radios de el la velocidad deseada pasa a ser cero y la conduccion lo frena
-  // en tau. Sin esta regla el agente, que llega antes que el peaton real
-  // porque su camino es mas corto que el medido, oscila alrededor del target.
-  double arrival = 1.0;
 };
 
 // Fuerza de conduccion: (m / tau) (vd ed - v).

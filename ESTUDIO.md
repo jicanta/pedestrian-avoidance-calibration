@@ -156,9 +156,17 @@ T_i* = q_i + w(τ*) · 2 α_i · (D − d*) ŝ,    α_izq = α,  α_der = 1 − 
 ```
 
 El factor 2 hace que `α = 0,5` sea exactamente la capa simétrica de siempre.
-Siguen siendo **dos parámetros a calibrar**: como el barrido determina `t_a`
-sólo por abajo, se lo deja fijo (4 s) y se calibra el par `(d_s, α)`, que es lo
-que sugirió la cátedra.
+Siguen siendo **dos parámetros a calibrar** —el enunciado pide "exactamente 2
+parámetros a ajustar"—: como el barrido determina `t_a` sólo por abajo, se lo
+deja fijo (4 s) y se calibra el par `(d_s, α)`, que es lo que sugirió la
+cátedra.
+
+**Esto no es la respuesta al 2 c) opcional.** Ese item pide "optimizar
+parámetros por cada peatón (en lugar de 1 juego de parámetros por cada par)",
+y son **cuatro** números por evento; está hecho aparte, en `make pares`
+(comando `pairs` del motor). `α` es otra cosa: una *medición* del reparto, con
+un número por par en lugar de cuatro, que sirve para mostrar que la asimetría
+existe y que la capa la captura — no para reemplazar el opcional.
 
 ### Qué da
 
@@ -200,8 +208,6 @@ sentido **después** del recorte.
 - ¿Está bien contar el tercer número así —`t_a` fijo porque el barrido lo
   determina sólo por abajo, y el par calibrado es `(d_s, α)`— o prefieren que
   `α` se presente como una extensión de tres parámetros declarada como tal?
-- ¿Alcanza esto como respuesta al 2 c) opcional (optimizar por peatón), siendo
-  **un** parámetro por par en lugar de cuatro?
 - ¿Les interesa la correlación `r = 0,91` entre el `α` calibrado y el medido
   como validación de que la capa captura el mecanismo?
 

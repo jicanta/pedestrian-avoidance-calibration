@@ -28,8 +28,20 @@ struct Run {
   int conflictInstants = 0;  // instantes con conflicto declarado (agente 0 u 1)
 };
 
+// La capa de cada agente por separado: el item 2 c) opcional del enunciado
+// pide optimizar los parametros POR PEATON ("en lugar de 1 juego de parametros
+// por cada par"), o sea cuatro numeros por evento en lugar de dos. Cada agente
+// lleva entonces su propio (p1, p2) y su propio reparto; la version de una
+// sola capa es el caso en que los dos son iguales.
+Run simulate(const Event& event, const Model& model,
+             const std::array<Avoidance, 2>& layers, double sampling, int subdivisions);
+
 Run simulate(const Event& event, const Model& model, const Avoidance& layer,
              double sampling, int subdivisions);
+
+// Las dos capas que salen de una: la misma para los dos agentes, con el
+// reparto alfa para el de la izquierda y 1 - alfa para el de la derecha.
+std::array<Avoidance, 2> split(const Avoidance& layer);
 
 // Las dos metricas de error cuadratico medio del enunciado, para un peaton.
 //   metrica 1 (a iguales tiempos):  media_k |r^exp(t_k) - r^sim(t_k)|^2

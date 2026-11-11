@@ -172,6 +172,8 @@ make corridas              # los 19 eventos con cada óptimo y con la capa apaga
 make check                 # validación: métricas recalculadas en Python, contactos, grilla temporal
 make poblacional-figuras   # ítem b: superficie <E>(p1,p2) y cortes, por métrica
 make individual-figuras    # ítem c: óptimos individuales y error por evento
+make pares                 # ítem c opcional: los 4 parámetros por evento, 2 por peatón (25 min)
+make pares-figuras         # ítem c opcional: los óptimos por peatón y el error con 1, 2 y 4 juegos
 make residuo-figuras       # de dónde viene el error que queda: ritmo/forma y lado
 make validacion-figuras    # ítem d: validación cruzada
 make trayectorias-figuras  # ítem a: trayectorias, observable primario y d(t) de los eventos elegidos
@@ -180,21 +182,30 @@ make apoyo                 # animaciones de apoyo: la capa cabeza a cabeza con t
 make youtube               # copia los videos con nombres legibles en youtube/
 make gifs                  # los videos como GIF en gif/
 make figuras               # todas las figuras de análisis, en los dos estilos
-make slides-images         # las 35 imágenes de la presentación, numeradas por diapositiva
+make slides-images         # las imágenes de la presentación, numeradas por diapositiva
 make documentos            # report/presentacion.tex -> report/build/presentacion.pdf
 make entrega               # SdS_TP5_2026Q2G10S2_Codigo.zip y ..._Presentación.pdf
 make todo                  # eventos + convergencia + barrido + corridas
+
+# los estudios que están apagados por omisión (ESTUDIO.md), en carpetas aparte
+make recorte               # barrido de β para el recorte relativo de la ventana
+make barrido-recorte       # la calibración completa con β = 0,75
+make corredor              # el recorte por lugar: barrido de Δ y la calibración con Δ = 0,5
+make asimetria             # el reparto de la elusión: (d_s, α) con t_a fijo
+make gifs-corredor         # los 19 eventos con la ventana recortada, en gif/estudio/
 ```
 
 ## Motor
 
-C++17, sin dependencias. Cuatro comandos:
+C++17, sin dependencias. Seis comandos:
 
 ```bash
 cd engine && make
 ./build/elusion events                                     # verifica la lectura de los datos
 ./build/elusion run --pruebas 10 --p1 2.5 --p2 0.07        # una corrida con cuadros
 ./build/elusion sweep --p1 0:4:81 --p2 0:0.6:61            # la grilla de parámetros
+./build/elusion pairs --p1 0:4:17 --p2 0:0.6:25            # los 4 parámetros por evento (2 c opcional)
+./build/elusion asymmetry --p1 4 --alfas 0:1:41            # el reparto de la elusión
 ./build/elusion convergence --subdivisiones 1,2,4,...,512  # el paso de integración
 ```
 
@@ -396,6 +407,55 @@ dónde pasa.
 
 Es poco para 19 pares de parámetros contra uno. El error que queda **no está en
 los parámetros**.
+
+### Ítem c opcional: los parámetros por peatón
+
+El opcional pide "optimizar parámetros por cada peatón (en lugar de 1 juego de
+parámetros por cada par de peatones)", y aclara que eso son **cuatro**
+parámetros por evento en lugar de dos.
+
+No es el barrido de dos parámetros hecho dos veces: **los dos agentes están
+acoplados**, así que el error de cada peatón depende también de los parámetros
+del otro (si el de la izquierda se corre más, el de la derecha necesita
+correrse menos). El mínimo hay que buscarlo en la grilla de los cuatro a la
+vez, que es lo que hace el comando `pairs` del motor: `425 × 425 = 180 625`
+combinaciones por evento, `3,4` millones de corridas en total (25 min para la
+ventana recortada, 58 para la de la entrega). Se minimiza `E_m`, el promedio
+sobre los 2 peatones, que es lo que el enunciado define como error del evento.
+
+La grilla es más gruesa que la de la calibración poblacional —`p1` en 17
+valores de 0 a 4 s, `p2` en 25 de 0 a 0,6 m— porque el costo va al cuadrado.
+Para que la comparación diga algo, **los tres juegos se miden sobre esa misma
+grilla**: una grilla más fina baja el error de los tres a la vez. Por eso el
+"2 por evento" de esta tabla no es exactamente el 1,219 m² de arriba, que sale
+de la grilla fina.
+
+| | métrica 1 | métrica 2 |
+|---|---|---|
+| poblacional (1 juego) | 1,483 m² | 0,314 m² |
+| 2 por evento (ítem c) | 1,220 m² (−18 %) | 0,296 m² (−6 %) |
+| **4 por evento (opcional)** | **1,171 m² (−4 % más)** | **0,278 m² (−6 % más)** |
+| ganancia pareada, 4 contra 2 | 0,049 ± 0,021 m² (2,3 σ) | 0,018 ± 0,006 m² (2,8 σ) |
+| los dos peatones eligen el mismo par | 2 de 19 | 1 de 19 |
+
+Dos cosas que decir:
+
+1. **Los dos peatones de un par casi nunca quieren los mismos parámetros**
+   (2 de 19 con la métrica 1, 1 de 19 con la 2). Eso no es ruido del ajuste:
+   es la misma asimetría que se mide directamente en las trayectorias (en cada
+   par uno de los dos cede casi todo, ver `ESTUDIO.md` §2).
+2. **Pero se gana poco**: 4 % más con la métrica 1 y 6 % más con la 2, contra
+   el 18 % y el 6 % que ya había dado individualizar por evento. Duplicar los
+   parámetros del modelo compra menos que la primera individualización. Con la
+   ventana recortada el balance se da vuelta —individualizar por peatón gana
+   11 % más con la métrica 1 y **33 %** más con la 2, contra 6 % y 14 % de
+   individualizar por evento— que es lo esperable: sobre la ventana de la
+   entrega los parámetros se gastan compensando targets mal puestos, no
+   describiendo la elusión.
+
+Y la contra, la misma que con `α`: **describe pero no predice**. Son cuatro
+números por evento, así que para un par nuevo no hay con qué estimarlos. Lo
+que se valida en el ítem d sigue siendo el modelo poblacional de dos.
 
 ### De dónde viene el error que queda
 

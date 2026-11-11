@@ -6,8 +6,12 @@
 # "sale izquierda" es el peaton que sale de la fila izquierda y "sale derecha"
 # el que sale de la fila de abajo a la derecha. La prueba 2 tiene el peaton de
 # la izquierda sin identificar en el LEEME ("V?"): en los datos es el id 1000,
-# la unica trayectoria de esa ventana que va de x = 0,75 m a x = 10,8 m (de
-# izquierda a derecha) y que no esta asignada a ninguna otra prueba.
+# y la cuenta no deja otra opcion. Las 19 filas nombran 38 ranuras y las 38 son
+# ids distintos (cada persona hace UNA sola pasada), el LEEME declara 38
+# personas y el archivo de trayectorias tiene exactamente 38 ids distintos. Con
+# "V?" puesto en 1000 las dos listas coinciden ranura por ranura: no sobra ni
+# falta ningun id. Ademas la trayectoria de 1000 es la que corresponde -- va de
+# x = 0,75 m a x = 10,8 m, de izquierda a derecha, en los cuadros de la prueba.
 #
 # El motor usa estos cuadros solo como recorte exterior: la ventana de cada
 # evento es la interseccion con los intervalos en que los dos peatones estan

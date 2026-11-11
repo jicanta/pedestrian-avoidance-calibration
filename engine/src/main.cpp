@@ -17,6 +17,8 @@ void printUsage() {
       << "              [--dir ../data/barrido]\n\n"
       << "  asymmetry   [--p1 3.85] [--p2 0:0.6:61] [--alfas 0:1:41]\n"
       << "              [--subdivisiones 64] [--dir ../data/asimetria]\n\n"
+      << "  pairs       [--p1 0:4:17] [--p2 0:0.6:25] [--subdivisiones 64]\n"
+      << "              [--dir ../data/individual]\n\n"
       << "  convergence [--p1 2] [--p2 0.4] [--subdivisiones 1,2,...,512]\n"
       << "              [--dir ../data/convergencia]\n\n"
       << "  Modelo: SFM sin fuerza social (Helbing, Farkas y Vicsek 2000) con los\n"
@@ -48,6 +50,12 @@ void printUsage() {
       << "  la fraccion de la separacion que falta que se lleva el peaton de la\n"
       << "  izquierda (--alfa fija ese reparto en los otros comandos; 0,5 es la\n"
       << "  capa simetrica). Escribe el mismo archivo que sweep.\n"
+      << "  pairs es el item 2 c) OPCIONAL: optimiza los parametros POR PEATON,\n"
+      << "  cuatro numeros por evento en lugar de dos. Como los dos agentes estan\n"
+      << "  acoplados (el error de uno depende de los parametros del otro) el\n"
+      << "  minimo se busca en la grilla de los cuatro a la vez, G x G por evento;\n"
+      << "  de la misma grilla sale tambien el optimo de dos parametros (la\n"
+      << "  diagonal), que es con lo que se compara.\n"
       << "  convergence elige el paso de integracion.\n";
 }
 
@@ -67,6 +75,9 @@ int main(int argc, char** argv) {
     }
     if (arguments.command() == "asymmetry") {
       return runAsymmetry(arguments);
+    }
+    if (arguments.command() == "pairs") {
+      return runPairs(arguments);
     }
     if (arguments.command() == "convergence") {
       return runConvergence(arguments);

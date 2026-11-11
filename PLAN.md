@@ -243,11 +243,16 @@ haya más adelante.
 
 ### 4.5 La llegada al target
 
-El agente **se detiene** al llegar a menos de un radio de su target final: ahí
-`v^d = 0` y la conducción lo frena en `τ`. Sin esa regla el agente, que llega
-antes que el peatón real porque su camino es más corto que el medido, oscila
-alrededor del target. No es parte de la capa de elusión: es cómo se cierra la
-condición que el enunciado fija para el target final.
+**No hay regla de llegada.** El enunciado fija el target final y la rapidez
+deseada y dice "se simula hasta el último instante experimental del evento",
+nada más; el agente apunta a su target hasta el final.
+
+Hubo una (el agente frenaba al llegar a menos de un radio del target, con
+`v^d = 0`) y se sacó. Medida sobre las dos ventanas no mueve ningún número:
+⟨E⁽¹⁾⟩ y ⟨E⁽²⁾⟩ iguales hasta la cuarta cifra decimal y la misma excursión
+máxima pasado el target, 0,24 m. Era una regla agregada al modelo sin nada que
+la justificara, y el enunciado pide que la capa de elusión "no agregue fuerzas
+ni modifique las reglas propias del modelo elegido".
 
 ### 4.6 El paso de integración
 
@@ -371,14 +376,18 @@ los GIF de `gif/`. Tiene 34 diapositivas de contenido, más de lo que entra en
    El evento 19 que falta es el **14**, y lo que le pasa está medido aparte en
    `ESTUDIO.md` §3: ver la duda 9.
 2. **Peatón sin identificar.** ¿Confirman que el "V?" de la prueba 2 es el id
-   1000 del archivo (§4.1)?
-3. **Huecos de seguimiento.** ¿Está bien no interpolarlos y evaluar el error
-   sólo en los instantes con muestra (§4.3)?
-4. **Métrica 2.** Se toma el punto más cercano de la trayectoria simulada
-   **muestreada en los mismos instantes experimentales** (una poligonal de `Nm`
-   puntos), no de la trayectoria continua. ¿Es lo que esperan?
-5. **Llegada al target.** ¿Está bien que el agente se detenga al llegar (§4.5)?
-   La alternativa, seguir apuntando al target, lo hace oscilar alrededor.
+   1000 del archivo (§4.1)? La cuenta no deja otra opción —las 19 filas nombran
+   38 ranuras con 38 ids distintos y el archivo tiene exactamente 38 ids—, así
+   que es confirmar, no decidir.
+3. ~~**Huecos de seguimiento.**~~ Cerrada: no se interpola nada (§4.3). Es un
+   solo peatón de los 38, 32 instantes.
+4. ~~**Métrica 2.**~~ Cerrada por el propio enunciado: la fórmula (2) está
+   escrita como `mín_j` sobre los instantes simulados `t_j`, que es punto a
+   punto y es lo que hace el motor. Medido, usar la poligonal continua en lugar
+   de los puntos baja ⟨E⁽²⁾⟩ de 0,0133 a 0,0127 m² —4,6 %, muy adentro de la
+   barra de ±0,0017— y no mueve ningún óptimo.
+5. ~~**Llegada al target.**~~ Cerrada: la regla se sacó (§4.5). No está en el
+   enunciado y, medida, no mueve ningún número.
 6. **Región compatible.** ¿Les parece razonable informar, además del óptimo, el
    conjunto de pares que empatan con él según la diferencia pareada? Con la
    barra de error estándar de la media, el 70 % de la grilla "empata".
@@ -388,10 +397,11 @@ los GIF de `gif/`. Tiene 34 diapositivas de contenido, más de lo que entra en
    por abajo) y el par calibrado es `(d_s, α)`, con `α` la fracción de la
    separación que falta que se lleva el peatón de la izquierda. El `α`
    poblacional es 0,5, pero par por par baja `<E(2)>` un 26 % y correlaciona con
-   el `α` medido en las trayectorias con `r = 0,91`. Lo que queda por preguntar:
-   si alcanza como respuesta al 2 c) opcional (**un** parámetro por par en lugar
-   de cuatro) y si prefieren que `α` se presente como tercer parámetro declarado
-   o como el segundo del par calibrado con `t_a` fijo.
+   el `α` medido en las trayectorias con `r = 0,91`. **No es la respuesta al
+   2 c) opcional**, que pide cuatro parámetros y no uno (ver la duda 10): `α` se
+   presenta como una *medición* del reparto, no como un modelo alternativo. Lo
+   que queda por preguntar: si prefieren que `α` se presente como tercer
+   parámetro declarado o como el segundo del par calibrado con `t_a` fijo.
 
 8. **Las dos poblaciones.** En 9 de las 19 pruebas al menos un peatón arranca
    caminando por la fila, perpendicular al corredor, y la recta al target final
@@ -414,3 +424,15 @@ los GIF de `gif/`. Tiene 34 diapositivas de contenido, más de lo que entra en
    experimento) además de las de trayectoria, **(b)** si `Nm = 53` es poco
    evento para el 14, y **(c)** qué hacemos entonces con la separación en dos
    poblaciones de la duda 8, que con este recorte desaparece del todo.
+
+10. **El 2 c) opcional, los parámetros por peatón.** El enunciado pide
+    "optimizar parámetros por cada peatón (en lugar de 1 juego de parámetros
+    por cada par de peatones)", o sea **cuatro** números por evento. Como los
+    dos agentes están acoplados —el error de cada uno depende también de los
+    parámetros del otro— el mínimo se busca en la grilla de los cuatro a la
+    vez, `G × G` por evento (`make pares`, comando `pairs` del motor), y de la
+    misma grilla sale el óptimo de dos parámetros con el que se compara. Lo que
+    queda por preguntar: si minimizar `E_m` (el promedio de los 2 peatones) con
+    los cuatro parámetros juntos es lo que esperan, o si prefieren minimizar el
+    error de cada peatón por separado —que no es lo mismo, porque el problema
+    no es separable.
