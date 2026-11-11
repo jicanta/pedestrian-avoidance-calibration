@@ -104,7 +104,15 @@ aparecen cuatro cosas que antes no estaban:
    capa calibrada baja a 7 de 19 (métrica 1) o 10 de 19 (métrica 2): sigue
    habiendo choque en la mitad de los eventos. Con la ventana recortada, el SFM
    puro choca en 16 de 19 y la capa calibrada en **0 de 19**.
-4. **El error se reparte parejo.** Con β = 0,75 los 18 eventos del corredor
+4. **El modelo elude por el lado correcto.** El observable es el de
+   `visualization/residual.py`: el signo del desvío lateral `y_izq − y_der` en
+   el cruce, medido contra simulado. Con la ventana de la entrega el modelo
+   elude por el **lado opuesto al de las personas en 7 de los 19 eventos**
+   (1, 3, 7, 10, 12, 13 y 19); con la ventana recortada, en **0 de 19**. Es el
+   observable más directo de que el problema no era la capa sino el target: el
+   evento 3, el que la presentación muestra como "elude por el lado opuesto",
+   deja de hacerlo.
+5. **El error se reparte parejo.** Con β = 0,75 los 18 eventos del corredor
    tienen `E⁽²⁾` entre 0,006 y 0,034 m², y el único que queda alto es el 14
    (`E⁽¹⁾ = 0,886` contra ≤ 0,096 del resto), que es justamente el único que
    sigue clasificando como "sale de la fila": ahí la recta al target no es la
@@ -311,11 +319,42 @@ Lo que importa:
    evento clasificado como "sale de la fila"; con el corredor, ninguno. Los 19
    eventos son una sola población.
 
+### La ventana que queda, evento por evento
+
+Con `β = 0,75` y `Δ = 0,5` el criterio produce estas 19 ventanas. Si la cátedra
+prefiere el recorte **a mano**, ésta es la tabla: son los mismos cuadros, y
+congelarlos en `experimental/eventos.txt` da exactamente la misma simulación.
+La diferencia no está en los números sino en de dónde salen — de un criterio
+que se puede defender y reproducir, en lugar de 19 decisiones a ojo.
+
+| m | izq | der | LEEME | ventana recortada | Nm | duración |
+|---|---|---|---|---|---|---|
+| 1 | 3 | 36 | 20068–20261 | **20096–20130** | 35 | 2,26 s |
+| 2 | 1000 | 25 | 20208–20391 | **20238–20304** | 67 | 4,39 s |
+| 3 | 43 | 1 | 20370–20540 | **20400–20477** | 78 | 5,13 s |
+| 4 | 10 | 5 | 20527–20734 | **20559–20621** | 63 | 4,13 s |
+| 5 | 4 | 12 | 20632–20853 | **20705–20765** | 61 | 3,99 s |
+| 6 | 9 | 6 | 20778–20971 | **20841–20907** | 67 | 4,39 s |
+| 7 | 20 | 44 | 20910–21142 | **20972–21042** | 71 | 4,66 s |
+| 8 | 27 | 37 | 21066–21298 | **21134–21201** | 68 | 4,46 s |
+| 9 | 16 | 39 | 21228–21380 | **21299–21356** | 58 | 3,80 s |
+| 10 | 17 | 42 | 21435–21635 | **21475–21534** | 60 | 3,93 s |
+| 11 | 23 | 24 | 21536–21804 | **21620–21684** | 65 | 4,26 s |
+| 12 | 22 | 18 | 21760–21960 | **21792–21845** | 54 | 3,53 s |
+| 13 | 15 | 35 | 21877–22098 | **21950–22005** | 56 | 3,66 s |
+| 14 | 30 | 28 | 22011–22206 | **22112–22164** | 53 | 3,46 s |
+| 15 | 46 | 34 | 22278–22481 | **22308–22368** | 61 | 3,99 s |
+| 16 | 47 | 48 | 22402–22639 | **22475–22536** | 62 | 4,06 s |
+| 17 | 2 | 45 | 22561–22726 | **22640–22686** | 47 | 3,06 s |
+| 18 | 26 | 21 | 22722–23000 | **22806–22863** | 58 | 3,80 s |
+| 19 | 29 | 38 | 22902–23074 | **22982–23054** | 73 | 4,79 s |
+
 ### Lo que hay que preguntar
 
 - La condición de rapidez es sobre la trayectoria; ésta es sobre la geometría
   del experimento (dónde está el corredor). ¿Les cierra meter una condición de
-  lugar, o prefieren que el recorte salga sólo de la trayectoria?
+  lugar, o prefieren que el recorte salga sólo de la trayectoria? ¿O prefieren
+  directamente la tabla de arriba, congelada a mano?
 - Para el evento 14 el recorte deja `Nm = 53` (3,5 s). ¿Es poco evento?
 - Si el criterio se acepta, los 19 eventos pasan a ser una sola población.
   ¿Qué hacemos con la separación en dos poblaciones, que hoy es un resultado de
@@ -330,6 +369,8 @@ make recorte            # eventos + barrido fino para β = 0; 0,4 … 0,9
 make barrido-recorte    # la calibración completa con β = 0,75 (RITMO_NUEVO)
 make corredor           # eventos para Δ = 0,2 … 1 y la calibración con Δ = 0,5
 make asimetria          # (d_s, α) con t_a fijo, sobre las dos ventanas
+make gifs-corredor      # los GIF de los eventos 14, 3, 10 y 5 con la ventana
+                        # recortada, en gif/estudio/ (make gifs no los toca)
 ```
 
 Los cuatro escriben en `data/recorte/`, `data/corredor/` y `data/asimetria/`,

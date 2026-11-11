@@ -139,7 +139,7 @@ COMUN_CORREDOR := $(COMUN_NUEVO) --corredor $(CORREDOR_NUEVO)
 .PHONY: all todo build eventos eventos-figuras convergencia convergencia-figuras \
         recorte barrido-recorte corredor asimetria barrido corridas poblacional-figuras individual-figuras residuo-figuras \
         validacion-figuras trayectorias-figuras alternativas alternativas-figuras \
-        check animations apoyo youtube gifs \
+        check animations apoyo youtube gifs gifs-corredor \
         figuras figuras-diapositivas slides-images slides-images-tikz documentos \
         entrega clean-figures
 
@@ -362,6 +362,30 @@ youtube:
 	cp "$(SLIDES)/animaciones/apoyo_cabeza_a_cabeza.mp4" "youtube/06 - SdS TP5 G10 - Apoyo - La capa de elusion cabeza a cabeza.mp4"
 	cp "$(SLIDES)/animaciones/apoyo_barrido_p2_evento10.mp4" "youtube/07 - SdS TP5 G10 - Apoyo - Que hace p2.mp4"
 	cp "$(SLIDES)/animaciones/apoyo_barrido_p1_evento10.mp4" "youtube/08 - SdS TP5 G10 - Apoyo - Que hace p1.mp4"
+
+# Los GIF del estudio van en gif/estudio/, que `make gifs` no toca: son los
+# mismos eventos con la ventana recortada (ESTUDIO.md secciones 1 y 3), para
+# llevar a la consulta al lado de los de la entrega.
+gifs-corredor:
+	mkdir -p gif/estudio && rm -f gif/estudio/*.gif
+	@for m in $(EVENTOS_FIG); do \
+	  $(PY) visualization/animate.py \
+	      --run $(DATA)/corredor/elegido/optimo-metrica1/m$$m --fps $(FPS) \
+	      --name evento$$(printf %02d $$m)-corredor \
+	      --figures $(DATA)/corredor/figuras --estilo diapositiva ; \
+	  $(PY) visualization/animate.py \
+	      --run $(DATA)/corredor/elegido/optimo-metrica1/m$$m --cruce \
+	      --name evento$$(printf %02d $$m)-corredor \
+	      --figures $(DATA)/corredor/figuras --estilo diapositiva ; \
+	done
+	@i=9; for m in 14 3 10 5; do \
+	  src=$(DATA)/corredor/figuras/animaciones/evento$$(printf %02d $$m)-corredor.mp4; \
+	  ffmpeg -loglevel error -y -i "$$src" \
+	      -vf "fps=12,scale=900:-1:flags=lanczos,split[a][b];[a]palettegen[p];[b][p]paletteuse" \
+	      "gif/estudio/$$(printf %02d $$i) - SdS TP5 G10 - Estudio - Evento $$m con el recorte del corredor.gif"; \
+	  i=$$((i+1)); \
+	done
+	@ls -lh gif/estudio
 
 gifs:
 	mkdir -p gif && rm -f gif/*.gif
