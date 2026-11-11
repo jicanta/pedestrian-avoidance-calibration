@@ -19,6 +19,15 @@ namespace {
 // y el peaton todavia no cambio de direccion.
 constexpr int kVelocityWindow = 5;
 
+// Eje del corredor por el que se cruzan los dos peatones. El LEEME de la
+// catedra lo declara ("se cruzan por y ~ 2 m") y el archivo crudo lo confirma:
+// el histograma de y es bimodal, con unas 6300 muestras alrededor de y = 2 (el
+// corredor) y unas 8800 debajo de y = 0,5 (las dos filas), separadas por un
+// valle casi vacio en y = 1. Las filas estan DENTRO del rectangulo filmado
+// (x de 0,08 a 11,40 m, y de -0,69 a 3,73 m): lo que sobra de la ventana no es
+// seguimiento fuera de cuadro, es la fila.
+constexpr double kCorridorAxis = 2.0;
+
 struct Track {
   std::map<int, Vec2> byFrame;
 };
@@ -141,9 +150,16 @@ double cruiseSpeed(const Track& track, int from, int to, double sampling) {
 // `fraction` veces su propio ritmo de crucero. El relativo es el que hace el
 // trabajo: los peatones caminan entre 1,2 y 1,6 m/s, asi que un mismo umbral
 // absoluto recorta mucho a uno y nada al otro. Con los dos en 0 no se recorta.
+//
+// `corridor` (semiancho, m) agrega una condicion de LUGAR: los dos peatones
+// tienen que estar sobre el corredor, |y - kCorridorAxis| <= corridor. Las dos
+// condiciones de rapidez miran cuanto camina el peaton y no por donde, asi que
+// no alcanzan para el unico tramo de fila que se camina rapido: salir de la
+// fila hacia el corredor, que son 1,7 m de subida en y sin avanzar nada en x.
+// Con 0 esta apagada.
 void trimToWalking(const Track& left, const Track& right, double threshold, double fraction,
-                   double sampling, int& first, int& last) {
-  if (threshold <= 0.0 && fraction <= 0.0) {
+                   double corridor, double sampling, int& first, int& last) {
+  if (threshold <= 0.0 && fraction <= 0.0 && corridor <= 0.0) {
     return;
   }
   double leftThreshold = threshold;
@@ -162,7 +178,15 @@ void trimToWalking(const Track& left, const Track& right, double threshold, doub
   for (int frame = first; frame <= last; ++frame) {
     const double a = measuredSpeed(left, frame, first, last, sampling, 2);
     const double b = measuredSpeed(right, frame, first, last, sampling, 2);
-    if (a >= leftThreshold && b >= rightThreshold) {
+    bool inside = a >= leftThreshold && b >= rightThreshold;
+    if (inside && corridor > 0.0) {
+      const auto leftSample = left.byFrame.find(frame);
+      const auto rightSample = right.byFrame.find(frame);
+      inside = leftSample != left.byFrame.end() && rightSample != right.byFrame.end() &&
+               std::abs(leftSample->second.y - kCorridorAxis) <= corridor &&
+               std::abs(rightSample->second.y - kCorridorAxis) <= corridor;
+    }
+    if (inside) {
       if (walkingFirst < 0) {
         walkingFirst = frame;
       }
@@ -281,7 +305,7 @@ Pedestrian build(int id, const Track& track, int first, int last, double samplin
 
 Experiment readExperiment(const std::string& trajectories, const std::string& table,
                           const std::vector<int>& labels, double walkingThreshold,
-                          double walkingFraction) {
+                          double walkingFraction, double corridorHalfWidth) {
   Experiment experiment;
   const std::map<int, Track> tracks = readTracks(trajectories, experiment.framerate);
   experiment.sampling = 1.0 / experiment.framerate;
@@ -321,7 +345,7 @@ Experiment readExperiment(const std::string& trajectories, const std::string& ta
     int firstFrame = first;
     int lastFrame = last;
     trimToWalking(left->second, right->second, walkingThreshold, walkingFraction,
-                  experiment.sampling, firstFrame, lastFrame);
+                  corridorHalfWidth, experiment.sampling, firstFrame, lastFrame);
 
     Event event;
     event.label = row.label;

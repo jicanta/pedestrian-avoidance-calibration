@@ -205,6 +205,14 @@ Dos recortes, en este orden:
 2. **Caminata**: la ventana se recorta a la parte en que los dos miden una
    rapidez de al menos **0,3 m/s** (diferencia centrada sobre ±2 cuadros).
 
+Hay dos recortes más, **apagados por omisión** y medidos en `ESTUDIO.md` §1 y
+§3 para llevarlos a la consulta: `--ritmo β` sube el umbral de cada peatón a
+una fracción de su propio ritmo de crucero (recorta los dos extremos, no sólo
+el arranque) y `--corredor Δ` pide además que los dos estén pisando el
+corredor, `|y − 2| ≤ Δ`. El segundo hace falta porque el primero mira cuánto
+camina el peatón y no por dónde, y hay un tramo de fila que se camina rápido:
+salir de la fila hacia el corredor. De los 19 eventos le pasa a uno solo, el 14.
+
 El segundo recorte es necesario, no cosmético. El enunciado habla de dos
 peatones *que caminan en curso de colisión*, y al principio de varias pruebas
 uno de los dos todavía está **parado haciendo la fila**: en la prueba 14 los
@@ -360,6 +368,8 @@ los GIF de `gif/`. Tiene 34 diapositivas de contenido, más de lo que entra en
    instantes, y **(c)** si con el recorte —18 de 19 eventos pasan a ser una sola
    población— la separación en dos poblaciones sigue siendo un resultado o pasa
    a ser parte de la justificación del recorte (ver también la duda 8).
+   El evento 19 que falta es el **14**, y lo que le pasa está medido aparte en
+   `ESTUDIO.md` §3: ver la duda 9.
 2. **Peatón sin identificar.** ¿Confirman que el "V?" de la prueba 2 es el id
    1000 del archivo (§4.1)?
 3. **Huecos de seguimiento.** ¿Está bien no interpolarlos y evaluar el error
@@ -389,3 +399,18 @@ los GIF de `gif/`. Tiene 34 diapositivas de contenido, más de lo que entra en
    (es lo que se hace, y se muestra qué pasa calibrando sólo con los otros 10),
    o preferirían que la ventana arranque cuando los dos ya caminan por el
    corredor?
+
+9. **El evento 14 y el recorte por lugar.** El recorte de la duda 1 mira
+   *cuánto* camina el peatón, no *por dónde*, y hay un tramo de fila que se
+   camina rápido: salir de la fila hacia el corredor (las filas están debajo de
+   él, así que entrar es subir en `y` sin avanzar en `x`). De los 19 eventos le
+   pasa a uno solo, el 14, y es el único que con `β = 0,75` sigue arrancando
+   perpendicular al corredor y el que se lleva solo el 60 % de ⟨E⁽¹⁾⟩. Está
+   medido en `ESTUDIO.md` §3: pidiendo además que los dos estén pisando el
+   corredor (`|y − 2| ≤ 0,5`, con una meseta de 0,4 a 0,6 donde el resultado es
+   idéntico) el óptimo no se mueve, la reducción de la métrica 1 sube del 90 %
+   al 96 % y la barra de error se cae de 0,045 a 0,0045. Lo que queda por
+   preguntar: **(a)** si aceptan una condición de *lugar* (la geometría del
+   experimento) además de las de trayectoria, **(b)** si `Nm = 53` es poco
+   evento para el 14, y **(c)** qué hacemos entonces con la separación en dos
+   poblaciones de la duda 8, que con este recorte desaparece del todo.

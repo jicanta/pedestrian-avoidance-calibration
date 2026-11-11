@@ -41,9 +41,11 @@ Experiment experimentFromArguments(const Arguments& arguments) {
     labels = integerList("pruebas", arguments.text("pruebas", ""));
   }
   // --arranque: umbral absoluto (m/s); --ritmo: fraccion del ritmo de crucero
-  // de cada peaton. El recorte usa el mayor de los dos (experiment.cpp).
+  // de cada peaton. El recorte usa el mayor de los dos. --corredor: semiancho
+  // (m) de la banda |y - 2| que los dos peatones tienen que estar pisando
+  // (experiment.cpp).
   return readExperiment(trajectories, table, labels, arguments.number("arranque", 0.3),
-                        arguments.number("ritmo", 0.0));
+                        arguments.number("ritmo", 0.0), arguments.number("corredor", 0.0));
 }
 
 void configureLayer(Avoidance& layer, const Arguments& arguments) {

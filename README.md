@@ -200,7 +200,8 @@ cd engine && make
 
 Opciones comunes: `--datos` y `--eventos` (los archivos de la cátedra),
 `--pruebas 1,5,10` (qué eventos), `--arranque 0.3` (el umbral de caminata, ver
-abajo), `--subdivisiones 64` (el paso), `--dir` (dónde escribir). Los
+abajo), `--ritmo 0` y `--corredor 0` (los dos recortes de la ventana que vienen
+apagados, ver abajo), `--subdivisiones 64` (el paso), `--dir` (dónde escribir). Los
 parámetros del modelo se pueden pisar (`--m 80 --r 0.25 --tau 0.5 --kn 1.2e5
 --kt 2.4e5`), y las dos variantes de la capa con `--sin-rampa` y
 `--mira-horizonte`.
@@ -247,6 +248,33 @@ El peatón que el LEEME deja sin identificar en la prueba 2 (`sale izquierda
 V?`) es el **id 1000**: es la única trayectoria de esa ventana que va de
 izquierda a derecha y no está asignada a ninguna otra prueba. Queda anotado en
 `experimental/eventos.txt`.
+
+### El recorte de la ventana
+
+El umbral absoluto de `--arranque` saca el tiempo parado, pero casi nada más:
+los peatones caminan entre 1,2 y 1,6 m/s, así que 0,3 m/s es el 20 % del ritmo
+de uno y el 25 % del de otro. La cátedra marcó que con esa ventana los targets
+quedan mal definidos, y es cierto: `v_d` queda en el 76 % de la rapidez con la
+que el peatón camina y hay targets en `y = 3,48` cuando el corredor está en
+`y ≈ 2`. El motor tiene dos perillas más, **apagadas por omisión** para que los
+números entregados sigan saliendo iguales:
+
+| opción | qué pide | por qué |
+|---|---|---|
+| `--ritmo β` | que los dos midan al menos `β` veces **su propio** ritmo de crucero (percentil 75 de su rapidez medida) | recorta los **dos** extremos, que es lo que el umbral absoluto no hace: con `β = 0,75` la rapidez media de la ventana pasa a ser la rapidez con la que el peatón camina |
+| `--corredor Δ` | que los dos estén pisando el corredor, `\|y − 2\| ≤ Δ` | el criterio de rapidez mira *cuánto* camina el peatón y no *por dónde*, y hay un tramo de fila que se camina rápido: salir de la fila hacia el corredor. De los 19 eventos le pasa a uno solo, el **14** |
+
+El eje `y = 2` lo declara el LEEME ("se cruzan por y ~ 2 m") y lo confirma el
+archivo crudo: el histograma de `y` es bimodal, con unas 6300 muestras en el
+corredor y unas 8800 debajo de `y = 0,5`, que son las dos filas. Las filas
+están **adentro** del rectángulo filmado (`x` de 0,08 a 11,40 m, `y` de −0,69 a
+3,73 m): lo que sobra de la ventana es fila filmada, no seguimiento fuera de
+cuadro.
+
+Los dos están medidos en `ESTUDIO.md` §1 y §3, con `make recorte`,
+`make barrido-recorte` y `make corredor`, que escriben en `data/recorte/` y
+`data/corredor/` sin tocar nada de la entrega. Para correr todo con los dos
+puestos: `make todo RITMO=0.75 CORREDOR=0.5`.
 
 ### Integración
 

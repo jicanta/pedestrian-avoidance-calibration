@@ -63,7 +63,11 @@ struct Experiment {
 // `walkingThreshold` (m/s, absoluto) y `walkingFraction` (fraccion del ritmo de
 // crucero de cada peaton) recortan la ventana de cada evento a la parte en que
 // los dos peatones ya estan caminando: el umbral de cada uno es el mayor de los
-// dos. Con los dos en 0 no se recorta (ver trimToWalking en experiment.cpp).
+// dos. `corridorHalfWidth` (m) agrega la condicion de que los dos esten sobre
+// el corredor, |y - 2| <= corridorHalfWidth, que es lo que separa caminar por
+// el corredor de salir de la fila hacia el (lo unico de la fila que se camina
+// rapido). Con los tres en 0 no se recorta (ver trimToWalking en
+// experiment.cpp).
 Experiment readExperiment(const std::string& trajectories, const std::string& table,
                           const std::vector<int>& labels, double walkingThreshold,
-                          double walkingFraction);
+                          double walkingFraction, double corridorHalfWidth);

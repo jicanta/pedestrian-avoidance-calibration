@@ -55,6 +55,16 @@ ARRANQUE ?= 0.3
 # de la ventana".
 RITMO       ?= 0
 RITMO_NUEVO ?= 0.75
+# Recorte por LUGAR: semiancho (m) de la banda |y - 2| que los DOS peatones
+# tienen que estar pisando. Los dos recortes de arriba miran cuanto camina el
+# peaton y no por donde, asi que no alcanzan para el unico tramo de fila que se
+# camina rapido: salir de la fila hacia el corredor, que son 1,7 m de subida en
+# y sin avanzar nada en x. Eso es lo que le pasa al evento 14, el unico que con
+# RITMO_NUEVO sigue arrancando fuera del corredor. Con 0 esta apagado (el
+# default); make corredor barre el semiancho y calibra con CORREDOR_NUEVO. Ver
+# README, "El recorte de la ventana", y ESTUDIO.md seccion 3.
+CORREDOR       ?= 0
+CORREDOR_NUEVO ?= 0.5
 
 # --- integracion -----------------------------------------------------------
 # dt = dt_exp / SUBDIV, con SUBDIV entero: asi cada instante experimental cae
@@ -109,7 +119,8 @@ COMISION ?= S2
 ENTREGA  := SdS_TP5_2026Q2G$(GRUPO)$(COMISION)
 ZIP      := $(ENTREGA)_Codigo.zip
 
-COMUN    := --datos $(DATOS) --eventos $(EVENTOS) --arranque $(ARRANQUE) --ritmo $(RITMO)
+COMUN    := --datos $(DATOS) --eventos $(EVENTOS) --arranque $(ARRANQUE) --ritmo $(RITMO) \
+            --corredor $(CORREDOR)
 
 # --- reparto de la elusion (make asimetria) --------------------------------
 # alfa reparte la separacion que falta entre los dos peatones del par: el de la
@@ -123,9 +134,10 @@ ALFAS    ?= 0:1:41
 ASIM     := $(DATA)/asimetria
 COMUN_NUEVO := --datos $(DATOS) --eventos $(EVENTOS) --arranque $(ARRANQUE) \
                --ritmo $(RITMO_NUEVO)
+COMUN_CORREDOR := $(COMUN_NUEVO) --corredor $(CORREDOR_NUEVO)
 
 .PHONY: all todo build eventos eventos-figuras convergencia convergencia-figuras \
-        recorte barrido-recorte asimetria barrido corridas poblacional-figuras individual-figuras residuo-figuras \
+        recorte barrido-recorte corredor asimetria barrido corridas poblacional-figuras individual-figuras residuo-figuras \
         validacion-figuras trayectorias-figuras alternativas alternativas-figuras \
         check animations apoyo youtube gifs \
         figuras figuras-diapositivas slides-images slides-images-tikz documentos \
@@ -185,6 +197,26 @@ barrido-recorte: build
 	$(ELUSION) events $(COMUN_NUEVO) --dir $(DATA)/recorte/elegido
 	$(ELUSION) sweep $(COMUN_NUEVO) --p1 $(P1_FINO) --p2 $(P2_FINO) 	    --subdivisiones $(SUBDIV) --dir $(DATA)/recorte/elegido
 	$(ELUSION) sweep $(COMUN_NUEVO) --p1 0:12:49 --p2 0.09,0.12 	    --subdivisiones $(SUBDIV) --dir $(DATA)/recorte/elegido/p1largo
+
+# El recorte por rapidez corta el tiempo parado y la frenada, pero no el unico
+# tramo de fila que se camina rapido: salir de la fila hacia el corredor. Al
+# evento 14 le pasa eso, y es el unico de los 19 al que le pasa. Este barrido
+# mide el semiancho de la banda del corredor: por cada Delta, el resumen de los
+# eventos; y con el elegido, la calibracion completa y las dos corridas con
+# cuadros (el optimo de la ventana recortada, t_a = TA_FIJO y d_s = 0,09 de la
+# metrica 1, y la de sin capa) para contar el contacto con check.py.
+corredor: build
+	@for d in 0.2 0.25 0.3 0.4 0.5 0.6 0.7 0.8 1; do \
+	    $(ELUSION) events $(COMUN_NUEVO) --corredor $$d \
+	        --dir $(DATA)/corredor/delta-$$d; \
+	done
+	$(ELUSION) events $(COMUN_CORREDOR) --dir $(DATA)/corredor/elegido
+	$(ELUSION) sweep $(COMUN_CORREDOR) --p1 $(P1_FINO) --p2 $(P2_FINO) \
+	    --subdivisiones $(SUBDIV) --dir $(DATA)/corredor/elegido
+	$(ELUSION) run $(COMUN_CORREDOR) --p1 $(TA_FIJO) --p2 0.09 \
+	    --subdivisiones $(SUBDIV) --dir $(DATA)/corredor/elegido/optimo-metrica1
+	$(ELUSION) run $(COMUN_CORREDOR) --p1 0 --p2 0 \
+	    --subdivisiones $(SUBDIV) --dir $(DATA)/corredor/elegido/sin-capa
 
 # --------------------------------------------------------------------------
 # Reparto de la elusion entre los dos peatones del par

@@ -1,15 +1,18 @@
-# Dos mejoras para discutir con la cátedra
+# Tres mejoras para discutir con la cátedra
 
-Las dos salen de lo que marcó la cátedra: que la ventana de cada prueba no
-está recortada en los extremos (y por eso los targets quedan mal definidos) y
-que conviene dejar fijo uno de los dos parámetros y usar el lugar que queda
-para modelar la asimetría del par.
+Las dos primeras salen de lo que marcó la cátedra: que la ventana de cada
+prueba no está recortada en los extremos (y por eso los targets quedan mal
+definidos) y que conviene dejar fijo uno de los dos parámetros y usar el lugar
+que queda para modelar la asimetría del par. La tercera es lo que quedó
+colgando de la primera: el recorte por rapidez arregla 18 de los 19 eventos y
+no alcanza para el 14.
 
-Nada de esto cambia los números de la entrega: el recorte relativo (`--ritmo`)
-y el reparto (`--alfa`) vienen apagados por omisión (`RITMO = 0`,
-`alfa = 0,5`), y el barrido fino vuelve a dar bit a bit los mismos errores que
-el archivo entregado. Los estudios nuevos se corren con `make recorte`,
-`make barrido-recorte` y `make asimetria`, y escriben en carpetas aparte.
+Nada de esto cambia los números de la entrega: el recorte relativo (`--ritmo`),
+el del corredor (`--corredor`) y el reparto (`--alfa`) vienen apagados por
+omisión (`RITMO = 0`, `CORREDOR = 0`, `alfa = 0,5`), y el barrido fino vuelve a
+dar bit a bit los mismos errores que el archivo entregado. Los estudios nuevos
+se corren con `make recorte`, `make barrido-recorte`, `make corredor` y
+`make asimetria`, y escriben en carpetas aparte.
 
 ---
 
@@ -196,17 +199,142 @@ sentido **después** del recorte.
 
 ---
 
+## 3. El evento 14: lo que el recorte por rapidez no alcanza
+
+### El problema, medido
+
+Las dos condiciones de §1 miran **cuánto** camina el peatón, no **por dónde**.
+Y hay un tramo de fila que se camina rápido: **salir de la fila hacia el
+corredor**. Las dos filas están por debajo del corredor, así que entrar a él es
+subir en `y` sin avanzar en `x`, a 0,6–1,0 m/s — por encima de cualquiera de
+los dos umbrales.
+
+Conviene decir que esto **no es un problema de seguimiento**: las filas están
+adentro del rectángulo filmado. Todo el archivo crudo abarca `x` de 0,08 a
+11,40 m y `y` de −0,69 a 3,73 m, y el histograma de `y` es bimodal — unas 6300
+muestras alrededor de `y = 2` (el corredor) y unas 8800 por debajo de `y = 0,5`
+(las dos filas), separadas por un valle casi vacío en `y = 1`. Lo que sobra de
+la ventana es fila filmada, no trayectoria extrapolada.
+
+De los 19 eventos **le pasa a uno solo, el 14**, que es exactamente el que §1
+deja afuera. Con `β = 0,75` su ventana arranca en el cuadro 22058, con los dos
+todavía subiendo:
+
+| | izquierda (30) | derecha (28) |
+|---|---|---|
+| arranque | (0,63 , 1,47) | (8,01 , 1,29) |
+| ángulo de `v(0)` | **95°** | **88°** |
+| desvío de `v(0)` respecto de la cuerda al target | **88°** | **86°** |
+| `v_d` | 0,77 m/s | 1,05 m/s |
+
+Y el recorte por rapidez no puede arreglarlo, porque sólo corta los extremos:
+el peatón 30 sube al corredor, **se queda parado 2 s en `x ≈ 0,64`** esperando
+a que el otro llegue, y recién entonces arranca. Como el primer cuadro de la
+ventana ya pasa el umbral (está subiendo rápido), la espera queda adentro.
+
+### La corrección
+
+Una condición de **lugar**, no de rapidez: los dos peatones tienen que estar
+pisando el corredor, `|y − 2| ≤ Δ` (`--corredor Δ`). El eje `y = 2` es el que
+declara el LEEME ("se cruzan por y ~ 2 m") y el que marca el histograma.
+
+**Δ se elige en el medio de la meseta.** Barriendo el semiancho (`make
+corredor`):
+
+| Δ (m) | instantes | eventos que cambian vs. `β = 0,75` | Nm del evento 14 | desvío final máx |
+|---|---|---|---|---|
+| 0,20 | 755 | 1, 2, 3, 6, 7, 12, 14, 18 | 6 | 26° |
+| 0,25 | 1001 | 1, 12, 14, 18 | 8 | 26° |
+| 0,30 | 1008 | 1, 12, 14, 18 | 10 | 26° |
+| **0,40** | **1157** | **14** | **53** | **26°** |
+| **0,50** | **1157** | **14** | **53** | **26°** |
+| **0,60** | **1157** | **14** | **53** | **26°** |
+| 0,70 | 1210 | 14 | 106 | 88° |
+| 0,80 | 1211 | ninguno | 107 | 88° |
+
+Entre 0,40 y 0,60 el resultado es **bit a bit el mismo**: toca únicamente al
+evento 14 y deja los otros 18 cuadro por cuadro idénticos. Por abajo de 0,40
+empieza a comerse la elusión de otros eventos (con Δ = 0,30 el evento 1 se
+queda en 11 instantes y el 14 en 10); en 0,70 ya no alcanza. `Δ = 0,5` es el
+medio de la meseta. Pedir en vez de eso que el **rumbo** esté a menos de
+40°–70° del eje `x` da exactamente el mismo recorte, así que el criterio
+tampoco depende de haberlo escrito como banda.
+
+Con `Δ = 0,5` el evento 14 queda así:
+
+| | `β = 0,75` | `β = 0,75` + corredor |
+|---|---|---|
+| ventana | 22058–22164 (Nm = 107) | 22112–22164 (**Nm = 53**) |
+| arranque izq / der | (0,63 , 1,47) / (8,01 , 1,29) | (1,44 , 1,98) / (5,85 , 1,65) |
+| desvío de `v(0)` izq / der | 88° / 86° | **10° / 3°** |
+| `v_d` izq / der | 0,77 / 1,05 m/s | **1,15 / 1,31 m/s** |
+| distancia mínima | 0,92 m, al 76 % de la ventana | 0,92 m, al **52 %** |
+
+Se pagan 3,6 s de evento, que son los que el peatón 30 tarda en subir al
+corredor y esperar. La distancia mínima sigue adentro y ahora cae en el medio.
+
+Sobre los 19 eventos:
+
+| ventana | Nm medio | mín | ⟨v_d / v_crucero⟩ | desvío final máx | "sale de la fila" |
+|---|---|---|---|---|---|
+| `β = 0` (entrega) | 134 | 79 | 0,752 | 103° | 17/38 |
+| `β = 0,75` | 64 | 35 | 0,903 | 88° | 2/38 (los dos del 14) |
+| `β = 0,75` + corredor | **61** | **35** | **0,913** | **26°** | **0/38** |
+
+### Qué pasa con la calibración
+
+Misma grilla fina (81 × 61) y mismo criterio de óptimo:
+
+| ventana | métrica | óptimo `(t_a, d_s)` | ⟨E⟩ | ⟨E⟩ sin capa | reducción |
+|---|---|---|---|---|---|
+| `β = 0,75` | 1 | 4,0 s · 0,090 m | 0,0742 ± 0,0453 | 0,757 | 90 % |
+| `β = 0,75` | 2 | 4,0 s · 0,120 m | 0,0144 ± 0,0020 | 0,345 | 96 % |
+| **+ corredor** | **1** | **4,0 s · 0,090 m** | **0,0286 ± 0,0045** | **0,730** | **96 %** |
+| **+ corredor** | **2** | **4,0 s · 0,120 m** | **0,0132 ± 0,0017** | **0,346** | **96 %** |
+
+Lo que importa:
+
+1. **El óptimo no se mueve.** Los dos pares son los mismos que con `β = 0,75`,
+   con las dos métricas. El recorte del corredor no reajusta la calibración:
+   saca un evento del residuo.
+2. **Las dos métricas dan la misma reducción, 96 %.** Con `β = 0,75` la
+   métrica 1 se quedaba en 90 % porque el evento 14 pesaba él solo más que los
+   otros 18 juntos.
+3. **La barra de error de la métrica 1 se cae de 0,045 a 0,0045**, un factor
+   10. Era dispersión de un evento, no del modelo: `E⁽¹⁾` del evento 14 pasa de
+   **0,886 a 0,021**, y el rango sobre los 19 eventos, de 0,012–0,886 a
+   0,012–0,096.
+4. **El contacto no cambia**: el SFM puro choca en 16 de 19 y la capa calibrada
+   en 0 de 19, igual que con `β = 0,75` (`make corredor` deja las dos corridas
+   para verificarlo con `visualization/check.py`).
+5. **Las dos poblaciones desaparecen del todo.** Con `β = 0,75` quedaba 1
+   evento clasificado como "sale de la fila"; con el corredor, ninguno. Los 19
+   eventos son una sola población.
+
+### Lo que hay que preguntar
+
+- La condición de rapidez es sobre la trayectoria; ésta es sobre la geometría
+  del experimento (dónde está el corredor). ¿Les cierra meter una condición de
+  lugar, o prefieren que el recorte salga sólo de la trayectoria?
+- Para el evento 14 el recorte deja `Nm = 53` (3,5 s). ¿Es poco evento?
+- Si el criterio se acepta, los 19 eventos pasan a ser una sola población.
+  ¿Qué hacemos con la separación en dos poblaciones, que hoy es un resultado de
+  la presentación (ver también la duda 8 de `PLAN.md`)?
+
+---
+
 ## Cómo reproducir
 
 ```
 make recorte            # eventos + barrido fino para β = 0; 0,4 … 0,9
 make barrido-recorte    # la calibración completa con β = 0,75 (RITMO_NUEVO)
+make corredor           # eventos para Δ = 0,2 … 1 y la calibración con Δ = 0,5
 make asimetria          # (d_s, α) con t_a fijo, sobre las dos ventanas
 ```
 
-Los tres escriben en `data/recorte/` y `data/asimetria/`, sin tocar
-`data/barrido/` ni `data/experimental/`. Para correr todo con el recorte puesto
-alcanza `make todo RITMO=0.75`.
+Los cuatro escriben en `data/recorte/`, `data/corredor/` y `data/asimetria/`,
+sin tocar `data/barrido/` ni `data/experimental/`. Para correr todo con los dos
+recortes puestos alcanza `make todo RITMO=0.75 CORREDOR=0.5`.
 
 De paso quedó arreglado un error que todavía no se había disparado:
 `writeStatic` escribe la línea `capa predictiva` (texto) y `read_static`
