@@ -13,14 +13,13 @@
 // del LEEME de la catedra. De ahi sale cada evento m con sus dos peatones.
 //
 // La ventana de un evento es la INTERSECCION de los intervalos en los que los
-// dos peatones estan seguidos, recortada despues a la parte en que los dos ya
-// estan caminando (ver trimToWalking en experiment.cpp): antes del primer
-// cuadro comun falta uno de los dos y la simulacion de dos agentes no se puede
-// plantear, y antes de que los dos caminen el evento no es todavia el cruce
-// que el enunciado describe. Los huecos de
-// seguimiento que quedan adentro de esa ventana no se rellenan: la muestra
-// queda marcada como ausente y el error no se evalua en ese instante (el
-// agente se simula igual, que es lo que lo acopla con el otro).
+// dos peatones estan seguidos (dentro de los cuadros que declara el LEEME),
+// recortada despues al tramo del corredor xMin <= x <= xMax (ver
+// trimToCorridor en experiment.cpp): afuera de ese tramo los peatones estan en
+// la fila o llegando a ella, y eso no es el cruce que el enunciado describe.
+// Los huecos de seguimiento que quedan adentro de esa ventana no se rellenan:
+// la muestra queda marcada como ausente y el error no se evalua en ese
+// instante (el agente se simula igual, que es lo que lo acopla con el otro).
 
 struct Sample {
   Vec2 position;
@@ -60,14 +59,7 @@ struct Experiment {
 
 // Lee el archivo crudo de trayectorias y la tabla de eventos y arma los M
 // eventos. `labels` vacio toma todos; si no, solo esas pruebas.
-// `walkingThreshold` (m/s, absoluto) y `walkingFraction` (fraccion del ritmo de
-// crucero de cada peaton) recortan la ventana de cada evento a la parte en que
-// los dos peatones ya estan caminando: el umbral de cada uno es el mayor de los
-// dos. `corridorHalfWidth` (m) agrega la condicion de que los dos esten sobre
-// el corredor, |y - 2| <= corridorHalfWidth, que es lo que separa caminar por
-// el corredor de salir de la fila hacia el (lo unico de la fila que se camina
-// rapido). Con los tres en 0 no se recorta (ver trimToWalking en
-// experiment.cpp).
+// `xMin` y `xMax` (m) son el tramo del corredor al que se recorta la ventana
+// de cada evento: la misma restriccion sobre el eje x para todos.
 Experiment readExperiment(const std::string& trajectories, const std::string& table,
-                          const std::vector<int>& labels, double walkingThreshold,
-                          double walkingFraction, double corridorHalfWidth);
+                          const std::vector<int>& labels, double xMin, double xMax);

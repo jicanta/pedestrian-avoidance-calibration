@@ -41,7 +41,6 @@ def main() -> None:
     arguments = parser.parse_args()
     common.use_style(arguments.estilo)
 
-    events = common.read_events()
     rows = []
     reference = {}
     for key, label, folder in VARIANTS:
@@ -50,21 +49,20 @@ def main() -> None:
             print(f"(falta {path})")
             continue
         p1, p2, labels, error1, error2 = common.read_sweep(path)
-        corridor = common.classes(labels, events) == "corredor"
         row = {"key": key, "label": label}
         for metric, event_error in ((1, error1), (2, error2)):
             mean, _ = common.population(event_error)
             i, j = np.unravel_index(np.argmin(mean), mean.shape)
             best = event_error[i, j, :]
             edge = i in (0, len(p1) - 1) or j in (0, len(p2) - 1)
-            row[metric] = dict(p1=p1[i], p2=p2[j], total=mean[i, j], corridor=best[corridor].mean(),
-                               queue=best[~corridor].mean(), without=mean[0, 0], edge=edge,
+            row[metric] = dict(p1=p1[i], p2=p2[j], total=mean[i, j], without=mean[0, 0],
+                               sem=best.std(ddof=1) / np.sqrt(len(best)), edge=edge,
                                events=best)
             if key == "predictiva":
                 reference[metric] = best
         rows.append(row)
 
-    print(f"{'capa':26s} {'m':>2} {'p1*':>7} {'p2*':>7} {'<E>':>7} {'-%':>4} {'corr':>6} {'fila':>6} "
+    print(f"{'capa':26s} {'m':>2} {'p1*':>7} {'p2*':>7} {'<E>':>7} {'-%':>4} "
           f"{'pareado vs predictiva':>24}")
     for row in rows:
         for metric in (1, 2):
@@ -74,27 +72,23 @@ def main() -> None:
             # "sin capa" es p1 = 0, que solo esta en la grilla de la predictiva.
             without = rows[0][metric]["without"]
             print(f"{row['label']:26s} {metric:2d} {r['p1']:7.3f} {r['p2']:7.3f} {r['total']:7.4f} "
-                  f"{100 * (1 - r['total'] / without):4.0f} {r['corridor']:6.3f} {r['queue']:6.3f} "
+                  f"{100 * (1 - r['total'] / without):4.0f} "
                   f"{d.mean():+10.4f} +- {sem:.4f}{'  (borde de la grilla)' if r['edge'] else ''}")
 
-    # Figura: <E(2)> en el optimo de cada variante, sobre los 19 y por poblacion.
+    # Figura: <E(2)> en el optimo de cada variante, con su error estandar.
     figure, axes = plt.subplots()
     positions = np.arange(len(rows))
-    width = 0.27
-    for offset, (name, color, text) in enumerate(
-            (("total", "#6e7680", "los 19 eventos"),
-             ("corridor", common.CLASS_COLOR["corredor"], "ya en el corredor"),
-             ("queue", common.CLASS_COLOR["fila"], "sale de la fila"))):
-        values = [row[2][name] for row in rows]
-        axes.bar(positions + (offset - 1) * width, values, width, color=color, label=text)
+    axes.bar(positions, [row[2]["total"] for row in rows], 0.6,
+             yerr=[row[2]["sem"] for row in rows], capsize=4,
+             color=[common.EXPERIMENT_COLOR[0]] + ["#9aa3ad"] * (len(rows) - 1))
     axes.axhline(rows[0][2]["without"], color="#1a1a1a", linestyle="--", linewidth=1.4,
                  label=f"sin capa, {common.decimal(rows[0][2]['without'], 2)} m$^2$")
     axes.set_xticks(positions)
-    axes.set_xticklabels([row["label"].replace(" (la que corre)", "\n(la que corre)")
+    axes.set_xticklabels([row["label"].replace(" (la que corre)", "\n(la que corre)").replace("campo ", "campo\n")
                           for row in rows],
                          fontsize=matplotlib.rcParams["xtick.labelsize"] - 2)
     axes.set_ylabel(common.AXIS_E2)
-    common.legend_inside(axes, ncol=2)
+    common.legend_inside(axes)
     common.save(figure, common.folder("a", arguments.figures) /
                 f"alternativas_metrica2_{arguments.estilo}.png")
     plt.close(figure)

@@ -1,5 +1,5 @@
 % Las condiciones que el enunciado fija para cada agente a partir de su propia
-% trayectoria experimental: arranca en la posicion y con la velocidad medidas
+% trayectoria experimental, recortada al tramo del corredor: arranca en la posicion y con la velocidad medidas
 % en el primer instante, su target final es la ultima posicion medida y el
 % modulo de su velocidad deseada es la rapidez media de la trayectoria.
 \begin{tikzpicture}[scale=0.95, >={Stealth[length=2.4mm]}, font=\footnotesize]
@@ -8,7 +8,7 @@
         (0.5,1.1) .. controls (1.8,0.55) and (3.2,0.3) .. (4.4,0.95)
         .. controls (5.3,1.45) and (6.0,1.35) .. (6.8,1.25);
   \node[medida, anchor=north, align=center] at (3.5,0.35)
-        {trayectoria experimental\\ $N_m$ instantes, uno cada $\dtexp$};
+        {trayectoria experimental dentro del tramo\\ $N_m$ instantes, uno cada $\dtexp$};
 
   % Arranque
   \fill[izquierda] (0.5,1.1) circle (0.25);
@@ -20,7 +20,7 @@
   % Target final
   \fill[target] (6.8,1.25) circle (0.11);
   \node[target, anchor=south, align=center, inner sep=3pt] at (6.8,1.42)
-        {$\vT_i$: target final\\ (última medida)};
+        {$\vT_i$: target final\\ (última medida del tramo)};
 
   % Rapidez deseada
   \node[anchor=north, align=center, inner sep=2pt] at (3.5,-0.55)

@@ -12,7 +12,7 @@ entero), que es lo que deja compararlos:
   despues de la otra en el mismo video (`--tandas 5,5,5,4`). Sirve para ver si
   todas las pasadas caen sobre el mismo corredor.
 
-    python3 visualization/mosaico.py --runs data/corredor/elegido/optimo-metrica1
+    python3 visualization/mosaico.py --runs data/runs/optimo-metrica1
     python3 visualization/mosaico.py --runs data/runs/optimo-metrica1 --modo tandas
 
 El nombre del archivo sale de `--name`; si no se da, del nombre de la carpeta

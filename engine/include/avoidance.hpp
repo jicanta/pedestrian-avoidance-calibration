@@ -28,8 +28,8 @@
 // Mas un tercer numero, alfa, que reparte la elusion entre los dos peatones del
 // par y que NO se calibra junto con los otros dos: la version simetrica lo deja
 // fijo en 0,5 (y entonces la capa es la de dos parametros de siempre) y la
-// version asimetrica fija t_a y calibra el par (d_s, alfa). Ver "REPARTO DE LA
-// ELUSION" mas abajo.
+// version asimetrica, que es un extra, fija t_a y barre el par (d_s, alfa).
+// Ver "REPARTO DE LA ELUSION" mas abajo.
 //
 // La geometria es la de los modelos predictivos de elusion (Karamouzas et al.
 // 2009, que usan el mismo par tiempo de anticipacion / espacio personal pero
@@ -66,9 +66,9 @@
 // separacion que falta y la cubre mitad y mitad. En los datos de la catedra eso
 // no es lo que pasa: midiendo el desvio lateral de cada peaton respecto de su
 // propia recta de arranque a target, en el instante del cruce, la fraccion que
-// se lleva el que sale de la izquierda tiene media 0,53 (no hay un lado que
-// ceda sistematicamente) pero desvio 0,26 y va de 0,11 a 1,00: en cada par uno
-// de los dos cede casi todo y cual de los dos es parece sorteado. Un par de
+// se lleva el que sale de la izquierda tiene media 0,57 (no hay un lado que
+// ceda sistematicamente) pero desvio 0,23 y va de 0,17 a 0,99: en cada par uno
+// de los dos cede mas y cual de los dos cambia de par en par. Un par de
 // parametros simetrico no puede reproducir eso.
 //
 // Por eso la capa lleva un tercer numero, `share` = alfa, la fraccion de la
@@ -79,9 +79,9 @@
 //
 // El factor 2 esta para que alfa = 0,5 sea exactamente la capa simetrica de
 // antes. alfa = 1 es "el de la izquierda se corre todo y el de la derecha
-// sigue derecho" y alfa = 0, lo contrario. Sigue habiendo dos parametros a
-// calibrar: la catedra sugirio fijar uno de los dos originales -- t_a, que el
-// barrido determina solo por abajo -- y usar el lugar que queda para alfa.
+// sigue derecho" y alfa = 0, lo contrario. Es un EXTRA: la calibracion que
+// pide el enunciado es la de (t_a, d_s) con alfa = 0,5, y el barrido de alfa
+// (comando asymmetry) se muestra aparte, al final.
 //
 // w(tau*) es un peso de urgencia que hace la capa CONTINUA en los dos bordes
 // del disparo: en tau* = ta vale 0 y el target temporal coincide con q_i, que

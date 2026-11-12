@@ -58,7 +58,7 @@ def run_engine(output: Path, p1: float, p2: float, data: Path | None = None,
                table: Path | None = None, event: int | None = None):
     command = [str(ENGINE), "run", "--p1", str(p1), "--p2", str(p2), "--dir", str(output)]
     if data is not None:
-        command += ["--datos", str(data), "--eventos", str(table), "--arranque", "0"]
+        command += ["--datos", str(data), "--eventos", str(table), "--xmin", "-100", "--xmax", "100"]
     if event is not None:
         command += ["--pruebas", str(event)]
     subprocess.run(command, check=True, capture_output=True, cwd=common.ROOT)
@@ -379,7 +379,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("que", choices=("cabeza-a-cabeza", "barrido"))
-    parser.add_argument("--p1", type=float, default=2.5)
+    parser.add_argument("--p1", type=float, default=2.15)
     parser.add_argument("--p2s", type=str, default="0,0.2,0.5")
     parser.add_argument("--parametro", choices=("p1", "p2"), default="p2")
     parser.add_argument("--metrica", type=int, choices=(1, 2), default=2)

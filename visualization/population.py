@@ -3,15 +3,15 @@
 <E>(p1, p2) es el promedio sobre los M eventos del error de cada evento, que a
 su vez es el promedio sobre sus 2 peatones. Para cada metrica por separado:
 
-* el mapa de <E> sobre la grilla de parametros, con el optimo marcado y el
-  contorno de la region compatible con el (ver abajo);
+* el mapa de <E> sobre la grilla de parametros, con el optimo marcado;
 * los dos cortes unidimensionales que pasan por el optimo, con sus barras de
   error;
 * por consola, el optimo de cada metrica, la region compatible y la
   comparacion entre las dos metricas.
 
 La barra de error de <E> es el error estandar de la media entre eventos,
-sigma/sqrt(M). Para decidir que pares EMPATAN con el optimo esa barra no sirve:
+sigma/sqrt(M). Para decidir que valores EMPATAN con el optimo (la franja verde
+de los cortes) esa barra no sirve:
 todos los pares se evaluan sobre los MISMOS M eventos, asi que lo que hay que
 mirar es la diferencia pareada evento por evento. La region compatible es el
 conjunto de pares cuya diferencia media contra el optimo, E_m(p) - E_m(p*), no
@@ -26,6 +26,7 @@ from pathlib import Path
 import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib import colors
+from matplotlib.ticker import FuncFormatter
 import numpy as np
 
 import common
@@ -38,50 +39,35 @@ def compatible(event_error: np.ndarray, i: int, j: int) -> np.ndarray:
     return difference.mean(axis=2) <= spread
 
 
-def surface(p1, p2, mean, region, metric, figures, style, suffix=""):
-    """Mapa de <E> sobre la grilla.
-
-    El color va con escala de potencia (gamma < 1) y encima van curvas de nivel
-    en multiplos del minimo: en escala lineal el mapa lo gobierna la franja de
-    p1 pequeno, donde la capa casi no llega a actuar y el error es el del SFM
-    puro, y toda la zona del optimo queda del mismo tono.
-    """
+def surface(p1, p2, mean, metric, figures, style):
+    """Mapa de <E> sobre la grilla, como los mapas de los TP anteriores: el
+    color es <E>, en escala logaritmica (entre el SFM puro y el optimo hay un
+    orden de magnitud), y lo unico que va encima es el optimo."""
     common.use_style(style)
     figure, axes = plt.subplots()
     axes.grid(False)
-    lowest = mean.min()
-    mesh = axes.pcolormesh(p2, p1, mean, shading="nearest", cmap="viridis_r",
-                           norm=colors.PowerNorm(gamma=0.45, vmin=lowest, vmax=mean.max()))
-    bar = figure.colorbar(mesh, ax=axes, ticks=lowest * np.array([1.0, 1.1, 1.3, 1.6, 2.0, 2.7]))
-    bar.ax.set_yticklabels([common.decimal(lowest * f, 2)
-                            for f in (1.0, 1.1, 1.3, 1.6, 2.0, 2.7)])
+    mesh = axes.pcolormesh(p2, p1, mean, shading="nearest", cmap=common.heat_colormap(),
+                           norm=colors.LogNorm(vmin=mean.min(), vmax=mean.max()))
+    bar = figure.colorbar(mesh, ax=axes)
     bar.set_label(common.METRIC_AVERAGE[metric])
-    levels = lowest * np.array([1.02, 1.05, 1.1, 1.2, 1.5, 2.0])
-    lines = axes.contour(p2, p1, mean, levels=levels, colors="#1a1a1a", linewidths=0.8,
-                         alpha=0.55)
-    axes.clabel(lines, fmt=lambda value: common.decimal(value, 2), fontsize=9)
-    # La region que empata con el optimo va como un velo blanco sobre las
-    # celdas, no como contorno: con celdas sueltas que empatan, el contorno
-    # se llena de islas y se lee como ruido.
-    veil = np.ma.masked_where(~region, np.ones_like(mean))
-    axes.pcolormesh(p2, p1, veil, shading="nearest", cmap=colors.ListedColormap(["white"]),
-                    alpha=0.45, vmin=0, vmax=1)
+    bar.ax.yaxis.set_major_formatter(FuncFormatter(lambda value, _: common.decimal(value)))
+    bar.ax.yaxis.set_minor_formatter(FuncFormatter(
+        lambda value, _: common.decimal(value)
+        if f"{value:.0e}"[0] in "25" else ""))
+    bar.ax.tick_params(which="minor", labelsize=matplotlib.rcParams["ytick.labelsize"])
     i, j = np.unravel_index(np.argmin(mean), mean.shape)
-    axes.plot(p2[j], p1[i], marker="*", color="white", markersize=16, linestyle="none",
-              markeredgecolor="#1a1a1a", markeredgewidth=0.8,
-              label=f"óptimo $({common.decimal(p1[i], 2)}$ s$,\\ {common.decimal(p2[j], 3)}$ m$)$")
-    axes.plot([], [], marker="s", color="white", markersize=10, linestyle="none",
-              markeredgecolor="#6e7680", alpha=0.8, label="pares que empatan")
+    axes.plot(p2[j], p1[i], marker="*", color="white", markersize=18, linestyle="none",
+              markeredgecolor="#1a1a1a", markeredgewidth=1.0,
+              label=f"óptimo $({common.decimal(p1[i], 2)}$ s$,\\ {common.decimal(p2[j], 2)}$ m$)$")
     axes.set_xlabel(common.AXIS_P2)
     axes.set_ylabel(common.AXIS_P1)
-    axes.legend(loc="lower right", framealpha=0.85,
+    axes.legend(loc="upper right", framealpha=0.9,
                 fontsize=matplotlib.rcParams["legend.fontsize"])
-    common.save(figure, common.folder("b", figures) /
-                f"superficie_metrica{metric}{suffix}_{style}.png")
+    common.save(figure, common.folder("b", figures) / f"superficie_metrica{metric}_{style}.png")
     plt.close(figure)
 
 
-def cuts(p1, p2, event_error, region, metric, figures, style, suffix=""):
+def cuts(p1, p2, event_error, region, metric, figures, style):
     """Los dos cortes que pasan por el optimo, con sus barras de error.
 
     La curva va entera y las barras cada pocos puntos: con 81 y 61 valores de
@@ -115,13 +101,15 @@ def cuts(p1, p2, event_error, region, metric, figures, style, suffix=""):
                          fontsize=matplotlib.rcParams["axes.labelsize"])
     figure.tight_layout()
     common.save(figure, common.folder("b", figures) /
-                f"cortes_metrica{metric}{suffix}_{style}.png")
+                f"cortes_metrica{metric}_{style}.png")
     plt.close(figure)
 
 
 def ceiling(path: Path, figures, style):
     """Por que la grilla de p1 termina en 4 s: <E> contra p1 hasta 8 s, con la
-    p2 del optimo. Mas alla de 4 s no cambia nada que se vea."""
+    p2 del optimo de cada metrica. Mas alla del tiempo que falta para el cruce
+    al empezar el evento (entre 2,4 y 3 s) el conflicto se declara desde el primer
+    instante y <E> ya no baja."""
     if not Path(path).exists():
         print(f"(sin {path}: no se dibuja el techo de p1)")
         return
@@ -131,22 +119,24 @@ def ceiling(path: Path, figures, style):
     for metric, event_error in ((1, error1), (2, error2)):
         mean, sem = common.population(event_error)
         color, marker = common.METRIC_STYLE[metric]
-        j = 0
+        j = min(metric - 1, len(p2) - 1)
         axes.plot(p1, mean[:, j] / mean[:, j].min(), color=color, marker=marker, markersize=4,
                   label=f"{common.METRIC_LABEL[metric]}, $p_2 = {common.decimal(p2[j], 2)}$ m")
     axes.axvline(4.0, color="#2ca02c", linestyle="--", linewidth=1.8,
                  label="techo de la grilla fina")
     axes.set_xlabel(common.AXIS_P1)
     axes.set_ylabel("$\\langle E \\rangle / \\langle E \\rangle_{\\min}$")
-    axes.set_ylim(0.95, 1.6)
+    axes.set_ylim(0.9, 2.5)
     common.legend_inside(axes)
     common.save(figure, common.folder("b", figures) / f"techo_p1_{style}.png")
     plt.close(figure)
     for metric, event_error in ((1, error1), (2, error2)):
         mean, _ = common.population(event_error)
-        beyond = mean[p1 >= 4.0, 0]
-        print(f"  techo de p1, metrica {metric}: de 4 a {p1.max():g} s <E> se mueve "
-              f"{100 * (beyond.max() / beyond.min() - 1):.1f} %")
+        j = min(metric - 1, len(p2) - 1)
+        beyond = mean[p1 >= 4.0, j]
+        print(f"  techo de p1, metrica {metric} (p2 = {p2[j]:g} m): de 4 a {p1.max():g} s "
+              f"<E> se mueve {100 * (beyond.max() / beyond.min() - 1):.1f} %; minimo del "
+              f"barrido largo en p1 = {p1[np.argmin(mean[:, j])]:g} s")
 
 
 def main() -> None:
@@ -154,19 +144,10 @@ def main() -> None:
     parser.add_argument("--barrido", type=Path, default=common.SWEEP / "fino" / "errores.txt")
     parser.add_argument("--largo", type=Path, default=common.SWEEP / "p1largo" / "errores.txt",
                         help="barrido de p1 hasta 8 s, para justificar el techo de la grilla")
-    parser.add_argument("--clase", choices=("todos", "corredor", "fila"), default="todos",
-                        help="calibrar solo con los eventos de una poblacion")
     common.add_common_arguments(parser)
     arguments = parser.parse_args()
 
     p1, p2, labels, error1, error2 = common.read_sweep(arguments.barrido)
-    suffix = ""
-    if arguments.clase != "todos":
-        keep = common.classes(labels) == arguments.clase
-        labels, error1, error2 = labels[keep], error1[:, :, keep], error2[:, :, keep]
-        suffix = f"_{arguments.clase}"
-        print(f"solo los eventos que {common.CLASS_LABEL[arguments.clase]}: "
-              f"{', '.join(str(int(label)) for label in labels)}")
     print(f"grilla: {len(p1)} x {len(p2)} pares, M = {len(labels)} eventos")
     best = {}
     for metric, event_error in ((1, error1), (2, error2)):
@@ -174,8 +155,8 @@ def main() -> None:
         i, j = np.unravel_index(np.argmin(mean), mean.shape)
         region = compatible(event_error, i, j)
         best[metric] = (p1[i], p2[j], mean[i, j], sem[i, j], region)
-        surface(p1, p2, mean, region, metric, arguments.figures, arguments.estilo, suffix)
-        cuts(p1, p2, event_error, region, metric, arguments.figures, arguments.estilo, suffix)
+        surface(p1, p2, mean, metric, arguments.figures, arguments.estilo)
+        cuts(p1, p2, event_error, region, metric, arguments.figures, arguments.estilo)
         print(f"\n{common.METRIC_LABEL[metric]}")
         print(f"  optimo: p1 = {p1[i]:.2f} s, p2 = {p2[j]:.3f} m, "
               f"<E> = {mean[i, j]:.4f} +- {sem[i, j]:.4f} m2 "
@@ -202,8 +183,7 @@ def main() -> None:
           f"de <E(1)>, y al reves "
           f"{100 * (mean2[np.argmin(abs(p1 - a1)), np.argmin(abs(p2 - b1))] / v2 - 1):.1f} % "
           f"de <E(2)>")
-    if arguments.clase == "todos":
-        ceiling(arguments.largo, arguments.figures, arguments.estilo)
+    ceiling(arguments.largo, arguments.figures, arguments.estilo)
 
 
 if __name__ == "__main__":

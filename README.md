@@ -87,45 +87,54 @@ todas de dos parámetros y todas como target temporal, con la repulsión pesada
 por `A exp(−(d − 2r)/B)` (`--capa campo|campo-lateral|campo-predictivo`,
 `make alternativas`, `visualization/alternatives.py`):
 
-| capa | qué distancia y qué dirección usa | óptimo (métrica 2) | `<E(2)>` | corredor / fila | pareado contra la predictiva |
-|---|---|---|---|---|---|
-| **predictiva (la que corre)** | `(D − d*)` en la dirección `ŝ`, con horizonte `t_a` | 3,85 s, 0,050 m | **0,314 m² (−63 %)** | 0,081 / 0,574 | — |
-| campo isotrópico | la distancia actual, de `j` a `i` (Helbing como dirección) | A = 1,0, B = 0,66 m | 0,399 m² (−52 %) | 0,244 / 0,572 | **−0,085 ± 0,027** (peor) |
-| campo lateral | la distancia actual, perpendicular al camino, del lado contrario a `j` | A = 0,3, B = 4,5 m | 0,303 m² (−64 %) | 0,137 / 0,488 | +0,011 ± 0,026 (empata) |
-| campo predictivo | la separación predicha `d*`, en `ŝ` (Karamouzas como target) | A = 0,25, B = 0,005 m | 0,303 m² (−64 %) | 0,054 / 0,580 | +0,011 ± 0,013 (empata) |
+| capa | qué distancia y qué dirección usa | óptimo (métrica 2) | `<E(2)>` | pareado contra la predictiva |
+|---|---|---|---|---|
+| **predictiva (la que corre)** | `(D − d*)` en la dirección `ŝ`, con horizonte `t_a` | 1,50 s, 0,14 m | **0,019 m² (−94 %)** | — |
+| campo isotrópico | la distancia actual, de `j` a `i` (Helbing como dirección) | A = 1,4, B = 1,1 m | 0,111 m² (−66 %) | **−0,092 ± 0,011** (peor) |
+| campo lateral | la distancia actual, perpendicular al camino, del lado contrario a `j` | A = 0,2, B = 5,0 m (borde) | 0,014 m² (−96 %) | +0,005 ± 0,002 (mejor) |
+| campo predictivo | la separación predicha `d*`, en `ŝ` (Karamouzas como target) | A = 0,2, B = 0,2 m (borde) | 0,023 m² (−93 %) | −0,004 ± 0,008 (empata) |
 
 - El **campo isotrópico queda lejos**: de frente, la repulsión apunta hacia
   atrás y no tiene componente lateral, así que el agente frena en vez de
   correrse. Es exactamente el problema que señala la Teórica 7 para los
   modelos "particle-based" y que motiva a Karamouzas.
-- Los otros dos **empatan** con la predictiva dentro de la diferencia pareada,
-  pero sus óptimos **degeneran**: el predictivo se va a `B → 0`, donde el peso
-  exponencial es un escalón sobre el contacto predicho (y en el corredor es un
-  30 % mejor, 0,054 contra 0,081, a costa de la fila); el lateral se va a
-  `B = 4,5 m`, que es empujar de costado siempre que haya alguien adelante, y
-  "gana" sólo con la métrica 1 (`+0,20 ± 0,08`) porque en los eventos de la
-  fila veer temprano se parece a subir por la fila: no es mejor elusión.
-- La predictiva se queda porque hace lo mismo con dos parámetros que tienen
-  **unidades y lectura directa** (un tiempo de anticipación y un margen de
-  espacio personal, el par de la Teórica 7) y porque es continua en los dos
-  bordes del disparo.
+- El **campo predictivo empata** con la predictiva dentro de la diferencia
+  pareada.
+- El **campo lateral da un error algo menor** (0,014 contra 0,019 m² con la
+  métrica 2, y 0,045 contra 0,062 con la 1; la diferencia pareada es
+  significativa), y hay que decirlo. Pero su óptimo está en el **borde de la
+  grilla**, `B = 5 m`: con ese alcance el peso exponencial casi no depende de
+  la distancia, y la capa es "empujar de costado siempre que haya alguien
+  adelante". Funciona en un corredor con un solo cruce de frente porque ahí
+  correrse temprano y siempre es justo lo que hacen las personas; no tiene un
+  horizonte ni una distancia de paso.
+- La predictiva se queda porque sus dos parámetros tienen **unidades y lectura
+  directa** (un tiempo de anticipación y un margen de espacio personal, el par
+  de la Teórica 7), porque es continua en los dos bordes del disparo y porque
+  no elude cuando no hay conflicto.
 
 Dentro de la predictiva, las dos decisiones de diseño también tienen
-alternativa, y las cuatro combinaciones se corrieron con el mismo barrido y
-los mismos 19 eventos (`--sin-rampa` y `--mira-horizonte`):
+alternativa.
+Las cuatro combinaciones se corrieron con el mismo barrido (41 × 31) y los
+mismos 19 eventos (`--sin-rampa` y `--mira-horizonte`):
 
-| variante | peso de urgencia | punto de mira | `<E(1)>` mín. | `<E(2)>` mín. |
-|---|---|---|---|---|
-| **la que corre** | `w = 1 − τ*/ta` | `v^d τ*` | 1,480 | 0,315 |
-| sin rampa | `w = 1` | `v^d τ*` | 1,472 | 0,309 |
-| mira al horizonte | `w = 1 − τ*/ta` | `v^d ta` | 1,478 | 0,316 |
-| ninguna de las dos | `w = 1` | `v^d ta` | 1,456 | 0,313 |
+| variante | peso de urgencia | punto de mira | `<E(1)>` mín. | `<E(2)>` mín. | pareado contra la que corre (métrica 2) |
+|---|---|---|---|---|---|
+| **la que corre** | `w = 1 − τ*/ta` | `v^d τ*` | 0,063 | 0,019 | — |
+| sin rampa | `w = 1` | `v^d τ*` | 0,051 | 0,016 | +0,003 ± 0,0003 (mejor) |
+| mira al horizonte | `w = 1 − τ*/ta` | `v^d ta` | 0,111 | 0,029 | −0,010 ± 0,006 (peor, en el borde de `p2`) |
+| ninguna de las dos | `w = 1` | `v^d ta` | 0,042 | 0,013 | +0,006 ± 0,0003 (mejor) |
 
-Las cuatro dan lo mismo dentro del 2 %, que está muy por debajo del error
-estándar de la media entre eventos (0,25 m² en la métrica 1). Se eligió la
-primera porque es la única **continua** en los dos bordes del disparo, y porque
-el punto de mira en el instante del conflicto es el que el esquema de la
-presentación puede explicar en una línea.
+**Con la ventana recortada las cuatro ya no dan lo mismo**, y hay que decirlo:
+sacar la rampa baja el error un 15–20 %, y sacar la rampa y mirar al horizonte,
+un 30 %. (Con la ventana anterior, que incluía la fila, las cuatro empataban
+dentro del 2 %: el error estaba dominado por otra cosa.) La que corre sigue
+siendo la primera por dos motivos que no son el número: es la única
+**continua** en los dos bordes del disparo —sin rampa, la dirección deseada
+salta cuando `τ*` cruza `ta`— y es la que se discutió con la cátedra. Todas
+bajan el error más de un 85 % respecto del modelo sin capa, así que la
+conclusión del trabajo no depende de cuál se elija; cambiarla queda como
+**pregunta para la consulta** (`PLAN.md` §8).
 
 ## Estructura
 
@@ -134,7 +143,7 @@ tp-5/
 ├── Makefile            # todo el flujo desde la raíz: build, eventos, barrido, figuras, animaciones, entrega
 ├── README.md           # este documento
 ├── PLAN.md             # qué pide el enunciado, cómo se resuelve, decisiones y dudas a la cátedra
-├── FEEDBACK.md         # devoluciones de la cátedra (TP2, TP3 y TP4) aplicadas al TP5
+├── FEEDBACK.md         # devoluciones de la cátedra (TP2, TP3, TP4 y las consultas del TP5) aplicadas
 ├── IA.md               # las libertades que se tomó el agente y cómo se corrigió cada una (de ahí sale el apéndice)
 ├── requirements.txt    # matplotlib, numpy
 ├── docs/
@@ -151,7 +160,10 @@ tp-5/
 └── data/               # salidas de simulación y figuras (ignoradas por git)
     ├── experimental/   #   resumen de los 19 eventos tal como los lee el motor
     ├── convergencia/   #   barrido del paso de integración
-    ├── barrido/        #   grueso/ y fino/: las dos grillas de (p1, p2)
+    ├── barrido/        #   grueso/ y fino/: las dos grillas de (p1, p2); p1largo/; alternativas/
+    ├── ventana/        #   la calibración con otros tramos de x (make ventana)
+    ├── individual/     #   ítem c opcional: los 4 parámetros por evento
+    ├── asimetria/      #   extra: el barrido de (d_s, α)
     ├── runs/           #   corridas con cuadros: los dos óptimos y la capa apagada
     └── figures/, figuras_diapositivas/   # figuras por ítem, en estilo de revisión y de diapositiva
 ```
@@ -162,37 +174,33 @@ tp-5/
 pip install -r requirements.txt
 make build                 # engine/build/elusion
 make eventos               # lee los datos de la cátedra y escribe el resumen de los 19 eventos
-make eventos-figuras       # las 38 trayectorias medidas y d(t) de cada evento
+make eventos-figuras       # las 38 trayectorias con el tramo del recorte marcado, y d(t) de cada evento
+make ventana               # cuánto cambia la calibración al mover el tramo de x (3 min)
 make convergencia          # barrido del paso de integración
 make convergencia-figuras  # apartamiento de <E> contra dt
-make barrido               # ítems b, c y d: la grilla gruesa (4 s), la fina (62 s) y el barrido largo de p1
-make alternativas          # las tres capas de campo, cada una en su grilla (2 min)
+make barrido               # ítems b, c y d: la grilla gruesa, la fina (32 s) y el barrido largo de p1
+make alternativas          # las tres capas de campo, cada una en su grilla (1 min)
 make alternativas-figuras  # la comparación de las cuatro capas
 make corridas              # los 19 eventos con cada óptimo y con la capa apagada
 make check                 # validación: métricas recalculadas en Python, contactos, grilla temporal
-make poblacional-figuras   # ítem b: superficie <E>(p1,p2) y cortes, por métrica
-make individual-figuras    # ítem c: óptimos individuales y error por evento
-make pares                 # ítem c opcional: los 4 parámetros por evento, 2 por peatón (25 min)
-make pares-figuras         # ítem c opcional: los óptimos por peatón y el error con 1, 2 y 4 juegos
+make poblacional-figuras   # ítem b: mapa de <E>(p1,p2) y cortes, por métrica
+make individual-figuras    # ítem c: histogramas de los óptimos individuales y error por evento
+make pares                 # ítem c opcional: los 4 parámetros por evento, 2 por peatón (media hora)
+make pares-figuras         # ítem c opcional: histogramas de los óptimos por peatón y el error con 1, 2 y 4 juegos
 make residuo-figuras       # de dónde viene el error que queda: ritmo/forma y lado
 make validacion-figuras    # ítem d: validación cruzada
-make trayectorias-figuras  # ítem a: trayectorias, observable primario y d(t) de los eventos elegidos
-make animations            # videos y el cuadro fijo de cada uno, congelado en el último instante en conflicto antes del cruce simulado
-make apoyo                 # animaciones de apoyo: la capa cabeza a cabeza con tres p2, y qué hace cada parámetro en el evento 10
+make trayectorias-figuras  # ítem a: los cuatro eventos representativos, observable primario y d(t)
+make asimetria             # extra: t_a fijo y barrido del par (d_s, α)
+make asimetria-figuras     # extra: <E>(α), histograma de α por evento y α calibrado contra medido
+make animations            # videos de los cuatro eventos, su cuadro fijo y los 19 eventos a la vez
+make apoyo                 # animaciones de apoyo: la capa paso a paso, cabeza a cabeza y qué hace cada parámetro
 make youtube               # copia los videos con nombres legibles en youtube/
 make gifs                  # los videos como GIF en gif/
 make figuras               # todas las figuras de análisis, en los dos estilos
 make slides-images         # las imágenes de la presentación, numeradas por diapositiva
 make documentos            # report/presentacion.tex -> report/build/presentacion.pdf
 make entrega               # SdS_TP5_2026Q2G10S2_Codigo.zip y ..._Presentación.pdf
-make todo                  # eventos + convergencia + barrido + corridas
-
-# los estudios que están apagados por omisión (ESTUDIO.md), en carpetas aparte
-make recorte               # barrido de β para el recorte relativo de la ventana
-make barrido-recorte       # la calibración completa con β = 0,75
-make corredor              # el recorte por lugar: barrido de Δ y la calibración con Δ = 0,5
-make asimetria             # el reparto de la elusión: (d_s, α) con t_a fijo
-make gifs-corredor         # los 19 eventos con la ventana recortada, en gif/estudio/
+make todo                  # eventos + convergencia + barrido + alternativas + corridas + asimetria
 ```
 
 ## Motor
@@ -202,58 +210,39 @@ C++17, sin dependencias. Seis comandos:
 ```bash
 cd engine && make
 ./build/elusion events                                     # verifica la lectura de los datos
-./build/elusion run --pruebas 10 --p1 2.5 --p2 0.07        # una corrida con cuadros
+./build/elusion run --pruebas 10 --p1 2.15 --p2 0.13       # una corrida con cuadros
 ./build/elusion sweep --p1 0:4:81 --p2 0:0.6:61            # la grilla de parámetros
 ./build/elusion pairs --p1 0:4:17 --p2 0:0.6:25            # los 4 parámetros por evento (2 c opcional)
-./build/elusion asymmetry --p1 4 --alfas 0:1:41            # el reparto de la elusión
+./build/elusion asymmetry --p1 2.15 --alfas 0:1:41         # extra: el reparto de la elusión
 ./build/elusion convergence --subdivisiones 1,2,4,...,512  # el paso de integración
 ```
 
 Opciones comunes: `--datos` y `--eventos` (los archivos de la cátedra),
-`--pruebas 1,5,10` (qué eventos), `--arranque 0.3` (el umbral de caminata, ver
-abajo), `--ritmo 0` y `--corredor 0` (los dos recortes de la ventana que vienen
-apagados, ver abajo), `--subdivisiones 64` (el paso), `--dir` (dónde escribir). Los
-parámetros del modelo se pueden pisar (`--m 80 --r 0.25 --tau 0.5 --kn 1.2e5
---kt 2.4e5`), y las dos variantes de la capa con `--sin-rampa` y
-`--mira-horizonte`.
+`--pruebas 1,5,10` (qué eventos), `--xmin 1.0` y `--xmax 7.7` (el tramo del
+corredor al que se recorta la ventana, ver abajo), `--subdivisiones 64` (el
+paso), `--dir` (dónde escribir). Los parámetros del modelo se pueden pisar
+(`--m 80 --r 0.25 --tau 0.5 --kn 1.2e5 --kt 2.4e5`), y las dos variantes de la
+capa con `--sin-rampa` y `--mira-horizonte`.
 
 ### Cómo arma los eventos
 
 El motor lee el archivo crudo de la cátedra (`id cuadro x y markerID`) y la
 tabla de eventos (`m id_izquierda id_derecha cuadro_inicial cuadro_final`,
-copiada del LEEME) y, por cada prueba, recorta la ventana en dos pasos:
+copiada del LEEME) y, por cada prueba, arma la ventana en dos pasos:
 
 1. **Intersección**: desde el primer cuadro en que los dos peatones están
    seguidos hasta el último, *dentro* del intervalo que declara el LEEME. El
    recorte al intervalo del LEEME va primero porque un mismo peatón aparece en
    varias pruebas (haciendo la fila) y sus cuadros extremos en el archivo no
    son los de su prueba.
-2. **Caminata**: la parte en que los dos miden una rapidez de al menos
-   `--arranque` (0,3 m/s por defecto, con una diferencia centrada sobre ±2
-   cuadros).
-
-El segundo recorte no es cosmético. El enunciado habla de dos peatones *que
-caminan en curso de colisión*, y al principio de varias pruebas uno de los dos
-está **parado haciendo la fila**: en la prueba 14 los dos están quietos los
-primeros 4 s de los 13. Con el peatón quieto adentro de la ventana, la rapidez
-media —que es el módulo de la velocidad deseada— baja de 1,2 a 0,76 m/s, y el
-agente simulado arranca a caminar en `t = 0` contra un peatón que no se movió
-en cuatro segundos. Con el umbral de 0,3 m/s se pierde el **9 %** de los
-instantes (2787 → 2543) y las **19 distancias mínimas siguen adentro de la
-ventana**: el cruce nunca se recorta. El error poblacional sin capa baja de
-3,05 a 2,73 m² y el calibrado, de 1,70 a 1,48 m².
+2. **Tramo del corredor**: del primer al último cuadro en que los dos
+   peatones están en `1,0 m ≤ x ≤ 7,7 m`.
 
 De esa ventana salen, por peatón, las condiciones que el enunciado fija:
 posición y velocidad iniciales (la velocidad, como diferencia finita sobre 5
 cuadros: una diferencia entre cuadros consecutivos mide el ruido del
-seguimiento, 0,08 m/s sobre una rapidez de 0,9), target final (la última
-posición medida) y rapidez deseada (el largo del camino medido sobre su
-duración).
-
-Los **huecos de seguimiento** que quedan adentro —uno solo de los 38 peatones,
-32 instantes— **no se interpolan**: el agente se simula igual, porque hace
-falta para acoplarlo con el otro, pero el error no se evalúa en los instantes
-sin muestra.
+seguimiento), target final (la última posición medida) y rapidez deseada (el
+largo del camino medido sobre su duración).
 
 El peatón que el LEEME deja sin identificar en la prueba 2 (`sale izquierda
 V?`) es el **id 1000**: es la única trayectoria de esa ventana que va de
@@ -262,30 +251,65 @@ izquierda a derecha y no está asignada a ninguna otra prueba. Queda anotado en
 
 ### El recorte de la ventana
 
-El umbral absoluto de `--arranque` saca el tiempo parado, pero casi nada más:
-los peatones caminan entre 1,2 y 1,6 m/s, así que 0,3 m/s es el 20 % del ritmo
-de uno y el 25 % del de otro. La cátedra marcó que con esa ventana los targets
-quedan mal definidos, y es cierto: `v_d` queda en el 76 % de la rapidez con la
-que el peatón camina y hay targets en `y = 3,48` cuando el corredor está en
-`y ≈ 2`. El motor tiene dos perillas más, **apagadas por omisión** para que los
-números entregados sigan saliendo iguales:
+La ventana que declara el LEEME es mucho más larga que el cruce: al principio
+los peatones todavía están en la fila (parados, o caminando hacia la cabecera)
+y al final frenan y doblan hacia la fila de la vuelta siguiente. Si eso queda
+adentro, las condiciones que el enunciado saca de la trayectoria salen mal: la
+rapidez media —que es el módulo de la velocidad deseada— queda por debajo de
+la que el peatón camina, y el target final —la última posición medida— cae
+fuera del corredor.
 
-| opción | qué pide | por qué |
-|---|---|---|
-| `--ritmo β` | que los dos midan al menos `β` veces **su propio** ritmo de crucero (percentil 75 de su rapidez medida) | recorta los **dos** extremos, que es lo que el umbral absoluto no hace: con `β = 0,75` la rapidez media de la ventana pasa a ser la rapidez con la que el peatón camina |
-| `--corredor Δ` | que los dos estén pisando el corredor, `\|y − 2\| ≤ Δ` | el criterio de rapidez mira *cuánto* camina el peatón y no *por dónde*, y hay un tramo de fila que se camina rápido: salir de la fila hacia el corredor. De los 19 eventos le pasa a uno solo, el **14** |
+El recorte es **una restricción sobre el eje `x`, la misma para los 19
+eventos**. Sale de mirar las 38 trayectorias enteras superpuestas
+(`slides-images/slide-03-eventos-trayectorias.png`): se ve de dónde parten
+todos. Las cabeceras de las dos filas están en `x ≈ 0,6 m` (donde esperan los
+que salen por la izquierda) y en `x ≈ 8,1 m` (los de la derecha), y entre una y
+otra los peatones caminan por el corredor. El tramo que se simula es
 
-El eje `y = 2` lo declara el LEEME ("se cruzan por y ~ 2 m") y lo confirma el
-archivo crudo: el histograma de `y` es bimodal, con unas 6300 muestras en el
-corredor y unas 8800 debajo de `y = 0,5`, que son las dos filas. Las filas
-están **adentro** del rectángulo filmado (`x` de 0,08 a 11,40 m, `y` de −0,69 a
-3,73 m): lo que sobra de la ventana es fila filmada, no seguimiento fuera de
-cuadro.
+```
+1,0 m ≤ x ≤ 7,7 m        (0,4 m adentro de cada cabecera)
+```
 
-Los dos están medidos en `ESTUDIO.md` §1 y §3, con `make recorte`,
-`make barrido-recorte` y `make corredor`, que escriben en `data/recorte/` y
-`data/corredor/` sin tocar nada de la entrega. Para correr todo con los dos
-puestos: `make todo RITMO=0.75 CORREDOR=0.5`.
+y la ventana de un evento empieza cuando el último de los dos entra al tramo y
+termina cuando el primero de los dos sale. Es lo que pidió la cátedra en la
+consulta del 11/11 (`FEEDBACK.md`): un rango fijo leído de la figura, en lugar
+del criterio anterior (una fracción del percentil 75 de la rapidez de cada
+peatón más una banda en `y`), que se sacó entero.
+
+Con ese tramo (`make eventos-figuras`):
+
+| | |
+|---|---|
+| instantes | 1346 de los 3941 que declara el LEEME (34 %) |
+| `Nm` por evento | 42 a 80 (2,8 a 5,3 s) |
+| `v_d` | 1,15 a 1,63 m/s, media 1,32 |
+| ángulo entre `v(0)` y la recta al target | mediana 5°, máximo 29° |
+| `y` del target final | 1,68 a 2,22 m (el corredor está en `y ≈ 2`) |
+| el cruce cae en | entre el 47 % y el 80 % de la ventana |
+| huecos de seguimiento adentro | ninguno |
+
+El evento 1 es el más corto (`Nm = 42`) porque al peatón 36 se le corta el
+seguimiento 32 cuadros justo después del cruce: su última muestra antes del
+hueco está en `x = 3,45 m`, y cuando reaparece ya está parado en la fila. El
+cruce queda adentro; lo que falta es la salida.
+
+**Cuánto depende el resultado del tramo** (`make ventana`, grilla de 41 × 31):
+
+| tramo de `x` (m) | `Nm` medio | métrica 1: óptimo, `<E>`, cuánto baja | métrica 2: óptimo, `<E>`, cuánto baja |
+|---|---|---|---|
+| 0,80 a 7,90 | 80 | (2,0 s, 0,12 m) · 0,109 · −92 % | (2,0 s, 0,12 m) · 0,027 · −96 % |
+| 1,00 a 8,00 | 72 | (2,0 s, 0,14 m) · 0,076 · −92 % | (1,5 s, 0,14 m) · 0,027 · −94 % |
+| **1,00 a 7,70** | **71** | **(2,1 s, 0,14 m) · 0,063 · −93 %** | **(1,5 s, 0,14 m) · 0,019 · −94 %** |
+| 1,25 a 7,45 | 62 | (1,3 s, 0,18 m) · 0,042 · −94 % | (1,3 s, 0,18 m) · 0,017 · −94 % |
+| 1,50 a 7,20 | 55 | (4,0 s, 0,08 m) · 0,019 · −96 % | (4,0 s, 0,12 m) · 0,010 · −94 % |
+| 2,00 a 6,70 | 42 | (4,0 s, 0,06 m) · 0,011 · −95 % | (4,0 s, 0,12 m) · 0,008 · −90 % |
+
+`<E>` baja al acortar la ventana porque una trayectoria más corta acumula menos
+error; lo que se compara es **cuánto baja la capa el error**, y eso es entre
+90 % y 96 % con cualquiera de los seis tramos. El margen `d_s` del óptimo se
+mueve entre 0,06 y 0,18 m, y `t_a` salta entre 1,3 y 4 s, que es lo esperable
+de un parámetro que queda determinado sólo por abajo (ver el ítem b). El tramo
+no se eligió por el error: se eligió por la figura.
 
 ### Integración
 
@@ -297,14 +321,20 @@ contacto. El primer paso usa `a(−Δt) = a(0)`.
 El paso es `dt = Δt_exp / n` con `n` **entero**, de modo que cada instante
 experimental cae exactamente en un paso de la simulación y las dos
 trayectorias se comparan sin interpolar. `make convergencia` barre `n` de 1 a
-512: la tolerancia del 0,01 % contra el paso más fino se cumple desde `n = 16`
-y se usa **`n = 64`** (`dt = 1,04 ms`), que ya está en el piso de 0,001 % y
-hace que el barrido fino entero tarde un minuto.
+512 y mide cuánto se aparta `<E>` del valor del paso más fino: 1,5 % con
+`n = 1`, 0,3 % con `n = 16`, **0,11 % con `n = 64`** y 0,005 % con `n = 128`.
+Se usa **`n = 64`** (`dt = 1,04 ms`): 0,11 % es cien veces menos que el error
+estándar de `<E(1)>` entre eventos (11 %), y el barrido fino entero tarda medio
+minuto. La convergencia no es monótona (de `n = 2` a `n = 4` el apartamiento
+sube de 0,7 % a 1,4 %), así que se informa el valor y no un orden.
 
 ### Salida
 
 - `sweep` con `--p1 0:8:33` (`make barrido` lo corre aparte, en la `p2` de cada
   óptimo) es el barrido largo con el que se justifica el techo de la grilla.
+- `pairs` escribe `pares.txt`: por evento y por métrica, el óptimo de cuatro
+  parámetros y el de dos sobre la misma grilla. `asymmetry` escribe un
+  `errores.txt` como el de `sweep`, con `(d_s, α)` en lugar de `(p1, p2)`.
 - `events` escribe `eventos_resumen.txt`: una línea por evento con la ventana,
   las muestras de cada peatón y sus condiciones iniciales, target y rapidez
   deseada.
@@ -334,16 +364,22 @@ informó el motor, para que el camino corto esté verificado contra el largo.
 | Script | Ítem | Qué hace |
 |---|---|---|
 | `common.py` | — | lectura de los archivos del motor y del archivo crudo de la cátedra, las dos métricas instante por instante, promedios poblacionales, estilos `informe`/`diapositiva` y `save()` con coma decimal en los ejes |
-| `events.py` | datos | las 38 trayectorias medidas en el plano y la distancia entre los dos peatones de cada evento contra el tiempo; por consola, la tabla de los 19 eventos |
+| `events.py` | datos | las 38 trayectorias medidas enteras con el tramo del recorte marcado, y la distancia entre los dos peatones de cada evento contra el tiempo; por consola, la tabla de los 19 eventos y lo que deja la ventana |
+| `window.py` | datos | la tabla de `make ventana`: la calibración con otros tramos de `x` |
 | `convergence.py` | dt | apartamiento relativo de `<E>` contra `dt` en doble logarítmica, con la tolerancia y el paso usado marcados |
-| `trajectory.py` | a | por evento: trayectorias medidas y simuladas superpuestas (con la corrida sin capa de fondo y el cruce marcado en las dos), el observable primario `e(t)` de las dos métricas con su promedio temporal, y la distancia entre los dos peatones con `2r` y `D` marcados |
-| `animate.py` | a | animación del evento (un cuadro por instante medido: a 15 cuadros por segundo corre en tiempo real) y cuadro fijo con `--cruce`, congelado en el instante de mínima aproximación simulada |
-| `population.py` | b | mapa de `<E>(p1,p2)` con escala de color de potencia y curvas de nivel en múltiplos del mínimo, el óptimo y el contorno de la región compatible; los dos cortes por el óptimo con barras de error y la franja de los valores que empatan |
-| `individual.py` | c | los 19 óptimos individuales en el plano `(p1,p2)` con el poblacional marcado, y el error de cada evento con los parámetros poblacionales contra los propios |
-| `residual.py` | c | de dónde viene el error que queda: las **dos poblaciones** de eventos (los que ya caminan por el corredor y los que salen de la fila, separadas por el ángulo entre `v(0)` y el camino nominal), `E(1)_m` abierto en la componente a lo largo del camino nominal (ritmo, o ruta en los de la fila) y la perpendicular (forma), y el desvío lateral en el cruce medido contra simulado, que dice si el modelo eludió por el mismo lado |
-| `alternatives.py` | capa | la tabla y la figura de las tres capas de campo contra la predictiva: óptimo de cada una en su grilla, error por población y diferencia pareada |
-| `support.py` | apoyo | las animaciones de apoyo: un cruce sintético cabeza a cabeza con tres `p2` a la vez, dibujando lo que la capa calcula (posiciones predichas en `τ*`, `d*`, target temporal), y el evento 10 con cada parámetro recorriendo su rango al lado del corte de `<E>` (video y resumen estático con cuatro valores superpuestos) |
+| `representative.py` | a | las trayectorias de los cuatro eventos representativos en una sola figura: medida, simulada con la capa y simulada sin capa |
+| `trajectory.py` | a | por evento: trayectorias medidas y simuladas superpuestas, el observable primario `e(t)` de las dos métricas con su promedio temporal, y la distancia entre los dos peatones con `2r` y `D` marcados |
+| `animate.py` | a | animación del evento (un cuadro por instante medido: a 15 cuadros por segundo corre en tiempo real) y cuadro fijo con `--cruce`, congelado en el último instante en conflicto antes del cruce simulado |
+| `mosaico.py` | a | los 19 eventos animados a la vez, un panel por evento: la verificación a ojo de que cada ventana es el cruce y no la fila |
+| `population.py` | b | mapa de `<E>(p1,p2)` (escala logarítmica, con el óptimo marcado y nada más); los dos cortes por el óptimo con barras de error y la franja de los valores que empatan; el barrido largo de `p1` |
+| `individual.py` | c | histograma de los 19 óptimos individuales de cada parámetro con una línea vertical en el óptimo global, y el error de cada evento con los parámetros poblacionales contra los propios |
+| `pares.py` | c opcional | histograma de los 38 óptimos por peatón con la línea del óptimo global, y el error de cada evento con uno, dos y cuatro juegos de parámetros |
+| `residual.py` | c | de dónde viene el error que queda: `E(1)_m` abierto en la componente a lo largo del camino nominal (ritmo) y la perpendicular (forma), y el desvío lateral en el cruce medido contra simulado, que dice si el modelo eludió por el mismo lado |
+| `alternatives.py` | capa | la tabla y la figura de las tres capas de campo contra la predictiva: óptimo de cada una en su grilla y diferencia pareada |
+| `explain.py` | apoyo | la capa explicada paso a paso: el esquema de la detección y del target temporal armado de a un elemento, con la fórmula de cada paso al pie (video, GIF y un cuadro por paso) |
+| `support.py` | apoyo | las otras animaciones de apoyo: un cruce sintético cabeza a cabeza con tres `p2` a la vez, dibujando lo que la capa calcula (posiciones predichas en `τ*`, `d*`, target temporal), y el evento 10 con cada parámetro recorriendo su rango al lado del corte de `<E>` |
 | `crossval.py` | d | validación cruzada: distribución del error de validación contra el del ítem b, el par calibrado en cada partición y el error contra el tamaño del conjunto de entrenamiento; también deja-uno-afuera |
+| `asymmetry.py` | extra | el reparto de la elusión: `<E>(α)`, histograma del `α` de cada evento con la línea del óptimo global, y `α` calibrado contra `α` medido en las trayectorias |
 | `check.py` | — | validación de las corridas: recalcula las dos métricas, verifica que la grilla temporal sea la experimental y que las condiciones iniciales sean las medidas, e informa el solapamiento y el exceso de rapidez (que miden cuánto contacto queda) |
 
 El nombre de cada eje es el **símbolo del enunciado con su unidad**
@@ -354,59 +390,94 @@ adentro del gráfico sin tapar datos.
 Una **barra de error** sobre `<E>` es el error estándar de la media entre
 eventos, `σ/√M`. Para decidir qué pares **empatan** con el óptimo esa barra no
 sirve: mide la dispersión entre eventos, que es enorme comparada con las
-diferencias entre pares, y con ella el 70 % de la grilla "empata". Como todos
+diferencias entre pares. Como todos
 los pares se evalúan sobre los **mismos** 19 eventos, lo que corresponde es la
 diferencia **pareada**: un par empata si la media de `E_m(p) − E_m(p*)` no
 supera su propio error estándar.
 
 ## Resultados
 
+Todo con la ventana `1,0 m ≤ x ≤ 7,7 m`, 19 eventos, `dt = Δt_exp/64`.
+
+### Ítem a: qué hace la capa
+
+| | sin capa (`p1 = 0`) | con la capa calibrada (2,15 s, 0,13 m) |
+|---|---|---|
+| eventos con contacto entre los dos agentes | **19 de 19** (solapamiento de hasta 4,4 cm) | **0 de 19** |
+| `<E(1)>` | 0,874 m² | 0,062 m² |
+| `<E(2)>` | 0,323 m² | 0,022 m² (0,019 con su propio óptimo) |
+| elude por el mismo lado que las personas | — | **18 de 19** (19 de 19 con el óptimo de la métrica 2) |
+
+Los cuatro eventos que se muestran (`EVENTOS_FIG`):
+
+| evento | por qué | distancia mínima medida | simulada con capa | sin capa | `E(1)_m` con capa |
+|---|---|---|---|---|---|
+| **10** | el que más gana con la capa (`E(1)_m` de 1,91 a 0,068 m²) | 0,63 m | 0,53 m | 0,48 m | 0,068 m² |
+| **5** | el cruce medido más ajustado | 0,49 m | 0,58 m | 0,47 m | 0,055 m² |
+| **14** | el cruce medido más holgado | 0,92 m | 0,57 m | 0,47 m | 0,037 m² |
+| **17** | el único en que el modelo elude por el lado opuesto | 0,57 m | 0,51 m | 0,46 m | 0,155 m² |
+
+El 5 y el 14 juntos dicen lo que el modelo no puede hacer: las personas
+pasaron a 0,49 y a 0,92 m y el modelo pasa siempre a `≈ D`, porque **la
+distancia de paso es una sola para todos los pares**.
+
 ### Ítem b: calibración poblacional
 
 | | métrica 1 (iguales tiempos) | métrica 2 (punto más cercano) |
 |---|---|---|
-| sin capa (`p1 = 0`) | 2,735 m² (RMS 1,65 m) | 0,838 m² (RMS 0,92 m) |
-| óptimo | **2,50 s, 0,070 m** | **3,85 s, 0,050 m** |
-| `<E>` en el óptimo | 1,477 ± 0,253 m² (RMS 1,22 m) | 0,314 ± 0,074 m² (RMS 0,56 m) |
-| cuánto baja la capa | **46 %** | **63 %** |
-| región compatible | `p1` 0,85–4,00 s, `p2` 0,05–0,42 m (1482 pares) | `p1` 2,95–4,00 s, `p2` 0,02–0,09 m (129 pares) |
-| distancia de paso `D = 2r + p2` | 0,570 m | 0,550 m |
+| sin capa (`p1 = 0`) | 0,874 m² (RMS 0,93 m) | 0,323 m² (RMS 0,57 m) |
+| óptimo | **2,15 s, 0,13 m** | **1,50 s, 0,14 m** |
+| `<E>` en el óptimo | 0,0617 ± 0,0067 m² (RMS 0,25 m) | 0,0191 ± 0,0017 m² (RMS 0,14 m) |
+| cuánto baja la capa | **93 %** | **94 %** |
+| valores que empatan con el óptimo | `p1` 1,35–4,00 s, `p2` 0,07–0,22 m | `p1` 1,50–4,00 s, `p2` 0,08–0,26 m |
+| distancia de paso `D = 2r + p2` | 0,63 m | 0,64 m |
 
-Los dos óptimos difieren en `p1` y coinciden en `p2`, e **intercambiarlos
-cuesta menos del 2 %** en cualquiera de las dos métricas: las dos eligen
-esencialmente la misma capa. La diferencia es estadísticamente significativa
-con el test pareado —las dos superficies se miden sobre los mismos 19
-eventos— pero irrelevante en magnitud.
+Los dos óptimos coinciden en `p2` y difieren en `p1`. Usar el óptimo de la
+métrica 2 cuesta un 1,9 % de `<E(1)>`; al revés, un 18 % de `<E(2)>`.
 
-El techo de la grilla, `p1 = 4 s`, se verifica con un barrido aparte hasta 8 s
-(`data/barrido/p1largo`, figura `techo_p1`): entre 4 y 8 s la diferencia
-pareada de `<E>` es `+0,05 ± 0,04 m²` con la métrica 1 y `0,000 ± 0,007 m²`
-con la 2, compatible con cero. Con la rampa de urgencia `p1` sigue entrando en
-`w` aunque el conflicto ya se detecte desde el primer instante, así que la
-superficie nunca es exactamente plana; pero lo que se mueve es menos que lo que
-se puede resolver con 19 eventos.
+`p1` queda determinado **sólo por abajo**: `<E(1)>` cae de 0,87 a 0,07 m²
+entre 0 y 1,5 s y después es plano (0,065 m² en 4 s). Tiene una explicación
+geométrica: al empezar el evento los dos peatones están a unos 6,2 m y se
+acercan a entre 2,1 m/s (todavía acelerando) y 2,6 m/s, así que faltan entre
+2,4 y 3 s para el cruce; con más anticipación que eso el conflicto se declara
+desde el primer instante, y `p1` sólo entra a través del peso de urgencia. El techo de la grilla se verifica
+con un barrido aparte hasta 8 s (`data/barrido/p1largo`, figura `techo_p1`):
+entre 4 y 8 s `<E>` se mueve un 2,5 % (métrica 1) y un 1,3 % (métrica 2).
 
-`p1` queda determinado **sólo por abajo**: `<E>` cae de 2,73 a 1,5 m² entre 0 y
-1,2 s y después es plano dentro del error pareado. Es físico y no un artefacto
-de la parametrización: con más de un segundo de anticipación el agente ya llega
-a correrse lo que necesita, y adelantar la reacción no cambia por dónde pasa.
-Las cuatro variantes de la capa (tabla de arriba) dan la misma meseta. `p2` sí
-tiene un mínimo claro y sube monótono después: es el parámetro que fija por
-dónde pasa.
+La curva no es lisa: tiene **escalones** en `p1 ≈ 1,5` y `2,2 s`. Son dos
+eventos, el 17 y el 16, en los que el lado por el que elude el modelo cambia
+con `p1` (arrancan casi alineados, y de frente el lado lo decide un
+corrimiento de centímetros). Verificado corriendo los dos con `p2 = 0,13 m`:
+hasta `p1 = 1,5 s` los dos eluden por el lado de las personas; desde 1,8 s el
+17 pasa al opuesto, y desde 2,3 s también el 16. El mínimo global de cada
+métrica cae donde los dos (1,50 s), o uno de los dos (2,15 s), quedan bien.
+
+`p2` sí tiene un mínimo claro y sube monótono después: es el parámetro que
+fija por dónde se pasa.
 
 ### Ítem c: calibración individual
 
 | | métrica 1 | métrica 2 |
 |---|---|---|
-| `p1` individual (mediana, rango) | 1,35 s (0,00–4,00) | 3,40 s (0,00–4,00) |
-| `p2` individual (mediana, rango) | 0,050 m (0,000–0,480) | 0,050 m (0,000–0,600) |
-| eventos con `p1 = 0` | 4 de 19 | 2 de 19 |
-| `<E_m>` con los poblacionales | 1,477 m² | 0,314 m² |
-| `<E_m>` con los individuales | 1,219 m² | 0,296 m² |
-| **cuánto se gana** | **17,5 %** | **5,9 %** |
+| `p1` individual (mediana, rango) | 4,00 s (1,50–4,00) | 4,00 s (1,45–4,00) |
+| eventos con `p1` en el borde de la grilla (4 s) | 14 de 19 | 16 de 19 |
+| `p2` individual (mediana, rango) | 0,07 m (0,03–0,35) | 0,14 m (0,03–0,39) |
+| eventos con `p1 = 0` | ninguno | ninguno |
+| `<E_m>` con los poblacionales | 0,0617 m² | 0,0191 m² |
+| `<E_m>` con los individuales | 0,0481 m² | 0,0140 m² |
+| **cuánto se gana** | **22 %** (pareado 0,014 ± 0,006) | **27 %** (pareado 0,0051 ± 0,0004) |
 
-Es poco para 19 pares de parámetros contra uno. El error que queda **no está en
-los parámetros**.
+Se muestran como histograma de cada parámetro con una línea vertical en el
+óptimo global. Lo que se lee:
+
+- **En `p1` casi todos se van al borde**: evento por evento, más anticipación
+  nunca molesta. El óptimo global queda en 2,15 s (o 1,50 s) por los dos
+  eventos de los escalones, no porque haya un tiempo de anticipación preferido.
+- **En `p2` cada par tiene el suyo**, de 0,03 a 0,39 m: es la misma dispersión
+  que tiene la distancia mínima medida (0,49 a 0,92 m). El global es un
+  compromiso, y eso es lo que se gana al individualizar.
+- Casi la mitad de la ganancia de la métrica 1 es **un solo evento**, el 17
+  (0,155 → 0,043 m²): con sus propios parámetros elude por el lado correcto.
 
 ### Ítem c opcional: los parámetros por peatón
 
@@ -419,107 +490,131 @@ acoplados**, así que el error de cada peatón depende también de los parámetr
 del otro (si el de la izquierda se corre más, el de la derecha necesita
 correrse menos). El mínimo hay que buscarlo en la grilla de los cuatro a la
 vez, que es lo que hace el comando `pairs` del motor: `425 × 425 = 180 625`
-combinaciones por evento, `3,4` millones de corridas en total (25 min para la
-ventana recortada, 58 para la de la entrega). Se minimiza `E_m`, el promedio
-sobre los 2 peatones, que es lo que el enunciado define como error del evento.
+combinaciones por evento, 3,4 millones de corridas en total (36 min). Se
+minimiza `E_m`, el promedio sobre los 2 peatones, que es lo que el enunciado
+define como error del evento.
 
 La grilla es más gruesa que la de la calibración poblacional —`p1` en 17
 valores de 0 a 4 s, `p2` en 25 de 0 a 0,6 m— porque el costo va al cuadrado.
 Para que la comparación diga algo, **los tres juegos se miden sobre esa misma
 grilla**: una grilla más fina baja el error de los tres a la vez. Por eso el
-"2 por evento" de esta tabla no es exactamente el 1,219 m² de arriba, que sale
-de la grilla fina.
+"poblacional" y el "2 por evento" de esta tabla no son exactamente los de
+arriba, que salen de la grilla fina (en esta grilla, con `p1` de a 0,25 s, el
+óptimo poblacional de la métrica 1 cae en 4,00 s y 0,10 m).
 
 | | métrica 1 | métrica 2 |
 |---|---|---|
-| poblacional (1 juego) | 1,483 m² | 0,314 m² |
-| 2 por evento (ítem c) | 1,220 m² (−18 %) | 0,296 m² (−6 %) |
-| **4 por evento (opcional)** | **1,171 m² (−4 % más)** | **0,278 m² (−6 % más)** |
-| ganancia pareada, 4 contra 2 | 0,049 ± 0,021 m² (2,3 σ) | 0,018 ± 0,006 m² (2,8 σ) |
-| los dos peatones eligen el mismo par | 2 de 19 | 1 de 19 |
+| poblacional (1 juego) | 0,0634 m² | 0,0192 m² |
+| 2 por evento (ítem c) | 0,0484 m² (−24 %) | 0,0141 m² (−27 %) |
+| **4 por evento (opcional)** | **0,0433 m² (−11 % más)** | **0,0097 m² (−31 % más)** |
+| ganancia pareada, 4 contra 2 | 0,0051 ± 0,0012 m² (4,3 σ) | 0,0044 ± 0,0011 m² (4,1 σ) |
+| los dos peatones eligen el mismo par | 0 de 19 | 1 de 19 |
 
-Dos cosas que decir:
+Se muestra como histograma de los 38 óptimos de cada parámetro, con la línea
+vertical en el óptimo global del ítem b. Lo que se lee:
 
-1. **Los dos peatones de un par casi nunca quieren los mismos parámetros**
-   (2 de 19 con la métrica 1, 1 de 19 con la 2). Eso no es ruido del ajuste:
-   es la misma asimetría que se mide directamente en las trayectorias (en cada
-   par uno de los dos cede casi todo, ver `ESTUDIO.md` §2).
-2. **Pero se gana poco**: 4 % más con la métrica 1 y 6 % más con la 2, contra
-   el 18 % y el 6 % que ya había dado individualizar por evento. Duplicar los
-   parámetros del modelo compra menos que la primera individualización. Con la
-   ventana recortada el balance se da vuelta —individualizar por peatón gana
-   11 % más con la métrica 1 y **33 %** más con la 2, contra 6 % y 14 % de
-   individualizar por evento— que es lo esperable: sobre la ventana de la
-   entrega los parámetros se gastan compensando targets mal puestos, no
-   describiendo la elusión.
+1. **Los dos peatones de un par casi nunca quieren los mismos parámetros** (0
+   de 19 con la métrica 1, 1 de 19 con la 2). Es la misma asimetría que se
+   mide directamente en las trayectorias y que el extra de `α` describe con un
+   solo número: en cada par uno de los dos cede más.
+2. **En `p1`, 29 de los 38 peatones piden 3,5 s o más**, igual que en el ítem
+   c; en `p2`, 30 de los 38 quedan en 0,15 m o menos.
+3. **Con la métrica 2 se gana de verdad**: 31 % más que con dos por evento.
+   Con la métrica 1, 11 % más.
 
-Y la contra, la misma que con `α`: **describe pero no predice**. Son cuatro
-números por evento, así que para un par nuevo no hay con qué estimarlos. Lo
-que se valida en el ítem d sigue siendo el modelo poblacional de dos.
+Y la contra: **describe pero no predice**. Son cuatro números por evento, así
+que para un par nuevo no hay con qué estimarlos. Lo que se valida en el ítem d
+es el modelo poblacional de dos.
 
 ### De dónde viene el error que queda
 
-**Los eventos son dos poblaciones.** El ángulo entre la velocidad inicial
-medida de cada peatón y su camino nominal (del arranque al target final) es
-bimodal: o es menor que 32° o mayor que 60°, sin nada en el medio. En 10
-eventos los dos peatones **ya caminan por el corredor** y en 9 al menos uno
-**sale de la fila**, perpendicular al corredor (eventos 6, 7, 8, 9, 11, 13, 14,
-18 y 19; el recorte de la ventana a `|v| ≥ 0,3 m/s` saca el tiempo parado,
-pero no el tramo en que caminan por la fila). En los segundos la recta al
-target es la **ruta equivocada** —la persona sube por la fila y recién
-después dobla al corredor— y eso lo fija la condición del enunciado para el
-target, no la capa de elusión:
+Con los parámetros poblacionales de la métrica 1:
 
-| con los parámetros poblacionales | ya en el corredor (10) | sale de la fila (9) |
-|---|---|---|
-| `<E(1)>` | 0,78 m² | 2,25 m² |
-| `<E(2)>` | **0,08 m²** | **0,57 m²** |
-| mismo lado que las personas | 6 de 10 | 6 de 9 |
+- **El 61 % de `<E(1)>` va a lo largo del camino nominal** (0,038 de 0,062
+  m²): es **ritmo**, el agente camina a velocidad deseada constante y las
+  personas aceleran al salir y frenan al llegar. La forma —lo que la capa
+  decide— es el 39 %.
+- **El modelo elude por el mismo lado que las personas en 18 de los 19
+  eventos**, sin ninguna regla de lado: lo decide la geometría recíproca con
+  las velocidades del momento. La excepción es el 17. (En 14 de los 19 cruces
+  las personas pasaron cada una por su derecha.)
+- **Lo que no reproduce es la dispersión de la distancia de paso.** El desvío
+  lateral en el cruce medido va de 0,49 a 0,92 m (media 0,71) y el simulado, de
+  0,44 a 0,58 (media 0,53): en la figura del lado los puntos quedan en una
+  franja horizontal.
+- **Contacto.** Sin la capa hay contacto en los 19 eventos (solapamiento de
+  hasta 4,4 cm); con la capa calibrada, en ninguno. En los datos, un solo
+  evento tiene distancia mínima por debajo de `2r`.
 
-Calibrando **sólo con los 10 del corredor** (`population.py --clase corredor`),
-el óptimo de la métrica 2 es `(4,00 s, 0,070 m)` con `<E(2)> = 0,078 m²` (RMS
-0,28 m), **un 92 % menos que sin capa**, y el de la métrica 1 `(4,00 s, 0,080
-m)` con 0,663 m² (−78 %): el mismo `p2` que con los 19, y la capa hace casi
-todo el trabajo. Sólo con los 9 de la fila, la capa apenas baja el error un 19 %
-y el óptimo se va a `p2 ≈ 0`. Como referencia, la calibración del AA-CPM de la
-cátedra sobre su propio experimento de dos peatones da un error medio de 0,24 m
-(Martin y Parisi 2024, distancia media al punto más cercano): el mismo orden
-que el RMS de 0,28 m del corredor.
+Como referencia, la calibración del AA-CPM de la cátedra sobre su propio
+experimento de dos peatones da un error medio de 0,24 m (Martin y Parisi 2024,
+distancia media al punto más cercano): el RMS de la métrica 2 acá es 0,14 m.
 
-Con los parámetros poblacionales de la métrica 1, además:
-
-- **En el corredor, el 88 % de `<E(1)>` va a lo largo del camino nominal** (0,69
-  de 0,78 m²): es **ritmo**, el agente camina a velocidad deseada constante y las
-  personas aceleran, frenan y vuelven a acelerar. La forma —lo que la capa
-  decide— es el 12 %. En los de la fila la componente longitudinal también
-  lleva la ruta (73 %) y la perpendicular es cinco veces mayor que en el
-  corredor. Sobre los 19, 77 % y 23 %.
-- **El modelo elude por el mismo lado que las personas en 12 de los 19
-  eventos** (6 de 10 en el corredor). Esos 12 tienen `<E(1)> = 1,32 m²` y los
-  otros 7, 1,75 m². La capa decide el lado con la geometría recíproca a partir
-  de las velocidades del momento, y de frente lo decide un corrimiento de
-  centímetros; las personas lo deciden antes y por otros motivos: en 14 de los
-  19 cruces pasaron **cada uno por su derecha**, que es una convención que el
-  modelo no tiene. El evento 3 es el caso limpio: en el corredor, la elusión
-  correcta (pasan a 0,57 m contra 0,60 m medidos) pero en espejo.
-- **Contacto.** Sin la capa hay contacto en 17 de los 19 eventos (solapamiento
-  de hasta 4,4 cm); con la capa calibrada, en 7 (hasta 0,7 cm). En los datos,
-  un solo evento tiene distancia mínima por debajo de `2r`.
+**Lo que desapareció.** Con la ventana anterior los eventos parecían "dos
+poblaciones" (los que ya caminaban por el corredor y los que salían de la
+fila), el modelo eludía por el lado opuesto en 7 de 19 y quedaba contacto en
+7. Las tres cosas eran consecuencia de la ventana: el evento arrancaba con el
+peatón todavía en la fila y terminaba con el target fuera del corredor. Con el
+recorte en `x` no queda ninguna.
 
 ### Ítem d: validación cruzada
 
 | | métrica 1 | métrica 2 |
 |---|---|---|
-| ítem b (calibra y mide con los 19) | 1,477 m² | 0,314 m² |
-| entrenamiento (500 particiones de 13/6) | 1,466 ± 0,182 m² | 0,315 ± 0,052 m² |
-| validación | 1,554 ± 0,383 m² (**+5,2 %**) | 0,315 ± 0,111 m² (**+0,2 %**) |
-| dejando uno afuera (19 de 18/1) | 1,571 m² (+6,4 %) | 0,316 m² (+0,4 %) |
+| ítem b (calibra y mide con los 19) | 0,0617 m² | 0,0191 m² |
+| entrenamiento (500 particiones de 13/6) | 0,058 ± 0,005 m² | 0,018 ± 0,001 m² |
+| validación | 0,084 ± 0,027 m² (**+36 %**) | 0,026 ± 0,010 m² (**+36 %**) |
+| dejando uno afuera (19 de 18/1) | 0,078 m² (+27 %) | 0,025 m² (+29 %) |
+| sin capa, como referencia | 0,874 m² | 0,323 m² |
 
-Con dos parámetros y 19 eventos **no hay sobreajuste**: lo calibrado sobre una
-parte vale para la otra. El par calibrado sí cambia de partición en partición
-(52 pares distintos en 500 particiones, el más frecuente en el 26 %), y la
-dispersión está casi toda en `p1`: es la misma conclusión que la región
-compatible del ítem b, medida de otra manera.
+El error de validación queda un tercio por encima del del ítem b, y la causa
+es concreta: **los eventos 16 y 17**, los de los escalones. Cuando uno de los
+dos queda en el conjunto de validación, la calibración no tiene cómo saber que
+ese evento necesita un `p1` de un lado u otro del escalón. Separando las
+particiones: si ninguno de los dos está en validación el error es 0,065 m² (un
+5 % sobre el ítem b); si está el 17, 0,100; si están los dos, 0,158. Todas las
+particiones con error de validación mayor que 0,09 m² tienen al 16 o al 17 en
+validación.
+
+En términos absolutos el error de validación sigue siendo **diez veces menor
+que el del modelo sin capa**. El par calibrado cambia poco de partición en
+partición (6 pares distintos en 500, el más frecuente —1,50 s, 0,14 m— en el
+46 %): `p2` se queda entre 0,07 y 0,14 m y `p1` salta entre 1,5, 2,15 y 4 s.
+
+### Extra: el reparto de la elusión (`α`)
+
+Fuera de lo que pide el enunciado; lo propuso la cátedra y pidió mostrarlo al
+final. La capa calibrada es simétrica: los dos peatones se corren lo mismo. Se
+le agrega un número, `α`, la fracción de la separación que falta que se lleva
+el peatón que sale de la **izquierda** (el otro se lleva `1 − α`):
+
+```
+T_i* = q_i + w(τ*) · 2 α_i · (D − d*) ŝ,    α_izq = α,  α_der = 1 − α
+```
+
+El factor 2 hace que `α = 0,5` sea exactamente la capa simétrica. Con `t_a` y
+`d_s` en el óptimo de cada métrica (`make asimetria`, `asymmetry.py`):
+
+| | métrica 1 | métrica 2 |
+|---|---|---|
+| simétrica (`α = 0,5`) | 0,0617 ± 0,0067 | 0,0191 ± 0,0017 |
+| `α` global óptimo | **0,625** · 0,0603 (gana 2 %, pareado 0,0014 ± 0,0011) | **0,575** · 0,0188 (gana 1 %, pareado 0,0003 ± 0,0005) |
+| `α` propio de cada evento | 0,0572 (gana 7 %, pareado 0,0045 ± 0,0014) | 0,0155 (gana **19 %**, pareado 0,0036 ± 0,0009) |
+| `α` por evento | media 0,62 · de 0,23 a 0,97 | media 0,58 · de 0,12 a 0,95 |
+| correlación con el `α` medido | r = 0,72 | **r = 0,88** |
+
+- **Como población, la capa simétrica alcanza**: el mejor `α` global está un
+  poco por encima de 0,5 pero gana 1–2 %, dentro del error pareado. Dejar
+  también `d_s` libre no cambia el óptimo.
+- **Par por par el reparto no es parejo**: `α` va de 0,12 a 0,97. En cada par
+  uno de los dos cede más, y cuál cambia de par en par.
+- **El `α` calibrado es el que se mide.** `α` también se puede medir sin
+  simular: la fracción del desvío lateral en el cruce (respecto de la propia
+  recta de arranque a target) que hizo el que sale de la izquierda. Medido da
+  media 0,57, de 0,17 a 0,99, y correlaciona con el calibrado con r = 0,72
+  (métrica 1) y 0,88 (métrica 2). No es un parámetro que absorbe residuo.
+- **Describe pero no predice**: es un número por par, y para un par nuevo la
+  mejor estimación es ≈ 0,5.
 
 ## Presentación
 
@@ -535,45 +630,53 @@ declaración de uso de agentes de IA al final.
 
 Como pide el enunciado, **a la capa de elusión se le dedican tres diapositivas
 seguidas** (la detección del conflicto, el target temporal y los casos límite),
-más la animación de apoyo y la comparación con las capas de campo (`8b`), que
-es más de lo habitual para una introducción matemática. `report/guion.md`
-tiene qué decir en cada diapositiva, con el tiempo de cada una (13:00 en
-total) y un reparto entre los tres expositores.
+más dos animaciones de apoyo y la comparación con las capas de campo, que es
+más de lo habitual para una introducción matemática; la cátedra insistió en la
+consulta en que explicar el algoritmo es donde más tiempo hay que gastar.
+Antes de la capa va la diapositiva que define **cómo se fijan las condiciones
+y el target de cada agente**, que la cátedra pidió pasar a la introducción.
+`report/guion.md` tiene qué decir en cada diapositiva, con el tiempo de cada
+una (13:00 en total) y un reparto entre los tres expositores.
 
-Los esquemas de las diapositivas (el experimento, los dos de la capa de
-elusión, el UML, el bucle, la tabla de parámetros y el esquema del evento)
-están en `report/figuras/*.tikz`; `presentacion.tex` los lee con `\input` y
+Los esquemas de las diapositivas (el experimento, el del evento, los dos de la
+capa de elusión, el UML, el bucle y la tabla de parámetros) están en
+`report/figuras/*.tikz`; `presentacion.tex` los lee con `\input` y
 `make slides-images-tikz` los renderiza sueltos a PNG en `slides-images/`, con
 los mismos colores (`report/comun.tex`). Así en `slides-images/` está **toda**
 imagen que aparece en la charla, numerada por la diapositiva en la que va: es
 la carpeta con la que se arma la presentación a mano en Google Slides.
 
 **La presentación que se expone** se arma en Google Slides con esas imágenes y
-los GIF de `gif/`. La beamer de referencia tiene 34 diapositivas de contenido,
-más de lo que entra en 13 minutos: las prescindibles son, en este orden, 19
-(distancia del evento 10), 24 (cortes de la métrica 2, dejando la comparación
-de óptimos en viñetas), 33 (parámetros por partición), 31 (evento 3, que se
-puede contar sobre la figura del lado), 29 (ritmo y forma, cuya cifra cabe en
-la de las dos poblaciones) y 14 (paso de integración, que puede ser una
-viñeta). Las imágenes con sufijo `b` y `c` (`20b`, `21b`, `27b`, `27c`, `33b`)
-son opcionales: no van en la beamer y están por si hacen falta en una pregunta.
+los GIF de `gif/`. La beamer de referencia tiene 35 diapositivas de contenido,
+más de lo que entra en 13 minutos: las prescindibles son, en este orden, 21
+(distancia del evento 10), 26 (cortes de la métrica 2, dejando la comparación
+de óptimos en viñetas), 35 (parámetros por partición), 33 (evento 17, que se
+puede contar sobre la figura de las cuatro trayectorias), 30 (errores con
+cuatro parámetros, cuya cifra cabe en la 29), 10 (las capas de campo) y 16
+(paso de integración, que puede ser una viñeta). Las imágenes con sufijo `b`
+(`06b`, `07b`, `22b`, `24b`, `27b` a `30b`, `35b`) son opcionales: los cuadros
+finales del GIF paso a paso y las mismas figuras con la otra métrica, por si
+hacen falta en una pregunta.
 
-Después de "Muchas gracias" van **tres diapositivas de apéndice** con las
-libertades que se tomó el agente de IA y que hubo que corregir, una por una,
-como pidió la cátedra en el aviso del 04/11. El registro completo —qué hizo por
-su cuenta, por qué está mal, con qué quedó y el commit de cada corrección— está
-en `IA.md`, y de ahí sale el apéndice. Cada corrección nueva se anota ahí **en
-el momento**: el detalle se pierde rápido.
+Después de "Muchas gracias" van **tres diapositivas de extra** con la
+optimización de `α` (`slide-extra-1` a `3`), que la cátedra pidió mostrar al
+final como un opcional, y **tres de apéndice** con las libertades que se tomó
+el agente de IA y que hubo que corregir, una por una, como pidió la cátedra en
+el aviso del 04/11. El registro completo —qué hizo por su cuenta, por qué está
+mal, con qué quedó y el commit de cada corrección— está en `IA.md`, y de ahí
+sale el apéndice. Cada corrección nueva se anota ahí **en el momento**: el
+detalle se pierde rápido.
 
-Las **animaciones de apoyo** (`make apoyo`) son tres: el cruce sintético cabeza
-a cabeza con tres `p2` a la vez, que muestra en vivo lo que la capa calcula
-(diapositiva 8), y el evento 10 con `p2` y con `p1` recorriendo su rango al
-lado del corte de `<E>` (diapositiva 20). Son GIF para la charla en vivo, igual
-que las cinco animaciones de eventos.
+Las **animaciones de apoyo** (`make apoyo`) son cuatro: la capa explicada paso
+a paso (el esquema de las diapositivas 6 y 7 armado de a un elemento, con la
+fórmula de cada paso), el cruce sintético cabeza a cabeza con tres `p2` a la
+vez (diapositiva 9), y el evento 10 con `p2` y con `p1` recorriendo su rango al
+lado del corte de `<E>` (diapositiva 22). Con los cuatro eventos, el evento 10
+sin capa y los 19 eventos a la vez son **diez GIF** en `gif/`.
 
 Los links de YouTube de la beamer dicen `PENDIENTE-0n`: hay que reemplazarlos
 por los reales en `report/presentacion.tex` (y en la presentación de Google
-Slides) una vez subidos los cinco videos de `youtube/`.
+Slides) una vez subidos los videos de `youtube/`.
 
 **Los videos se suben como "no listado", nunca privados**, y hay que abrir cada
 link desde una ventana de incógnito antes de entregar: en el TP4 la cátedra no

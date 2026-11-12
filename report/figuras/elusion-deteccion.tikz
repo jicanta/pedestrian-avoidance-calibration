@@ -15,8 +15,8 @@
   % Posiciones actuales
   \fill[izquierda] (ri) circle (0.25);
   \fill[derecha]   (rj) circle (0.25);
-  \node[izquierda, anchor=north] at ($(ri)+(0,-0.32)$) {$\vr_i,\ \vv_i$};
-  \node[derecha,   anchor=south] at ($(rj)+(0,0.32)$) {$\vr_j,\ \vv_j$};
+  \node[izquierda, anchor=north] at ($(ri)+(0,-0.32)$) {$i$};
+  \node[derecha,   anchor=south] at ($(rj)+(0,0.32)$) {$j$};
 
   % Velocidades
   \draw[izquierda, very thick, ->] (ri) -- ++(1.35,0.26);
@@ -25,10 +25,8 @@
   % Discos predichos al instante de minima aproximacion
   \draw[izquierda, thick, dashed, fill=izquierda!12] (pi) circle (0.25);
   \draw[derecha,   thick, dashed, fill=derecha!12]   (pj) circle (0.25);
-  \node[izquierda, anchor=north east, inner sep=2pt] at ($(pi)+(-0.1,-0.18)$)
-        {$\vr_i + \vv_i\,\tdca$};
-  \node[derecha, anchor=south west, inner sep=2pt] at ($(pj)+(0.1,0.18)$)
-        {$\vr_j + \vv_j\,\tdca$};
+  \node[gris, anchor=north west, inner sep=2pt] at ($(pi)+(0.35,-0.05)$)
+        {donde estarían en \tdca};
 
   % Separacion predicha
   \draw[<->, very thick, black] (pi) -- (pj);

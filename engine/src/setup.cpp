@@ -6,6 +6,10 @@
 
 namespace {
 
+// Tramo del corredor por omision (m). Ver README, "El recorte de la ventana".
+constexpr double kXMin = 1.0;
+constexpr double kXMax = 7.7;
+
 // El motor se corre tanto desde engine/ como desde la raiz del repositorio
 // (el Makefile de arriba lo llama como engine/build/elusion), asi que los
 // archivos de la catedra se buscan en los dos lugares.
@@ -39,12 +43,11 @@ Experiment experimentFromArguments(const Arguments& arguments) {
   if (arguments.has("pruebas")) {
     labels = integerList("pruebas", arguments.text("pruebas", ""));
   }
-  // --arranque: umbral absoluto (m/s); --ritmo: fraccion del ritmo de crucero
-  // de cada peaton. El recorte usa el mayor de los dos. --corredor: semiancho
-  // (m) de la banda |y - 2| que los dos peatones tienen que estar pisando
-  // (experiment.cpp).
-  return readExperiment(trajectories, table, labels, arguments.number("arranque", 0.3),
-                        arguments.number("ritmo", 0.0), arguments.number("corredor", 0.0));
+  // --xmin y --xmax: el tramo del corredor al que se recorta la ventana de
+  // cada evento (experiment.cpp). Las cabeceras de las dos filas estan en
+  // x = 0,6 m y x = 8,1 m.
+  return readExperiment(trajectories, table, labels, arguments.number("xmin", kXMin),
+                        arguments.number("xmax", kXMax));
 }
 
 void configureLayer(Avoidance& layer, const Arguments& arguments) {

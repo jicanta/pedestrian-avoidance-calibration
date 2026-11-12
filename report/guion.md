@@ -6,9 +6,11 @@ que se arma en Google Slides; los separadores de sección no cuentan). Las
 cifras son las de las figuras mostradas. Lo que va en *"Si preguntan"* no se
 dice: es para contestar.
 
-**Total: 13:00.** Reparto sugerido: expositor A dice 1–9 (4:10), B dice 10–22
-(4:30), C dice 23–34 (4:20). Las prescindibles si hay que acortar están en el
-README (19, 24, 33, 31, 29, 14, en ese orden).
+**Total: 13:00.** La cátedra pidió en la consulta del 11/11 que **explicar el
+algoritmo** sea lo que más tiempo lleve: las diapositivas 5 a 9 y la 12 suman
+4:10, un tercio de la charla. Reparto sugerido: expositor A dice 1–10 (5:05),
+B dice 11–24 (4:00), C dice 25–36 (3:55). Las prescindibles si hay que acortar
+están en el README (21, 26, 35, 33, 30, 10, 16, en ese orden).
 
 ---
 
@@ -19,248 +21,292 @@ README (19, 24, 33, 31, 29, 14, en ese orden).
 
 ## Introducción (separador) — 0:05
 
-- Primero el experimento y el modelo, después la capa de elusión con más
-  detalle que de costumbre, porque es lo que se propone y calibra.
-
-## 2. El experimento — `slide-02-experimento.png` — 0:30
+## 2. El experimento — `slide-02-experimento.png` — 0:25
 
 - Una persona sale de la fila izquierda, otra de la fila de abajo a la
   derecha, y se cruzan de frente alrededor de y = 2 m. La cátedra da las dos
-  trayectorias medidas a 15 cuadros por segundo: 19 eventos, 38 peatones, 2543
-  instantes.
+  trayectorias medidas a 15 cuadros por segundo: 19 eventos, 38 peatones.
 - Pasan a entre 0,49 y 0,92 m, con 2r = 0,5 m: se eluden **sin tocarse**. Lo
   que hay que proponer es una capa de dos parámetros que reproduzca eso.
 
-## 3. Los datos — `slide-03-eventos-trayectorias.png` — 0:25
+## 3. Los datos y el tramo que se simula — `slide-03-eventos-trayectorias.png` — 0:30
 
-- Las 38 trayectorias superpuestas. El arco de elusión es sistemático: el que
-  sale por la izquierda baja y el que sale por la derecha sube.
-- En 14 de los 19 cruces cada uno pasó por su derecha; en 5, al revés. No es
-  una convención estricta, y eso vuelve al final.
+- Las 38 trayectorias enteras. Se ve de dónde parten todos: las cabeceras de
+  las dos filas, en x ≈ 0,6 y 8,1 m.
+- Cada evento se recorta al tramo de 1 a 7,7 m, el mismo para los 19: empieza
+  cuando el último de los dos entra y termina cuando el primero sale. Afuera
+  queda la fila.
+- En 14 de los 19 cruces cada uno pasó por su derecha.
+- *Si preguntan por qué 7,7 y no 8:* la cabecera de la fila derecha está en
+  8,1 m; con 8 la ventana terminaba con el peatón frenando contra la fila. Con
+  seis tramos distintos la capa baja el error entre 90 y 96 %.
 
-## 4. Modelo: SFM sin fuerza social — 0:35
+## 4. Modelo: SFM sin fuerza social — 0:30
 
 - Newton con dos términos: conducción hacia el target (relaja v a la deseada
   en τ = 0,5 s) y contacto granular (normal y fricción), que sólo existe con
-  solapamiento. Sin el término social A·exp(…): es el enunciado.
+  solapamiento. Sin el término social: es el enunciado.
 - Así el modelo **no anticipa**: va derecho al target y la única señal del otro
   es tocarlo. Lo único que decide a dónde va es ê^d, y ahí actúa la capa, y en
   ningún otro lado.
-- El agente se detiene al llegar al target (a menos de un radio).
-- *Si preguntan por qué SFM y no CPM:* las distancias mínimas casi nunca bajan
-  de 2r, así que en CPM sin contacto el agente camina a vd en recta y la
-  trayectoria queda enteramente a cargo de la capa; en SFM el τ le da inercia
-  a la respuesta. Y el dt de SFM es libre, que es lo que permite dividir Δt_exp
-  en partes enteras.
+- *Si preguntan por qué SFM y no CPM:* el τ le da inercia a la respuesta, y el
+  dt de SFM es libre, que es lo que permite dividir Δt_exp en partes enteras.
 
-## 5. Capa (1/3): detección — `slide-05-elusion-deteccion.png` — 0:45
+## 5. Condiciones y target de cada agente — `slide-05-parametros-evento.png` — 0:30
 
-- Con Δr y Δv se extrapolan las dos trayectorias: τ* es el instante de mínima
-  aproximación y d* la separación que habrá ahí.
-- Dos parámetros: p1 = t_a, tiempo de anticipación, y p2 = d_s, margen de
-  espacio personal: D = 2r + d_s es a cuánto se quiere pasar.
+- Cada agente arranca en la posición y con la velocidad medidas en el primer
+  instante de su ventana.
+- Su target final es la **última posición medida dentro del tramo**: queda
+  sobre el corredor. El módulo de la velocidad deseada es la rapidez media de
+  su trayectoria, entre 1,15 y 1,63 m/s.
+- Se simula hasta el último instante medido: entre 2,8 y 5,3 s por evento.
+
+## 6. Capa (1/3): detección — `slide-06-elusion-deteccion.png` + GIF 09 — 1:10
+
+- **Pasar el GIF paso a paso y hablar encima.** Dos peatones en curso de
+  colisión. Se extrapolan las dos trayectorias en línea recta, con las
+  velocidades que tienen ahora, y se mira la distancia entre las dos posiciones
+  extrapoladas mientras avanza τ.
+- El instante en que esa distancia es mínima es τ*, y la distancia, d*. Las dos
+  salen de una cuenta cerrada con Δr y Δv.
+- Los dos parámetros: p1 = t_a, el tiempo de anticipación (sólo se reacciona a
+  lo que va a pasar dentro de t_a), y p2 = d_s, el margen de espacio personal:
+  D = 2r + d_s es a cuánto se quiere pasar.
 - Hay conflicto si 0 < τ* ≤ t_a y d* < D.
 
-## 6. Capa (2/3): el target temporal — `slide-06-elusion-target.png` — 0:50
+## 7. Capa (2/3): el target temporal — `slide-07-elusion-target.png` — 1:00
 
-- q_i es dónde estaría el agente en τ* si siguiera derecho a su target; ŝ es
-  el lado hacia el que los dos ya van a estar corridos; (D − d*) es exactamente
-  la separación que falta.
+- (Sigue el GIF, pasos 5 y 6.) q_i es dónde estaría el agente en τ* si
+  siguiera derecho a su target; ŝ es el lado hacia el que los dos ya van a
+  estar corridos; (D − d*) es exactamente la separación que falta.
 - El target temporal es q_i corrido lateralmente esa separación, pesada por
   la urgencia w = 1 − τ*/t_a. La velocidad deseada sólo cambia de dirección,
   nunca de módulo.
+- El otro hace la misma cuenta y le sale el lado opuesto: se corren hacia
+  lados contrarios sin ponerse de acuerdo.
 
-## 7. Capa (3/3): por qué así — 0:40
+## 8. Capa (3/3): por qué así — 0:35
 
-- Recíproca (los dos calculan lo mismo con ŝ opuesto), continua en los dos
-  bordes del disparo (por w), con el límite correcto cuando el conflicto es
-  inminente (target puramente lateral) y vuelta automática al target final.
+- Recíproca, continua en los dos bordes del disparo (por w), con el límite
+  correcto cuando el conflicto es inminente (target puramente lateral) y vuelta
+  automática al target final.
 - Es la geometría de Karamouzas (Teórica 7) resuelta como "goal temporario"
   y no como fuerza. Diferencia: se predice con las velocidades actuales de los
   dos, así la elusión sale recíproca.
 
-## 8. La capa en acción — `slide-08-capa-en-accion.png` — 0:25 (GIF)
+## 9. La capa en acción — `slide-09-capa-en-accion.png` — 0:25 (GIF 06)
 
 - Cruce sintético, tres márgenes a la vez. Discos punteados: posiciones
   predichas en τ*; trazo: d*; cruz: target temporal. A mayor p2, más lejos del
   camino queda el target.
 
-## 8b. ¿Y con campos? — `slide-08b-alternativas.png` — 0:30
+## 10. ¿Y con campos? — `slide-10-alternativas.png` — 0:25
 
-- Se probaron tres capas más, todas de dos parámetros y como target temporal,
-  con repulsión A·exp(−(d−2r)/B): isotrópica, lateral y predictiva.
-- La isotrópica queda lejos (−52 % contra −63 %): de frente la repulsión no
-  tiene componente lateral, lo mismo que dice la Teórica 7. Las otras dos
-  empatan con la predictiva dentro del error pareado, pero sus óptimos
-  degeneran (B → 0 es un escalón; B = 4,5 m es empujar de costado siempre).
-- *Si preguntan:* la predictiva se queda porque sus dos parámetros tienen
-  unidades y lectura directa, y porque es continua.
+- Se probaron tres capas más, de dos parámetros y como target temporal, con
+  repulsión A·exp(−(d−2r)/B): isotrópica, lateral y predictiva.
+- La isotrópica queda lejos (−66 % contra −94 %): de frente la repulsión no
+  tiene componente lateral. El campo predictivo empata.
+- El lateral da un error algo menor (0,014 contra 0,019 m²), pero con B en el
+  borde de la grilla, 5 m: es empujar de costado siempre.
+- *Si preguntan por qué no se usó el lateral:* no tiene horizonte ni distancia
+  de paso; funciona acá porque hay un solo cruce de frente. La predictiva tiene
+  dos parámetros con unidades y lectura directa.
 
 ## Implementación (separador) — 0:05 (B)
 
-## 9. Motor — `slide-09-motor-uml.png` — 0:25
+## 11. Motor — `slide-11-motor-uml.png` — 0:20
 
 - Avoidance sólo devuelve el target temporal; Model no sabe que existe. El
   motor calcula las dos métricas porque son lo que el barrido minimiza (93 879
   corridas); promedios, óptimos y particiones salen después en Python del mismo
   archivo.
 
-## 10. El bucle y la grilla — `slide-10-bucle.png` — 0:25
+## 12. El algoritmo: el bucle — `slide-12-bucle.png` — 0:30
 
-- Beeman predictor-corrector, porque la fuerza depende de v (conducción y
-  fricción). Δt = Δt_exp/n con n entero: cada instante medido cae exacto en un
-  paso y no se interpola nada.
+- En cada paso: la capa mira a los dos agentes y le da a cada uno su target
+  (el temporal si hay conflicto, el final si no); con ese target sale la
+  velocidad deseada; con ella, la fuerza de conducción más el contacto; y se
+  integra.
+- Beeman predictor-corrector, porque la fuerza depende de v. Δt = Δt_exp/n con
+  n entero: cada instante medido cae exacto en un paso y no se interpola nada.
 
 ## Simulaciones (separador) — 0:05
 
-## 11. Parámetros — `slide-11-parametros-tabla.png`, `slide-11-parametros-evento.png` — 0:30
+## 13. Parámetros — `slide-13-parametros-tabla.png` — 0:20
 
 - Los del modelo son los del paper, salvo el radio que lo fija el enunciado.
-  De cada evento salen r(0), v(0), el target final y vd. Los dos únicos
-  parámetros libres son los de la capa.
+  Los dos únicos parámetros libres son los de la capa.
 
-## 12. Observables — 0:40
+## 14. Observables — 0:35
 
 - Observable primario: el apartamiento instantáneo e(t), al mismo instante
   (métrica 1) o al punto más cercano de toda la simulada (métrica 2). El
   escalar es su promedio temporal; la 1 castiga forma y tiempo de paso, la 2
   sólo la forma. Error de un evento: promedio de sus 2 peatones; poblacional:
   promedio sobre los 19.
-- Barra de error: error estándar de la media entre eventos. Pero para decir
-  qué pares **empatan** con el óptimo se usa la diferencia pareada evento por
-  evento, porque todos los pares se miden sobre los mismos 19.
+- Barra de error: error estándar de la media entre eventos. Para decir qué
+  valores **empatan** con el óptimo se usa la diferencia pareada evento por
+  evento.
 
-## 13. Casos estudiados — `slide-13-eventos-distancia-vs-t.png` — 0:30
+## 15. Casos estudiados — `slide-15-eventos-distancia-vs-t.png` — 0:20
 
-- La ventana de cada evento es la parte en que los dos ya caminan (≥ 0,3 m/s):
-  al principio de varias pruebas uno está parado en la fila y su rapidez media
-  —que es vd— quedaría muy baja. Se pierde el 9 % de los instantes y los 19
-  cruces siguen adentro.
-- Barrido de 81 × 61 pares × 19 eventos, 62 s. Validación cruzada con 500
-  particiones de 13/6.
+- Los 19 eventos sobre su ventana: el cruce cae entre el 47 y el 80 % de la
+  ventana, ninguno queda recortado.
+- Barrido de 81 × 61 pares × 19 eventos, 32 s. Individual por evento y por
+  peatón. Validación cruzada con 500 particiones de 13/6.
 
 ## Resultados (separador) — 0:05
 
-## 14. Paso de integración — `slide-14-convergencia-dt.png` — 0:20
+## 16. Paso de integración — `slide-16-convergencia-dt.png` — 0:15
 
-- La tolerancia del 0,01 % se cumple desde n = 16; se usa n = 64, 1 ms, que
-  ya está en el piso y cuesta un minuto el barrido entero.
+- Con n = 64, 1 ms, ⟨E⟩ se aparta 0,11 % del paso más fino: cien veces menos
+  que el error estándar entre eventos.
 
-## 15. Evento 10 sin capa — `slide-15-animacion-evento10-sin-capa.png` — 0:20 (GIF)
+## 17. Evento 10 sin capa — `slide-17-animacion-evento10-sin-capa.png` — 0:15 (GIF 02)
 
-- Sin capa van derecho y se chocan de frente (0,49 m, menos que 2r); el
-  contacto los separa a los empujones. E(1) = 7,9 m², el peor de los 19.
+- Sin capa van derecho y se chocan de frente (0,48 m, menos que 2r). Pasa en
+  los 19 eventos. E(1) = 1,91 m².
 
-## 16. Evento 10 con capa — `slide-16-animacion-evento10.png` — 0:25 (GIF)
+## 18. Evento 10 con capa — `slide-18-animacion-evento10.png` — 0:20 (GIF 01)
 
-- Conflicto en 36 de 140 instantes, se corren de costado y se cruzan uno
-  arriba y otro abajo. E(1) baja de 7,9 a 1,4 y E(2) de 4,0 a 0,07 m².
+- Conflicto en 29 de 76 instantes, se corren de costado y se cruzan por el
+  mismo lado que las personas. E(1) baja de 1,91 a 0,068 y E(2) de 0,99 a
+  0,019 m². Con la capa no hay contacto en ninguno de los 19.
 
-## 17. Evento 10: trayectorias — `slide-17-evento10-trayectorias.png` — 0:25
+## 19. Cuatro eventos representativos — `slide-19-trayectorias-representativas.png` — 0:35
 
-- Con la capa el arco aparece en el lugar y con la amplitud correctos, aunque
-  en espejo (el lado, al final). Lo que queda es el retraso: vd constante
-  contra personas que aceleran y frenan.
+- El 10: sin capa el desvío lo hace el choque, tarde; con capa, el arco está
+  donde lo hacen las personas.
+- El 5 y el 14: las personas pasaron a 0,49 y a 0,92 m; el modelo, a 0,58 y
+  0,57. La distancia de paso es una sola para todos.
+- El 17: el único en que el modelo elude por el lado opuesto.
 
-## 18. Evento 10: observable primario — `slide-18-evento10-observable.png` — 0:20
+## 20. Evento 10: observable primario — `slide-20-evento10-observable.png` — 0:15
 
-- La métrica 1 se acumula con el retraso; la 2 se queda abajo porque mira sólo
-  la forma: 1,40 contra 0,07 m², un factor 20 que es puro tiempo de paso.
+- La métrica 1 mira también el tiempo de paso; la 2, sólo la forma: 0,068 y
+  0,019 m², un RMS de 26 y 14 cm.
 
-## 19. Evento 10: distancia — `slide-19-evento10-distancia.png` — 0:15
+## 21. Evento 10: distancia — `slide-21-evento10-distancia.png` — 0:10
 
-- El mínimo simulado es 0,50 m, cerca del D = 0,57 que pide la capa; medido,
-  0,63. Y ocurre antes, otra vez por el ritmo.
+- El mínimo simulado es 0,53 m, sobre el contacto; medido, 0,63.
 
-## 20. Qué hace cada parámetro — `slide-20-que-hace-p2.png` — 0:25 (GIF)
+## 22. Qué hace cada parámetro — `slide-22-que-hace-p2.png` — 0:20 (GIF 07)
 
-- p2 fija por dónde se pasa: con 0,07 rozándose como las personas, con 0,3 y
-  0,6 se abren de más y ⟨E⟩ sube. p1 decide si llegan a correrse: con 0,5 s
-  reaccionan tarde; desde 1,2 s no cambia nada.
+- p2 fija por dónde se pasa: con 0,14 como las personas, con 0 se rozan, con
+  0,3 y 0,6 se abren de más. p1 decide si llegan a correrse: con 0,5 s
+  reaccionan tarde; desde 1,5 s casi no cambia.
 
-## 21. Superficie, métrica 1 — `slide-21-superficie-metrica1.png` — 0:30
+## 23. Mapa, métrica 1 — `slide-23-superficie-metrica1.png` — 0:25
 
-- Óptimo en (2,50 s, 0,07 m): 1,48 m² contra 2,73 sin capa, **−46 %**. El velo
-  blanco son los pares que empatan: p1 de 0,85 a 4 s. Verificado hasta 8 s.
+- Óptimo en (2,15 s, 0,13 m): 0,062 m² contra 0,87 sin capa, **−93 %**. Abajo
+  y a la izquierda la capa reacciona tarde o no pide separación.
 
-## 22. Cortes, métrica 1 — `slide-22-cortes-metrica1.png` — 0:25
+## 24. Cortes, métrica 1 — `slide-24-cortes-metrica1.png` — 0:25
 
-- p1 sólo queda determinado por abajo: cae hasta 1,2 s y después es plano.
-  Con más de un segundo el agente ya llega a correrse lo que necesita. p2 sí
-  tiene mínimo claro en 0,07 m.
+- p1 sólo queda determinado por abajo: cae hasta 1,5 s y después es plano,
+  hasta 8 s. Al empezar faltan entre 2,4 y 3 s para el cruce: con más
+  anticipación el conflicto se declara desde el primer instante. p2 sí tiene
+  mínimo claro en 0,13 m.
 
-## 23. Superficie, métrica 2 — `slide-23-superficie-metrica2.png` — 0:30 (C)
+## 25. Mapa, métrica 2 — `slide-25-superficie-metrica2.png` — 0:20 (C)
 
-- Mismo valle, más profundo: 0,84 → 0,314 m², **−63 %**. Óptimo en
-  (3,85 s, 0,05 m) y región que empata diez veces más chica: sin el tiempo de
-  paso, la métrica determina mejor. D = 0,57 y 0,55 m: casi lo mismo.
+- Mismo valle: 0,32 → 0,019 m², **−94 %**. Óptimo en (1,50 s, 0,14 m). Las dos
+  métricas piden la misma distancia de paso, 0,63 y 0,64 m.
 
-## 24. Cortes, métrica 2 y comparación — `slide-24-cortes-metrica2.png` — 0:20
+## 26. Cortes, métrica 2 — `slide-26-cortes-metrica2.png` — 0:15
 
-- Los óptimos coinciden en p2 y difieren en p1, el parámetro plano.
-  Intercambiarlos cuesta menos del 2 %: eligen la misma capa.
+- Coinciden en p2 y difieren en p1, el parámetro plano. Los escalones son dos
+  eventos (16 y 17) en los que el lado cambia con p1.
 
-## 25. Óptimos individuales — `slide-25-optimos-individuales.png` — 0:25
+## 27. Óptimos individuales — `slide-27-optimos-individuales.png` — 0:25
 
-- En p2 están todos juntos (mediana 0,05 m); en p1, desparramados, 8 en el
-  borde. 4 de 19 eligen p1 = 0: a esos la capa no les sirve.
+- Histograma de cada parámetro, con el global como línea vertical. En p1, 17
+  de 19 piden más de 3,75 s: más anticipación nunca molesta. En p2 cada par
+  tiene el suyo, de 0,03 a 0,35 m.
 
-## 26. Cuánto se gana — `slide-26-errores-por-evento.png` — 0:25
+## 28. Cuánto se gana — `slide-28-errores-por-evento.png` — 0:20
 
-- Individualizar baja ⟨E(1)⟩ de 1,48 a 1,22 (−17 %) y ⟨E(2)⟩ de 0,314 a
-  0,296 (−6 %): poco para 19 pares contra uno. El error no está en los
-  parámetros.
+- Individualizar baja ⟨E(1)⟩ de 0,062 a 0,048 (−22 %) y ⟨E(2)⟩ de 0,019 a
+  0,014 (−27 %). Casi la mitad de la ganancia de la métrica 1 es el evento 17.
 
-## 27. Dos poblaciones — `slide-27-dos-poblaciones.png` — 0:40
+## 29. Opcional: parámetros por peatón — `slide-29-optimos-por-peaton.png` — 0:25
 
-- Los eventos se separan solos por el ángulo entre v(0) y el camino nominal:
-  < 32° (ya en el corredor, 10) o > 60° (sale de la fila, 9). ⟨E(2)⟩: 0,08
-  contra 0,57 m².
-- En los de la fila la recta al target es la ruta equivocada, y eso lo fija
-  el enunciado. Calibrando sólo con los 10 del corredor: (4 s, 0,07 m) y
-  0,078 m², **−92 %**; sólo con la fila, −19 %.
+- Cuatro parámetros por evento, dos por peatón. Los dos agentes están
+  acoplados, así que el mínimo se busca en la grilla de los cuatro a la vez:
+  425 × 425 combinaciones por evento, 3,4 millones de corridas.
+- Histograma de los 38 óptimos con el global como línea vertical. En ningún
+  evento los dos peatones eligen el mismo par: es la asimetría del reparto.
 
-## 28. Evento 14 — `slide-28-animacion-evento14.png` — 0:20 (GIF)
+## 30. Opcional: cuánto se gana — `slide-30-errores-por-peaton.png` — 0:15
 
-- Las dos personas suben por la fila y doblan en y ≈ 2 m; los agentes van en
-  diagonal desde t = 0 y se cruzan cuando las personas aún están a 5,6 m.
+- Sobre la misma grilla: con dos por evento ⟨E(1)⟩ baja 24 %, con cuatro un
+  11 % más (27 % y 31 % más con la métrica 2). Describe pero no predice: para
+  un par nuevo no hay con qué estimar sus cuatro parámetros.
 
-## 29. Ritmo y forma — `slide-29-residuo-descomposicion.png` — 0:20
+## 31. Ritmo y forma — `slide-31-residuo-descomposicion.png` — 0:15
 
-- En el corredor el 88 % es longitudinal: ritmo. La forma, lo que la capa
-  decide, es el 12 %.
+- El 61 % del error es longitudinal: ritmo. La forma, lo que la capa decide,
+  es el 39 %.
 
-## 30. El lado — `slide-30-residuo-lado.png` — 0:25
+## 32. El lado y la distancia — `slide-32-residuo-lado.png` — 0:25
 
-- Acierta en 12 de 19: 6 de 10 en el corredor. De frente lo decide un
-  corrimiento de centímetros; las personas lo deciden antes (14 de 19 por su
-  derecha).
+- Acierta el lado en 18 de 19, sin ninguna regla de lado. Lo que no reproduce
+  es la dispersión: las personas pasaron a entre 0,49 y 0,92 m y el modelo
+  siempre a ≈ 0,53.
 
-## 31. Evento 3 — `slide-31-animacion-evento03.png` — 0:15 (GIF)
+## 33. Evento 17 — `slide-33-animacion-evento17.png` — 0:10 (GIF 05)
 
-- En el corredor, elusión correcta (0,57 contra 0,60 m) pero en espejo.
+- Arrancan casi alineados y el modelo elige el otro lado. Con p1 = 1,5 s elude
+  por el correcto.
 
-## 32. Validación cruzada — `slide-32-validacion-error.png` — 0:25
+## 34. Validación cruzada — `slide-34-validacion-error.png` — 0:25
 
-- 500 particiones de 13/6: el error de validación queda un 5,2 % por encima
-  del ítem b (0,2 % con la métrica 2). Con dos parámetros y 19 eventos no hay
-  sobreajuste.
+- 500 particiones de 13/6: el error de validación es 0,084 contra 0,062 del
+  ítem b, un 36 % más. Sigue siendo diez veces menos que sin capa.
+- El segundo pico son las particiones en que el 16 o el 17 quedan en
+  validación: sin ellos en validación la diferencia es del 5 %.
 
-## 33. Qué par elige cada partición — `slide-33-validacion-parametros.png` — 0:15
+## 35. Qué par elige cada partición — `slide-35-validacion-parametros.png` — 0:10
 
-- 52 pares distintos; la dispersión está casi toda en p1. Lo mismo que la
-  región que empata, medido de otra manera.
+- 6 pares distintos; p2 entre 0,07 y 0,14 m, p1 salta entre 1,5, 2,15 y 4 s.
 
 ## Conclusiones (separador) — 0:05
 
-## 34. Conclusiones — 0:50
+## 36. Conclusiones — 0:45
 
-- Leer las seis, cada una con su cifra: −46 % y −63 %; óptimos con la misma
-  distancia de paso; p1 sólo por abajo; dos poblaciones (−92 % en el corredor);
-  individualizar gana poco porque el error es ritmo y lado; sin sobreajuste.
+- Leer las seis, cada una con su cifra: −93 % y −94 %, y sin contacto; óptimos
+  con la misma distancia de paso; p1 sólo por abajo; mismo lado en 18 de 19, y
+  cada par a su propia distancia; el 61 % del residuo es ritmo; validación
+  +36 % por dos eventos.
 
-## 35. Uso de agentes de IA — 0:10
+## 37. Uso de agentes de IA — 0:10
 
-- Claude Code; en qué se usó y en qué no.
+- Claude Code; en qué se usó y en qué no. Las correcciones, en el apéndice.
 
 ## Muchas gracias
+
+---
+
+## Extra, después del cierre: el reparto de la elusión (α)
+
+La cátedra pidió mostrarlo al final, como un opcional. Un minuto y medio si
+hay tiempo.
+
+### Extra 1 — `slide-extra-1-alfa-curva.png`
+
+- La capa calibrada es simétrica: los dos se corren lo mismo. Se le agrega α,
+  la fracción de la separación que falta que se lleva el que sale de la
+  izquierda; 0,5 es la capa simétrica.
+- Con p1 y p2 en su óptimo, el mejor α global es 0,625 y 0,575, y gana 2 % y
+  1 %: dentro del error. Como población, la capa simétrica alcanza.
+
+### Extra 2 — `slide-extra-2-alfa-histograma.png`
+
+- Evento por evento α va de 0,12 a 0,97: en cada par uno cede más, y cuál
+  cambia de par en par. Con el α propio de cada par ⟨E(2)⟩ baja un 19 %.
+
+### Extra 3 — `slide-extra-3-alfa-medido.png`
+
+- α también se puede medir sin simular, del desvío lateral de cada uno en el
+  cruce. El calibrado y el medido coinciden: r = 0,72 y 0,88. Es una propiedad
+  de cada par, no un parámetro que absorbe residuo; pero describe y no predice.

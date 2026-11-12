@@ -9,7 +9,7 @@ en la presentación en vivo se usan los GIF de `gif/`.
 Los `.mp4` se generan con `make animations` y `make apoyo` y se copian acá con
 `make youtube`; no se versionan.
 
-Convenciones de dibujo, iguales en todos: disco lleno = agente simulado, disco
+Convenciones de dibujo, iguales en los videos de eventos: disco lleno = agente simulado, disco
 punteado = posición medida en el mismo instante, cruz verde = target temporal
 mientras la capa declara conflicto (y el disco lleva borde negro). Un cuadro
 por instante medido, a 15 cuadros por segundo: corren en tiempo real.
@@ -23,7 +23,7 @@ por instante medido, a 15 cuadros por segundo: corren en tiempo real.
 **Descripción:** Simulación de Sistemas (ITBA, 2026 Q2) — TP5, Problema 1,
 Grupo 10, comisión S2. Evento 10 de los datos experimentales de elusión 1
 contra 1 de frente, simulado con SFM sin fuerza social y la capa de elusión
-calibrada (p1 = 2,5 s, p2 = 0,07 m).
+calibrada (p1 = 2,15 s, p2 = 0,13 m). Es el evento que más gana con la capa.
 
 ### 02 — Evento 10 sin la capa (PENDIENTE-02)
 
@@ -33,30 +33,28 @@ calibrada (p1 = 2,5 s, p2 = 0,07 m).
 fuerza social no anticipa, los dos agentes van derecho a su target y se chocan
 de frente. El desvío lo produce la fuerza de contacto, tarde.
 
-### 03 — Evento 5 (PENDIENTE-03)
+### 03 — Evento 5: el cruce más ajustado (PENDIENTE-03)
 
-**Título:** SdS TP5 G10 — Elusión 1 contra 1: evento 5
+**Título:** SdS TP5 G10 — Elusión 1 contra 1: evento 5, el cruce más ajustado
 
 **Descripción:** Evento 5, el de menor distancia mínima medida de las 19
 pruebas (0,49 m, menos que la distancia de contacto 2r = 0,5 m), con la capa
-calibrada.
+calibrada: los agentes pasan a 0,58 m.
 
-### 04 — Evento 14: los dos salen de la fila (PENDIENTE-04)
+### 04 — Evento 14: el cruce más holgado (PENDIENTE-04)
 
-**Título:** SdS TP5 G10 — Elusión 1 contra 1: evento 14, los dos salen de la fila
+**Título:** SdS TP5 G10 — Elusión 1 contra 1: evento 14, el cruce más holgado
 
-**Descripción:** Evento 14: las dos personas caminan primero por la fila,
-hacia arriba, y recién después doblan al corredor; los agentes van derecho al
-target desde el principio. La recta al target final es la ruta equivocada, y
-eso la capa no lo puede arreglar.
+**Descripción:** Evento 14, el de mayor distancia mínima medida (0,92 m). Los
+agentes pasan a 0,57 m: la distancia de paso del modelo es una sola para todos
+los pares.
 
-### 05 — Evento 3: en el corredor, por el lado opuesto (PENDIENTE-05)
+### 05 — Evento 17: por el lado opuesto (PENDIENTE-05)
 
-**Título:** SdS TP5 G10 — Elusión 1 contra 1: evento 3, elusión por el lado opuesto
+**Título:** SdS TP5 G10 — Elusión 1 contra 1: evento 17, elusión por el lado opuesto
 
-**Descripción:** Evento 3: los dos ya caminan por el corredor y la capa elude
-correctamente (pasan a 0,57 m contra 0,60 m medidos) pero por el lado
-contrario al que usaron las personas.
+**Descripción:** Evento 17, el único de los 19 en que la capa calibrada elude
+por el lado contrario al que usaron las personas.
 
 ### 06 — Apoyo: la capa de elusión cabeza a cabeza (PENDIENTE-06)
 
@@ -64,7 +62,7 @@ contrario al que usaron las personas.
 
 **Descripción:** Cruce sintético de dos agentes a 1 m/s, 8 m aparte y corridos
 4 cm, con tres márgenes de espacio personal p2 a la vez (un carril por valor,
-p1 = 2,5 s). Se dibuja lo que la capa calcula en cada instante: las posiciones
+p1 = 2,15 s). Se dibuja lo que la capa calcula en cada instante: las posiciones
 predichas al instante de mínima aproximación (discos punteados), la
 separación predicha d* (trazo entre ellos) y el target temporal (cruz).
 
@@ -72,7 +70,7 @@ separación predicha d* (trazo entre ellos) y el target temporal (cruz).
 
 **Título:** SdS TP5 G10 — Qué hace p2: el evento 10 con el margen recorriendo su rango
 
-**Descripción:** El evento 10 simulado con p2 de 0 a 0,6 m (p1 = 3,85 s) y, al
+**Descripción:** El evento 10 simulado con p2 de 0 a 0,6 m (p1 = 1,5 s) y, al
 lado, el corte de <E(2)> del ítem b con el punto que marca dónde está. p2 fija
 por dónde se pasa.
 
@@ -80,6 +78,22 @@ por dónde se pasa.
 
 **Título:** SdS TP5 G10 — Qué hace p1: el evento 10 con la anticipación recorriendo su rango
 
-**Descripción:** El evento 10 simulado con p1 de 0 a 4 s (p2 = 0,05 m) y, al
-lado, el corte de <E(2)>. p1 decide si llegan a correrse; desde ~1,2 s ya no
-cambia nada.
+**Descripción:** El evento 10 simulado con p1 de 0 a 4 s (p2 = 0,14 m) y, al
+lado, el corte de <E(2)>. p1 decide si llegan a correrse; desde ~1,5 s casi no
+cambia.
+
+### 09 — Apoyo: la capa de elusión paso a paso (PENDIENTE-09)
+
+**Título:** SdS TP5 G10 — La capa de elusión paso a paso
+
+**Descripción:** El esquema de la capa armado de a un elemento, con la fórmula
+de cada paso: se extrapolan las dos trayectorias, se busca el instante de
+mínima aproximación τ* y la separación d* que habrá ahí, se la compara con la
+separación requerida D, y si no alcanza el target de cada agente se corre lo
+que falta, hacia lados opuestos.
+
+### 10 — Los 19 eventos (sólo GIF)
+
+Los 19 eventos con la capa calibrada, un panel por evento. No va a YouTube: es
+el GIF de `gif/` para mostrar en la consulta que la ventana de cada evento es
+el cruce.

@@ -47,6 +47,7 @@ FOLDER_NAME = {
     "b": "b_calibracion_poblacional",
     "c": "c_calibracion_individual",
     "d": "d_validacion_cruzada",
+    "extra": "e_extra_reparto",
     "anim": "animaciones",
 }
 
@@ -76,6 +77,8 @@ AXIS_EVENT = "evento $m$"
 AXIS_SPEED = "$|\\vec{v}|$ (m/s)"
 AXIS_WALL = "tiempo de ejecución (s)"
 AXIS_COUNT = "eventos"
+AXIS_COUNT_PEDESTRIANS = "peatones"
+AXIS_ALPHA = "$\\alpha$"
 
 METRIC_LABEL = {1: "métrica 1 (iguales tiempos)", 2: "métrica 2 (punto más cercano)"}
 METRIC_AVERAGE = {1: AXIS_E1, 2: AXIS_E2}
@@ -89,6 +92,19 @@ EXPERIMENT_COLOR = {0: "#1f5fbf", 1: "#d62728"}
 SIMULATION_COLOR = {0: "#7fb0ee", 1: "#f09a98"}
 PEDESTRIAN_LABEL = {0: "izquierda", 1: "derecha"}
 TARGET_COLOR = "#2ca02c"
+
+# Mapas de <E>(p1, p2): el mismo mapa de color que el del TP4 (turbo invertido,
+# rojo = error bajo), sin nada encima mas que el optimo.
+def heat_colormap():
+    from matplotlib import colors
+    import matplotlib.pyplot as plt
+    return colors.LinearSegmentedColormap.from_list(
+        "turbo-invertida", plt.get_cmap("turbo")(np.linspace(0.90, 0.10, 256)))
+
+
+# Color de la linea que marca el optimo poblacional (global) en los
+# histogramas de optimos individuales.
+GLOBAL_COLOR = "#2ca02c"
 
 ERRORBAR = {"linestyle": "none", "elinewidth": 1.2, "capsize": 2.5, "capthick": 1.2}
 
@@ -371,23 +387,11 @@ def population(event_error: np.ndarray):
     return mean, deviation / np.sqrt(event_error.shape[2])
 
 
-# --------------------------------------------------------------------------
-# Las dos poblaciones de eventos
-# --------------------------------------------------------------------------
-
-# Angulo (grados) entre la velocidad inicial medida de un peaton y su camino
-# nominal (del arranque a su target final). En los datos la distribucion es
-# bimodal: o es menor que 32 grados (el peaton ya camina por el corredor) o
-# mayor que 60 (todavia esta saliendo de la fila, perpendicular al corredor).
-# El umbral cae en el hueco entre los dos grupos.
-QUEUE_ANGLE = 45.0
-CLASS_LABEL = {"corredor": "ya en el corredor", "fila": "sale de la fila"}
-CLASS_COLOR = {"corredor": "#1f5fbf", "fila": "#c55a11"}
-
-
 def initial_angles(event: dict) -> tuple[float, float]:
-    """Angulo entre v(0) y el camino nominal, para el peaton izquierdo y el
-    derecho de un evento de read_events()."""
+    """Angulo (grados) entre v(0) y el camino nominal (del arranque al target
+    final), para el peaton izquierdo y el derecho de un evento de
+    read_events(). Con la ventana recortada al tramo del corredor es chico en
+    los 38 peatones: todos arrancan caminando hacia su target."""
     angles = []
     for side in ("izquierda", "derecha"):
         pedestrian = event[side]
@@ -397,19 +401,6 @@ def initial_angles(event: dict) -> tuple[float, float]:
         cosine = velocity @ nominal / (np.linalg.norm(velocity) * np.linalg.norm(nominal))
         angles.append(float(np.degrees(np.arccos(np.clip(cosine, -1.0, 1.0)))))
     return angles[0], angles[1]
-
-
-def event_class(event: dict) -> str:
-    """'fila' si alguno de los dos peatones arranca saliendo de la fila
-    (angulo mayor que QUEUE_ANGLE), 'corredor' si los dos ya caminan por el."""
-    return "fila" if max(initial_angles(event)) > QUEUE_ANGLE else "corredor"
-
-
-def classes(labels, events: list[dict] | None = None) -> np.ndarray:
-    """La clase de cada evento de `labels` (en ese orden), como array de str."""
-    events = events if events is not None else read_events()
-    by_label = {event["m"]: event_class(event) for event in events}
-    return np.array([by_label[int(label)] for label in labels])
 
 
 def optimum(surface: np.ndarray, p1: np.ndarray, p2: np.ndarray):

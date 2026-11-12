@@ -10,10 +10,9 @@
 
 // Barrido del reparto de la elusion. La capa simetrica hace que los DOS
 // peatones del par se corran lo mismo, y en los datos de la catedra eso no es
-// lo que pasa: en cada par uno de los dos cede casi todo. La catedra sugirio
-// dejar fijo uno de los dos parametros originales y usar el lugar que queda
-// para modelar esa asimetria, asi que aca t_a queda fijo en --p1 y el barrido
-// recorre el par (d_s, alfa):
+// lo que pasa: en cada par uno de los dos cede mas. Es un EXTRA que propuso la
+// catedra, fuera de lo que pide el enunciado: t_a queda fijo en --p1 y el
+// barrido recorre el par (d_s, alfa):
 //
 //   alfa = fraccion de la separacion que falta que se lleva el peaton de la
 //          IZQUIERDA; el de la derecha se lleva 1 - alfa. alfa = 0,5 es la capa
@@ -28,7 +27,7 @@
 int runAsymmetry(const Arguments& arguments) {
   const Experiment experiment = experimentFromArguments(arguments);
   const Model model = modelFromArguments(arguments);
-  const double anticipation = arguments.number("p1", 3.85);
+  const double anticipation = arguments.number("p1", 2.15);
   const std::vector<double> margins = linearGrid("p2", arguments.text("p2", "0:0.6:61"));
   const std::vector<double> shares = linearGrid("alfas", arguments.text("alfas", "0:1:41"));
   const int subdivisions = arguments.integer("subdivisiones", 64);

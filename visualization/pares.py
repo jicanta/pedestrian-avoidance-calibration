@@ -9,17 +9,16 @@ la MISMA grilla sale el optimo de dos parametros con el que se compara.
 
 Por cada metrica, dos figuras y la tabla por consola:
 
-* `optimos`: el plano (p1, p2) con, por cada evento, los DOS optimos de sus
-  peatones unidos por un segmento, el optimo de dos parametros de ese evento y
-  el poblacional. Lo que se lee es cuanto se separan los dos peatones de un
-  mismo par: si el segmento es corto, el par no necesita parametros distintos.
+* `optimos`: el histograma de los parametros optimos por peaton (los 2 M
+  valores de p1 en un panel y los de p2 en otro), con una linea vertical en el
+  optimo poblacional (global).
 * `errores`: E_m evento por evento con los tres juegos -- poblacional, dos
   individuales, cuatro individuales -- ordenado, con las tres medias.
 
 Los tres se miden sobre LA MISMA grilla, que es la unica forma de que la
 comparacion diga algo: una grilla mas fina baja el error de los tres a la vez.
 
-    python3 visualization/pares.py --pares data/individual/recortada
+    python3 visualization/pares.py
 """
 
 from __future__ import annotations
@@ -28,6 +27,7 @@ import argparse
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+from matplotlib.ticker import FuncFormatter, MaxNLocator
 import numpy as np
 
 import common
@@ -58,46 +58,50 @@ def population_optimum(path: Path, metric: int):
             0.5 * (row[columns[0]] + row[columns[1]])
     mean = error.mean(axis=2)
     i, j = np.unravel_index(np.argmin(mean), mean.shape)
-    return p1[i], p2[j], error[i, j, :], labels
+    return p1[i], p2[j], error[i, j, :], labels, (p1, p2)
 
 
-def optima(table, metric, population, figures, style, name):
+def global_optimum(path: Path, metric: int):
+    """El optimo poblacional del item b: (p1, p2) del minimo de <E> en la grilla fina."""
+    p1, p2, _, error1, error2 = common.read_sweep(path)
+    mean, _ = common.population(error1 if metric == 1 else error2)
+    i, j = np.unravel_index(np.argmin(mean), mean.shape)
+    return p1[i], p2[j]
+
+
+def optima(table, metric, population, grid, figures, style):
+    """Histograma de los parametros optimos POR PEATON (2 M valores de cada
+    parametro), con una linea vertical en el optimo poblacional (global)."""
     keep = table["metrica"] == metric
-    p1_left = table["p1_izq"][keep]
-    p2_left = table["p2_izq"][keep]
-    p1_right = table["p1_der"][keep]
-    p2_right = table["p2_der"][keep]
-    p1_shared = table["p1_comun"][keep]
-    p2_shared = table["p2_comun"][keep]
+    p1_values = np.concatenate([table["p1_izq"][keep], table["p1_der"][keep]])
+    p2_values = np.concatenate([table["p2_izq"][keep], table["p2_der"][keep]])
 
     common.use_style(style)
-    figure, axes = plt.subplots()
-    for k in range(len(p1_left)):
-        axes.plot([p2_left[k], p2_right[k]], [p1_left[k], p1_right[k]],
-                  color="#9aa3ad", linewidth=1.0, zorder=1)
-    axes.plot(p2_left, p1_left, linestyle="none", marker="o", markersize=7,
-              color=common.EXPERIMENT_COLOR[0], alpha=0.85, zorder=3,
-              label="peatón de la izquierda")
-    axes.plot(p2_right, p1_right, linestyle="none", marker="o", markersize=7,
-              color=common.EXPERIMENT_COLOR[1], alpha=0.85, zorder=3,
-              label="peatón de la derecha")
-    axes.plot(p2_shared, p1_shared, linestyle="none", marker="s", markersize=6,
-              markerfacecolor="none", markeredgecolor="#1a1a1a", markeredgewidth=1.0,
-              zorder=2, label="óptimo del par (2 parámetros)")
-    axes.plot([population[1]], [population[0]], linestyle="none", marker="*",
-              markersize=17, color="#f5c518", markeredgecolor="#1a1a1a",
-              markeredgewidth=0.8, zorder=4,
-              label=f"poblacional $({common.decimal(population[0], 2)}$ s$,\\ "
-                    f"{common.decimal(population[1], 3)}$ m$)$")
-    axes.set_xlabel(common.AXIS_P2)
-    axes.set_ylabel(common.AXIS_P1)
-    axes.legend(loc="best", fontsize=plt.rcParams["legend.fontsize"] - 1)
-    common.comma_ticks(figure)
+    figure, axesrow = plt.subplots(1, 2, figsize=(10.0, 4.0) if style == "informe"
+                                   else (11.0, 4.2))
+    for axes, values, nodes, best, label, unit in (
+            (axesrow[0], p1_values, grid[0], population[0], common.AXIS_P1, "s"),
+            (axesrow[1], p2_values, grid[1], population[1], common.AXIS_P2, "m")):
+        # Una barra por cada dos valores de la grilla del barrido.
+        step = 2 * (nodes[1] - nodes[0])
+        edges = np.arange(nodes[0], nodes[-1] + step, step)
+        axes.hist(np.clip(values, edges[0], edges[-1] - 1e-9), bins=edges,
+                  color=common.EXPERIMENT_COLOR[0], alpha=0.85, edgecolor="white",
+                  linewidth=0.8)
+        axes.axvline(best, color=common.GLOBAL_COLOR, linestyle="--", linewidth=2.4,
+                     label=f"óptimo global, ${common.decimal(best, 2)}$ {unit}")
+        axes.set_xlabel(label)
+        axes.set_ylabel(common.AXIS_COUNT_PEDESTRIANS)
+        axes.set_xlim(edges[0], edges[-1])
+        axes.yaxis.set_major_locator(MaxNLocator(integer=True))
+        axes.legend(loc="upper center", fontsize=plt.rcParams["legend.fontsize"])
+    figure.tight_layout()
     common.save(figure, common.folder("c", figures) /
-                f"pares_optimos_metrica{metric}_{name}_{style}.png")
+                f"pares_optimos_metrica{metric}_{style}.png")
+    plt.close(figure)
 
 
-def errors(table, metric, population_errors, labels, figures, style, name):
+def errors(table, metric, population_errors, labels, figures, style):
     keep = table["metrica"] == metric
     four = table["Em_cuatro"][keep]
     two = table["Em_dos"][keep]
@@ -114,13 +118,19 @@ def errors(table, metric, population_errors, labels, figures, style, name):
              alpha=0.85, label=f"4 por evento (media {common.decimal(four.mean(), 4)})")
     axes.set_xticks(positions)
     axes.set_xticklabels([str(int(labels[k])) for k in order])
-    axes.set_xlabel("evento")
+    axes.tick_params(axis="x", labelsize=plt.rcParams["xtick.labelsize"] - 4)
+    axes.set_xlabel(common.AXIS_EVENT)
     axes.set_ylabel(common.METRIC_EVENT[metric])
     axes.set_yscale("log")
+    axes.yaxis.set_major_formatter(FuncFormatter(lambda value, _: common.decimal(value)))
+    axes.yaxis.set_minor_formatter(FuncFormatter(
+        lambda value, _: common.decimal(value) if f"{value:.0e}"[0] in "25" else ""))
+    axes.tick_params(axis="y", which="minor", labelsize=plt.rcParams["ytick.labelsize"])
     axes.legend(loc="best", fontsize=plt.rcParams["legend.fontsize"] - 1)
     common.comma_ticks(figure)
     common.save(figure, common.folder("c", figures) /
-                f"pares_errores_metrica{metric}_{name}_{style}.png")
+                f"pares_errores_metrica{metric}_{style}.png")
+    plt.close(figure)
 
 
 def report(table, metric, population, population_errors, labels):
@@ -157,21 +167,24 @@ def report(table, metric, population, population_errors, labels):
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--pares", type=Path, default=Path("data/individual/recortada"),
+    parser.add_argument("--pares", type=Path, default=common.DATA / "individual",
                         help="carpeta con pares.txt y errores.txt de la MISMA grilla")
-    parser.add_argument("--name", type=str, default="")
+    parser.add_argument("--barrido", type=Path, default=common.SWEEP / "fino" / "errores.txt",
+                        help="el barrido fino del item b, de donde sale el optimo global")
     common.add_common_arguments(parser)
     arguments = parser.parse_args()
 
     table = read_pairs(arguments.pares / "pares.txt")
-    name = arguments.name or arguments.pares.name
-    print(f"item 2 c) opcional -- {name}")
+    print("item 2 c) opcional")
     for metric in (1, 2):
-        p1, p2, population_errors, labels = population_optimum(
+        p1, p2, population_errors, labels, grid = population_optimum(
             arguments.pares / "errores.txt", metric)
-        optima(table, metric, (p1, p2), arguments.figures, arguments.estilo, name)
-        errors(table, metric, population_errors, labels, arguments.figures,
-               arguments.estilo, name)
+        # La linea del histograma es el optimo global del item b (grilla fina),
+        # que es el que se informa en todo el trabajo; el de esta grilla, mas
+        # gruesa, solo se usa para comparar errores sobre la misma grilla.
+        optima(table, metric, global_optimum(arguments.barrido, metric), grid,
+               arguments.figures, arguments.estilo)
+        errors(table, metric, population_errors, labels, arguments.figures, arguments.estilo)
         report(table, metric, (p1, p2), population_errors, labels)
 
 

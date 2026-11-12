@@ -4,8 +4,9 @@ Para cada evento m se busca el par (p1_m, p2_m) que minimiza su propio error
 E_m, con cada metrica por separado, sobre la misma grilla del item b. Dos
 figuras por metrica:
 
-* `optimos`: los M optimos individuales en el plano (p1, p2), con el optimo
-  poblacional marcado. Cada punto lleva el numero de su evento.
+* `optimos`: el histograma de los M optimos individuales de cada parametro
+  (un panel para p1 y otro para p2), con una linea vertical en el optimo
+  poblacional (global).
 * `errores`: el error de cada evento con los parametros POBLACIONALES y con
   los suyos propios, evento por evento y ordenados, mas los dos promedios.
   La diferencia entre los dos promedios es lo que se gana al individualizar.
@@ -21,6 +22,7 @@ from pathlib import Path
 
 import matplotlib
 import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator
 import numpy as np
 
 import common
@@ -37,33 +39,30 @@ def individual_optima(p1, p2, event_error):
     return np.array(rows), (p1[i], p2[j])
 
 
-def scatter(rows, best, labels, metric, p1, p2, figures, style):
+def histogram_panel(axes, values, edges, best, label, unit, digits, ylabel):
+    """Histograma de un parametro, con la linea vertical del optimo global."""
+    axes.hist(values, bins=edges, color=common.EXPERIMENT_COLOR[0], alpha=0.85,
+              edgecolor="white", linewidth=0.8)
+    axes.axvline(best, color=common.GLOBAL_COLOR, linestyle="--", linewidth=2.4,
+                 label=f"óptimo global, ${common.decimal(best, digits)}$ {unit}")
+    axes.set_xlabel(label)
+    axes.set_ylabel(ylabel)
+    axes.set_xlim(edges[0], edges[-1])
+    axes.yaxis.set_major_locator(MaxNLocator(integer=True))
+    axes.legend(loc="upper center", fontsize=plt.rcParams["legend.fontsize"])
+
+
+def histograms(rows, best, metric, p1, p2, figures, style):
+    """Distribucion de los M optimos individuales, un panel por parametro, con
+    el optimo poblacional (global) marcado con una linea vertical."""
     common.use_style(style)
-    color, marker = common.METRIC_STYLE[metric]
-    figure, axes = plt.subplots()
-    axes.plot(rows[:, 0], rows[:, 1], linestyle="none", marker=marker, color=color,
-              markersize=8, alpha=0.8, label="óptimo de cada evento")
-    # Varios eventos caen en el mismo par (o casi): una etiqueta por cumulo
-    # con todos sus numeros, para que no se pisen.
-    groups: dict[tuple[float, float], list[int]] = {}
-    for (a, b, _, _), label in zip(rows, labels):
-        key = (round(a / 0.25) * 0.25, round(b / 0.06) * 0.06)
-        groups.setdefault(key, []).append(int(label))
-    for (a, b), members in groups.items():
-        text = ", ".join(str(member) for member in sorted(members))
-        axes.annotate(text, (a, b), textcoords="offset points",
-                      xytext=(-6 if a > 0.8 * p1.max() else 6, 5),
-                      ha="right" if a > 0.8 * p1.max() else "left",
-                      fontsize=matplotlib.rcParams["legend.fontsize"] - 2, color="#6e7680")
-    axes.plot([best[0]], [best[1]], marker="*", color="#2ca02c", markersize=18,
-              linestyle="none", markeredgecolor="#1a1a1a", markeredgewidth=0.8,
-              label=f"poblacional $({common.decimal(best[0], 2)}$ s$,\\ "
-                    f"{common.decimal(best[1], 3)}$ m$)$")
-    axes.set_xlabel(common.AXIS_P1)
-    axes.set_ylabel(common.AXIS_P2)
-    axes.set_xlim(p1.min() - 0.1, p1.max() + 0.1)
-    axes.set_ylim(p2.min() - 0.02, p2.max() + 0.02)
-    common.legend_inside(axes, loc="upper left")
+    figure, axesrow = plt.subplots(1, 2, figsize=(10.0, 4.0) if style == "informe"
+                                   else (11.0, 4.2))
+    histogram_panel(axesrow[0], rows[:, 0], np.linspace(p1.min(), p1.max(), 17), best[0],
+                    common.AXIS_P1, "s", 2, common.AXIS_COUNT)
+    histogram_panel(axesrow[1], rows[:, 1], np.linspace(p2.min(), p2.max(), 16), best[1],
+                    common.AXIS_P2, "m", 2, common.AXIS_COUNT)
+    figure.tight_layout()
     common.save(figure, common.folder("c", figures) / f"optimos_metrica{metric}_{style}.png")
     plt.close(figure)
 
@@ -79,10 +78,10 @@ def comparison(rows, labels, metric, figures, style):
              label="parámetros individuales")
     axes.axhline(rows[:, 3].mean(), color=common.EXPERIMENT_COLOR[1], linestyle="--",
                  linewidth=1.6,
-                 label=f"promedio poblacional {common.decimal(rows[:, 3].mean(), 2)} m$^2$")
+                 label=f"promedio poblacional {common.decimal(rows[:, 3].mean(), 3)} m$^2$")
     axes.axhline(rows[:, 2].mean(), color=common.EXPERIMENT_COLOR[0], linestyle=":",
                  linewidth=1.8,
-                 label=f"promedio individual {common.decimal(rows[:, 2].mean(), 2)} m$^2$")
+                 label=f"promedio individual {common.decimal(rows[:, 2].mean(), 3)} m$^2$")
     axes.set_xticks(positions)
     axes.set_xticklabels([str(int(labels[k])) for k in order])
     axes.tick_params(axis="x", labelsize=matplotlib.rcParams["xtick.labelsize"] - 3)
@@ -102,7 +101,7 @@ def main() -> None:
     p1, p2, labels, error1, error2 = common.read_sweep(arguments.barrido)
     for metric, event_error in ((1, error1), (2, error2)):
         rows, best = individual_optima(p1, p2, event_error)
-        scatter(rows, best, labels, metric, p1, p2, arguments.figures, arguments.estilo)
+        histograms(rows, best, metric, p1, p2, arguments.figures, arguments.estilo)
         comparison(rows, labels, metric, arguments.figures, arguments.estilo)
         gain = 100 * (1 - rows[:, 2].mean() / rows[:, 3].mean())
         print(f"\n{common.METRIC_LABEL[metric]}")
@@ -119,6 +118,11 @@ def main() -> None:
               f"{', '.join(str(int(labels[k])) for k in np.where(edge)[0])}")
         print(f"  <E_m> poblacional {rows[:, 3].mean():.4f} m2, individual "
               f"{rows[:, 2].mean():.4f} m2: individualizar gana {gain:.1f} %")
+        gain_pair = rows[:, 3] - rows[:, 2]
+        print(f"  ganancia pareada: {gain_pair.mean():.4f} +- "
+              f"{gain_pair.std(ddof=1) / np.sqrt(len(gain_pair)):.4f} m2")
+        print("  optimos por evento: " + "  ".join(
+            f"{int(label)}:({a:.2f},{b:.2f})" for label, (a, b, _, _) in zip(labels, rows)))
         print(f"  el evento que mas gana: m = {int(labels[np.argmax(rows[:, 3] - rows[:, 2])])} "
               f"({rows[:, 3].max():.2f} -> "
               f"{rows[np.argmax(rows[:, 3] - rows[:, 2]), 2]:.2f} m2)")
