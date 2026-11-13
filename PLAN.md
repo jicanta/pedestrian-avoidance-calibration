@@ -159,9 +159,9 @@ y la velocidad deseada pasa a ser `v_i^d ê_i^d` con
 Contra la predictiva se probaron tres capas basadas en **campos** de
 repulsión (`A exp(−(d − 2r)/B)` como dirección, nunca como fuerza): isotrópica
 (Helbing como dirección), lateral y predictiva (en `d*`, Karamouzas como
-target). La isotrópica queda lejos (−67 % contra −94 %: de frente no tiene
+target). La isotrópica queda lejos (−66 % contra −94 %: de frente no tiene
 componente lateral); el campo predictivo empata; el lateral da un error algo
-menor (0,014 contra 0,0195 m²) pero con el óptimo en el borde de la grilla,
+menor (0,014 contra 0,0193 m²) pero con el óptimo en el borde de la grilla,
 `B = 5 m`, que es empujar de costado siempre. La tabla completa está en el
 README.
 
@@ -171,10 +171,10 @@ motor):
 
 | variante | peso de urgencia | punto de mira | `<E(1)>` mín. | `<E(2)>` mín. |
 |---|---|---|---|---|
-| **la que corre** | `w = 1 − τ*/ta` | `v^d τ*` (el conflicto) | 0,065 | 0,0195 |
-| sin rampa | `w = 1` | `v^d τ*` | 0,053 | 0,016 |
-| mira al horizonte | `w = 1 − τ*/ta` | `v^d ta` | 0,121 | 0,031 |
-| ninguna de las dos | `w = 1` | `v^d ta` | 0,044 | 0,014 |
+| **la que corre** | `w = 1 − τ*/ta` | `v^d τ*` (el conflicto) | 0,065 | 0,0193 |
+| sin rampa | `w = 1` | `v^d τ*` | 0,052 | 0,016 |
+| mira al horizonte | `w = 1 − τ*/ta` | `v^d ta` | 0,112 | 0,029 |
+| ninguna de las dos | `w = 1` | `v^d ta` | 0,044 | 0,013 |
 
 Con la ventana recortada **ya no dan lo mismo**: sin la rampa el error baja un
 16–19 % (la diferencia pareada es significativa). Corre la primera porque es la
@@ -231,8 +231,9 @@ Con la ventana recortada queda uno solo adentro: al peatón 36 (evento 1) se le
 pierde el seguimiento justo después del cruce, en `x = 3,19 m`, y reaparece 33
 cuadros más tarde ya en la fila (`x = 0,59 m`). La ventana del evento 1 sigue
 hasta que el otro peatón llega a `x = 7,7 m` (`Nm = 71`, con 29 instantes del
-36 sin muestra), y el target final del 36 es la posición en que se lo vuelve a
-medir. Antes la ventana se cortaba donde se pierde el seguimiento (`Nm = 42`)
+36 sin muestra). El target final del 36 es, como el de todos, la última
+posición de su trayectoria medida (3,19; 2,22): llega ahí y se queda mientras
+el otro termina de salir. Antes la ventana se cortaba donde se pierde el seguimiento (`Nm = 42`)
 y los dos quedaban en la mitad del corredor: la cátedra lo marcó el 12/11
 (`FEEDBACK.md`). Los óptimos no cambiaron.
 
@@ -262,8 +263,8 @@ ni modifique las reglas propias del modelo elegido".
 `dt = Δt_exp / n` con `n` entero, para que cada instante experimental caiga
 exactamente en un paso y no haya que interpolar para comparar. El barrido de
 `n` (`make convergencia`) da un apartamiento de `<E>` respecto del paso más
-fino de 1,6 % con `n = 1`, 0,3 % con `n = 16`, **0,11 % con `n = 64`** y
-0,002 % con `n = 128`. Se usa **`n = 64`** (`dt = 1,04 ms`): 0,11 % es cien
+fino de 1,4 % con `n = 1`, 0,3 % con `n = 16`, **0,10 % con `n = 64`** y
+0,007 % con `n = 128`. Se usa **`n = 64`** (`dt = 1,04 ms`): 0,10 % es cien
 veces menos que el error estándar de `<E(1)>` entre eventos, y el barrido fino
 entero tarda medio minuto.
 
@@ -313,7 +314,7 @@ tp-5/
 Proceso en dos etapas: una grilla gruesa (17 × 21) para acotar el plano y una
 fina (81 × 61) sobre `t_a ∈ [0, 4] s` y `d_s ∈ [0, 0,6] m`, que es la que se usa.
 El techo de `t_a` se verifica con un barrido aparte hasta 8 s en la `d_s` de
-cada óptimo: entre 4 y 8 s `<E>` se mueve un 2,6 % (métrica 1) y un 1,5 %
+cada óptimo: entre 4 y 8 s `<E>` se mueve un 2,6 % (métrica 1) y un 1,4 %
 (métrica 2). El de `d_s` sale de la grilla gruesa: más allá de 0,6 m `<E>` sube
 monótono. Los mapas de `<E>(t_a, d_s)` van **simples**, como los de los TP
 anteriores: el mapa en escala logarítmica, la barra de color y el óptimo.
@@ -402,6 +403,6 @@ viernes 13/11 queda:
 7. **¿Fijar `t_a`?** El óptimo individual de `t_a` cae en el techo de la
    grilla (4 s) en 14 de 19 eventos, y con el techo en 12 s se van hasta ahí:
    más allá del tiempo al cruce (2,1 a 2,7 s) `t_a` casi no cambia nada. Fijar
-   `t_a = 4 s` cuesta +2 % de `<E(1)>` (empate) pero +35 % de `<E(2)>`, y en el
+   `t_a = 4 s` cuesta +2 % de `<E(1)>` (empate) pero +36 % de `<E(2)>`, y en el
    ajuste individual los eventos 16 y 17 piden 2,15 y 1,5 s. ¿Se puede sacar
    `t_a` y calibrar sólo `d_s` (y `α`), o lo dejamos y lo decimos así?

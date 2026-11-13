@@ -400,10 +400,10 @@
         \item Tres capas más, de dos parámetros y como target temporal, con
               repulsión $A\,e^{-(d-2r)/B}$: \textbf{isotrópica}, \textbf{lateral}
               y \textbf{predictiva} (en $\ddca$).
-        \item \alert{La isotrópica queda lejos} (\SI{-67}{\percent} contra
+        \item \alert{La isotrópica queda lejos} (\SI{-66}{\percent} contra
               \SI{-94}{\percent}): de frente no tiene componente lateral.
         \item El campo predictivo \textbf{empata}; el lateral da algo menos
-              ($0{,}014$ contra \SI{0.0195}{\meter\squared}) pero con
+              ($0{,}014$ contra \SI{0.0193}{\meter\squared}) pero con
               $B = \SI{5}{\meter}$, en el borde: un empuje de costado constante.
               Se eligió la predictiva por sus parámetros con \textbf{lectura
               directa}.
@@ -524,8 +524,8 @@
               $n$ de partes. Se mide cuánto se aparta \mEuno{} y \mEdos{} del
               valor que dan con el paso más fino ($n = 512$).
         \item Con $n = 1$ el error poblacional se corre un
-              \SI{1.6}{\percent}; \alert{con $n = 64$},
-              $\dt = \SI{1.04}{\milli\second}$, un \SI{0.11}{\percent}.
+              \SI{1.4}{\percent}; \alert{con $n = 64$},
+              $\dt = \SI{1.04}{\milli\second}$, un \SI{0.10}{\percent}.
         \item Es cien veces menos que el error estándar de \mEuno{} entre
               eventos (\SI{10}{\percent}), y el barrido entero tarda medio
               minuto: no hace falta un paso más fino.
@@ -642,7 +642,7 @@
         \item \alert{Óptimo en $t_a = \SI{2.15}{\second}$,
               $d_s = \SI{0.13}{\meter}$}, con
               $\mEuno = 0{,}064 \pm \SI{0.006}{\meter\squared}$ (RMS
-              \SI{0.25}{\meter}); sin capa, \SI{0.93}{\meter\squared}:
+              \SI{0.25}{\meter}); sin capa, \SI{0.91}{\meter\squared}:
               \textbf{la capa baja el error un \SI{93}{\percent}}.
         \item Abajo ($t_a < \SI{1}{\second}$) y a la izquierda
               ($d_s < \SI{0.05}{\meter}$) la capa reacciona tarde o no pide
@@ -655,9 +655,9 @@
     \figancha[0.86]{slide-24-cortes-metrica1.png}{%
         \colvin{%
             \item $t_a$ \textbf{sólo queda determinado por abajo}: \mEuno{} cae
-                  de $0{,}93$ a \SI{0.08}{\meter\squared} entre 0 y
+                  de $0{,}91$ a \SI{0.08}{\meter\squared} entre 0 y
                   \SI{1.5}{\second} y después es plano (en \SI{4}{\second} vale
-                  $0{,}067$, y hasta \SI{8}{\second} se mueve un
+                  $0{,}066$, y hasta \SI{8}{\second} se mueve un
                   \SI{2.6}{\percent}).
             \item Al empezar el evento faltan entre $2{,}1$ y \SI{2.7}{\second}
                   para el cruce: con más anticipación que eso el conflicto ya se
@@ -672,8 +672,8 @@
 \begin{frame}{Ítem b: \mEdos{} sobre la grilla de parámetros}
     \figbulw[0.45em]{slide-25-superficie-metrica2.png}{%
         \item Mismo valle: sin capa
-              $\mEdos = \SI{0.34}{\meter\squared}$ y en el óptimo
-              $0{,}0195 \pm \SI{0.0017}{\meter\squared}$ (RMS \SI{0.14}{\meter}),
+              $\mEdos = \SI{0.33}{\meter\squared}$ y en el óptimo
+              $0{,}0193 \pm \SI{0.0017}{\meter\squared}$ (RMS \SI{0.14}{\meter}),
               \alert{un \SI{94}{\percent} menos}.
         \item \alert{Óptimo en $t_a = \SI{1.50}{\second}$,
               $d_s = \SI{0.14}{\meter}$}.
@@ -689,7 +689,7 @@
             \item Los dos óptimos coinciden en $d_s$ ($0{,}13$ y
                   \SI{0.14}{\meter}) y difieren en $t_a$ ($2{,}15$ y
                   \SI{1.50}{\second}), que es el parámetro plano.
-            \item Usar el óptimo de la métrica 2 cuesta un \SI{2.6}{\percent}
+            \item Usar el óptimo de la métrica 2 cuesta un \SI{2.3}{\percent}
                   de \mEuno{}; al revés, un \SI{17}{\percent} de \mEdos{}.}
         \colvin{%
             \item Los escalones de \mEdos{} en $t_a \approx 1{,}5$ y
@@ -709,7 +709,7 @@
                   evento, más anticipación nunca molesta. El global queda en \SI{2.15}{\second} por los dos
                   eventos en que cambia el lado.}
         \colvin{%
-            \item En $d_s$ la mediana individual es \SI{0.07}{\meter} (de $0{,}03$
+            \item En $d_s$ la mediana individual es \SI{0.06}{\meter} (de $0{,}03$
                   a $0{,}24$): cada par pasa a \textbf{su propia distancia}, y el
                   global es un compromiso.
             \cond{métrica 1, misma grilla de $81 \times 61$ pares}}
@@ -722,7 +722,7 @@
               los propios.
         \item \alert{Individualizar baja \mEuno{} de $0{,}064$ a
               \SI{0.050}{\meter\squared}, un \SI{22}{\percent}} --- y con la
-              métrica 2, de $0{,}0195$ a $0{,}014$, un \SI{27}{\percent}.
+              métrica 2, de $0{,}0193$ a $0{,}014$, un \SI{27}{\percent}.
         \item Casi la mitad de la ganancia de la métrica 1 es \textbf{un solo
               evento}, el 17: con sus propios parámetros elude por el lado
               correcto ($0{,}155 \to \SI{0.043}{\meter\squared}$).
@@ -741,7 +741,7 @@
         \colvin{%
             \item \alert{En ningún evento los dos peatones eligen el mismo par}:
                   es la asimetría del reparto, vista en los parámetros. En
-                  $t_a$, 29 de los 38 piden \SI{3.5}{\second} o más; en $d_s$,
+                  $t_a$, 28 de los 38 piden \SI{3.5}{\second} o más; en $d_s$,
                   31 quedan en \SI{0.15}{\meter} o menos.
             \cond{métrica 1; grilla de $41 \times 31$ pares por peatón}}
     }
@@ -753,8 +753,8 @@
               con cuatro por evento, los tres sobre \textbf{la misma grilla}.
         \item \alert{Con dos por evento \mEuno{} baja un \SI{22}{\percent}
               ($0{,}065 \to \SI{0.050}{\meter\squared}$); con cuatro, un
-              \SI{11}{\percent} más} ($\to 0{,}045$; pareado
-              $0{,}005 \pm 0{,}001$). Con la métrica 2, \SI{26}{\percent} y
+              \SI{10}{\percent} más} ($\to 0{,}045$; pareado
+              $0{,}005 \pm 0{,}001$). Con la métrica 2, \SI{27}{\percent} y
               \SI{31}{\percent} más.
         \item Describe pero \textbf{no predice}: para un par nuevo no hay con
               qué estimar sus cuatro parámetros. Lo que se valida en el ítem d
@@ -818,7 +818,7 @@
               dejando uno afuera, un \SI{26}{\percent}. Con la métrica 2,
               \SI{35}{\percent} y \SI{28}{\percent}.
         \item Sigue siendo \textbf{diez veces menos que sin capa}
-              (\SI{0.93}{\meter\squared}). El segundo pico del histograma son las
+              (\SI{0.91}{\meter\squared}). El segundo pico del histograma son las
               particiones en que el 16 o el 17 quedan en validación.
         \cond{métrica 1, 500 particiones de 13/6}
     }
@@ -849,8 +849,8 @@
     \begin{itemize}\setlength{\itemsep}{0.55em}
         \item Una capa de elusión de \textbf{dos parámetros} que sólo reemplaza el
               target baja el error poblacional un \SI{93}{\percent} con la métrica
-              1 ($0{,}93 \to \SI{0.064}{\meter\squared}$) y un \SI{94}{\percent} con
-              la métrica 2 ($0{,}34 \to \SI{0.0195}{\meter\squared}$), y elimina el
+              1 ($0{,}91 \to \SI{0.064}{\meter\squared}$) y un \SI{94}{\percent} con
+              la métrica 2 ($0{,}33 \to \SI{0.0193}{\meter\squared}$), y elimina el
               contacto: de 19 eventos a ninguno.
         \item Los óptimos son $(\SI{2.15}{\second},\ \SI{0.13}{\meter})$ y
               $(\SI{1.50}{\second},\ \SI{0.14}{\meter})$: las dos métricas piden la
@@ -940,8 +940,8 @@
             \item Va de $0{,}12$ a $0{,}97$: \alert{en cada par uno de los dos
                   cede más}, y cuál de los dos cambia de par en par.}
         \colvin{%
-            \item Con el $\alpha$ propio de cada par, \mEdos{} baja de $0{,}0195$
-                  a \SI{0.016}{\meter\squared}, un \SI{18}{\percent}
+            \item Con el $\alpha$ propio de cada par, \mEdos{} baja de $0{,}0193$
+                  a \SI{0.016}{\meter\squared}, un \SI{19}{\percent}
                   (\SI{7}{\percent} con la métrica 1).
             \cond{$t_a$ y $d_s$ fijos en el óptimo de cada métrica}}
     }
@@ -952,8 +952,8 @@
         \colvin{%
             \item $\alpha$ también se puede \textbf{medir sin simular}: la
                   fracción del desvío lateral en el cruce que hizo el que sale
-                  de la izquierda. Media $0{,}58$, de $0{,}17$ a $0{,}99$.
-            \item \alert{El calibrado y el medido coinciden}: $r = 0{,}69$ con la
+                  de la izquierda. Media $0{,}59$, de $0{,}17$ a $0{,}99$.
+            \item \alert{El calibrado y el medido coinciden}: $r = 0{,}65$ con la
                   métrica 1 y $r = 0{,}88$ con la 2.}
         \colvin{%
             \item No es un parámetro que absorbe residuo: es una propiedad de

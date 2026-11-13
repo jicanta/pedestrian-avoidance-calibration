@@ -204,12 +204,13 @@ std::vector<Row> readTable(const std::string& path) {
 // que el enunciado fija a partir de ella: posicion y velocidad iniciales,
 // target final y rapidez media.
 //
-// El target final es la ultima posicion medida de la ventana. Si al peaton se
-// le perdio el seguimiento antes del final de la ventana, es la primera
-// posicion en que se lo vuelve a medir (hasta `limit`, el ultimo cuadro que
-// declara el LEEME): sigue siendo un dato medido, y es adonde iba.
-Pedestrian build(int id, const Track& track, int first, int last, int limit,
-                 double sampling) {
+// El target final es la ULTIMA POSICION MEDIDA de la ventana, como dice el
+// enunciado ("su target final es la ultima posicion de su trayectoria
+// experimental"): el agente termina donde termina la trayectoria medida.
+// Vale tambien cuando al peaton se le pierde el seguimiento antes del final
+// de la ventana (el 36 del evento 1): su target es su ultima muestra, llega
+// ahi y se queda mientras el otro termina de salir.
+Pedestrian build(int id, const Track& track, int first, int last, double sampling) {
   Pedestrian pedestrian;
   pedestrian.id = id;
   pedestrian.experimental.resize(static_cast<std::size_t>(last - first + 1));
@@ -247,12 +248,6 @@ Pedestrian build(int id, const Track& track, int first, int last, int limit,
     if (pedestrian.experimental[k].present) {
       pedestrian.target = pedestrian.experimental[k].position;
       break;
-    }
-  }
-  if (!pedestrian.experimental.back().present) {
-    const auto next = track.byFrame.upper_bound(last);
-    if (next != track.byFrame.end() && next->first <= limit) {
-      pedestrian.target = next->second;
     }
   }
 
@@ -332,9 +327,9 @@ Experiment readExperiment(const std::string& trajectories, const std::string& ta
     event.firstFrame = firstFrame;
     event.instants = lastFrame - firstFrame + 1;
     event.duration = (event.instants - 1) * experiment.sampling;
-    event.left = build(row.left, left->second, firstFrame, lastFrame, row.lastFrame, experiment.sampling);
+    event.left = build(row.left, left->second, firstFrame, lastFrame, experiment.sampling);
     event.right =
-        build(row.right, right->second, firstFrame, lastFrame, row.lastFrame, experiment.sampling);
+        build(row.right, right->second, firstFrame, lastFrame, experiment.sampling);
 
     event.minimumDistance = -1.0;
     for (int k = 0; k < event.instants; ++k) {

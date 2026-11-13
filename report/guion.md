@@ -63,7 +63,8 @@ están en el README (21, 26, 35, 33, 30, 10, 16, en ese orden).
 - *Si preguntan por el evento 1:* al peatón 36 se le pierde el seguimiento
   después del cruce (x = 3,2 m) y reaparece ya en la fila. La ventana no se
   corta ahí: sigue hasta que el otro llega a 7,7 m; en esos 29 instantes el 36
-  se simula pero su error no se evalúa, y su target es donde reaparece.
+  se simula pero su error no se evalúa. Su target es su última posición
+  medida, como en todos: llega ahí y se queda mientras el otro termina.
 
 ## 6. Capa (1/3): detección — `slide-06-elusion-deteccion.png` + GIF 09 — 1:10
 
@@ -108,9 +109,9 @@ están en el README (21, 26, 35, 33, 30, 10, 16, en ese orden).
 
 - Se probaron tres capas más, de dos parámetros y como target temporal, con
   repulsión A·exp(−(d−2r)/B): isotrópica, lateral y predictiva.
-- La isotrópica queda lejos (−67 % contra −94 %): de frente la repulsión no
+- La isotrópica queda lejos (−66 % contra −94 %): de frente la repulsión no
   tiene componente lateral. El campo predictivo empata.
-- El lateral da un error algo menor (0,014 contra 0,0195 m²), pero con B en el
+- El lateral da un error algo menor (0,014 contra 0,0193 m²), pero con B en el
   borde de la grilla, 5 m: es empujar de costado siempre.
 - *Si preguntan por qué no se usó el lateral:* no tiene horizonte ni distancia
   de paso; funciona acá porque hay un solo cruce de frente. La predictiva tiene
@@ -163,7 +164,7 @@ están en el README (21, 26, 35, 33, 30, 10, 16, en ese orden).
 
 ## 16. Paso de integración — `slide-16-convergencia-dt.png` — 0:15
 
-- Con n = 64, 1 ms, ⟨E⟩ se aparta 0,11 % del paso más fino: cien veces menos
+- Con n = 64, 1 ms, ⟨E⟩ se aparta 0,10 % del paso más fino: cien veces menos
   que el error estándar entre eventos.
 
 ## 17. Evento 10 sin capa — `slide-17-animacion-evento10-sin-capa.png` — 0:15 (GIF 02)
@@ -202,7 +203,7 @@ están en el README (21, 26, 35, 33, 30, 10, 16, en ese orden).
 
 ## 23. Mapa, métrica 1 — `slide-23-superficie-metrica1.png` — 0:25
 
-- Óptimo en (2,15 s, 0,13 m): 0,064 m² contra 0,93 sin capa, **−93 %**. Abajo
+- Óptimo en (2,15 s, 0,13 m): 0,064 m² contra 0,91 sin capa, **−93 %**. Abajo
   y a la izquierda la capa reacciona tarde o no pide separación.
 
 ## 24. Cortes, métrica 1 — `slide-24-cortes-metrica1.png` — 0:25
@@ -214,7 +215,7 @@ están en el README (21, 26, 35, 33, 30, 10, 16, en ese orden).
 
 ## 25. Mapa, métrica 2 — `slide-25-superficie-metrica2.png` — 0:20 (C)
 
-- Mismo valle: 0,34 → 0,0195 m², **−94 %**. Óptimo en (1,50 s, 0,14 m). Las dos
+- Mismo valle: 0,33 → 0,0193 m², **−94 %**. Óptimo en (1,50 s, 0,14 m). Las dos
   métricas piden la misma distancia de paso, 0,63 y 0,64 m.
 
 ## 26. Cortes, métrica 2 — `slide-26-cortes-metrica2.png` — 0:15
@@ -230,7 +231,7 @@ están en el README (21, 26, 35, 33, 30, 10, 16, en ese orden).
 
 ## 28. Cuánto se gana — `slide-28-errores-por-evento.png` — 0:20
 
-- Individualizar baja ⟨E(1)⟩ de 0,064 a 0,050 (−22 %) y ⟨E(2)⟩ de 0,0195 a
+- Individualizar baja ⟨E(1)⟩ de 0,064 a 0,050 (−22 %) y ⟨E(2)⟩ de 0,0193 a
   0,014 (−27 %). Casi la mitad de la ganancia de la métrica 1 es el evento 17.
 
 ## 29. Opcional: parámetros por peatón — `slide-29-optimos-por-peaton.png` — 0:25
@@ -244,7 +245,7 @@ están en el README (21, 26, 35, 33, 30, 10, 16, en ese orden).
 ## 30. Opcional: cuánto se gana — `slide-30-errores-por-peaton.png` — 0:15
 
 - Sobre la misma grilla: con dos por evento ⟨E(1)⟩ baja 22 %, con cuatro un
-  11 % más (26 % y 31 % más con la métrica 2). Describe pero no predice: para
+  10 % más (27 % y 31 % más con la métrica 2). Describe pero no predice: para
   un par nuevo no hay con qué estimar sus cuatro parámetros.
 
 ## 31. Ritmo y forma — `slide-31-residuo-descomposicion.png` — 0:15
@@ -307,10 +308,10 @@ hay tiempo.
 ### Extra 2 — `slide-extra-2-alfa-histograma.png`
 
 - Evento por evento α va de 0,12 a 0,97: en cada par uno cede más, y cuál
-  cambia de par en par. Con el α propio de cada par ⟨E(2)⟩ baja un 18 %.
+  cambia de par en par. Con el α propio de cada par ⟨E(2)⟩ baja un 19 %.
 
 ### Extra 3 — `slide-extra-3-alfa-medido.png`
 
 - α también se puede medir sin simular, del desvío lateral de cada uno en el
-  cruce. El calibrado y el medido coinciden: r = 0,69 y 0,88. Es una propiedad
+  cruce. El calibrado y el medido coinciden: r = 0,65 y 0,88. Es una propiedad
   de cada par, no un parámetro que absorbe residuo; pero describe y no predice.

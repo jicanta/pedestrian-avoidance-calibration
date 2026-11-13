@@ -92,8 +92,8 @@ por `A exp(−(d − 2r)/B)` (`--capa campo|campo-lateral|campo-predictivo`,
 
 | capa | qué distancia y qué dirección usa | óptimo (métrica 2) | `<E(2)>` | pareado contra la predictiva |
 |---|---|---|---|---|
-| **predictiva (la que corre)** | `(D − d*)` en la dirección `ŝ`, con horizonte `t_a` | 1,50 s, 0,14 m | **0,0195 m² (−94 %)** | — |
-| campo isotrópico | la distancia actual, de `j` a `i` (Helbing como dirección) | A = 1,4, B = 1,1 m | 0,112 m² (−67 %) | **−0,093 ± 0,010** (peor) |
+| **predictiva (la que corre)** | `(D − d*)` en la dirección `ŝ`, con horizonte `t_a` | 1,50 s, 0,14 m | **0,0193 m² (−94 %)** | — |
+| campo isotrópico | la distancia actual, de `j` a `i` (Helbing como dirección) | A = 1,4, B = 1,1 m | 0,111 m² (−66 %) | **−0,091 ± 0,011** (peor) |
 | campo lateral | la distancia actual, perpendicular al camino, del lado contrario a `j` | A = 0,2, B = 5,0 m (borde) | 0,014 m² (−96 %) | +0,005 ± 0,002 (mejor) |
 | campo predictivo | la separación predicha `d*`, en `ŝ` (Karamouzas como target) | A = 0,2, B = 0,2 m (borde) | 0,023 m² (−93 %) | −0,004 ± 0,008 (empata) |
 
@@ -103,7 +103,7 @@ por `A exp(−(d − 2r)/B)` (`--capa campo|campo-lateral|campo-predictivo`,
   modelos "particle-based" y que motiva a Karamouzas.
 - El **campo predictivo empata** con la predictiva dentro de la diferencia
   pareada.
-- El **campo lateral da un error algo menor** (0,014 contra 0,0195 m² con la
+- El **campo lateral da un error algo menor** (0,014 contra 0,0193 m² con la
   métrica 2, y 0,047 contra 0,064 con la 1; la diferencia pareada es
   significativa), y hay que decirlo. Pero su óptimo está en el **borde de la
   grilla**, `B = 5 m`: con ese alcance el peso exponencial casi no depende de
@@ -123,10 +123,10 @@ mismos 19 eventos (`--sin-rampa` y `--mira-horizonte`):
 
 | variante | peso de urgencia | punto de mira | `<E(1)>` mín. | `<E(2)>` mín. | pareado contra la que corre (métrica 2) |
 |---|---|---|---|---|---|
-| **la que corre** | `w = 1 − τ*/ta` | `v^d τ*` | 0,065 | 0,0195 | — |
-| sin rampa | `w = 1` | `v^d τ*` | 0,053 | 0,016 | +0,003 ± 0,0002 (mejor) |
-| mira al horizonte | `w = 1 − τ*/ta` | `v^d ta` | 0,121 | 0,031 | −0,011 ± 0,009 (peor, en el borde de `d_s`) |
-| ninguna de las dos | `w = 1` | `v^d ta` | 0,044 | 0,014 | +0,006 ± 0,0004 (mejor) |
+| **la que corre** | `w = 1 − τ*/ta` | `v^d τ*` | 0,065 | 0,0193 | — |
+| sin rampa | `w = 1` | `v^d τ*` | 0,052 | 0,016 | +0,003 ± 0,0002 (mejor) |
+| mira al horizonte | `w = 1 − τ*/ta` | `v^d ta` | 0,112 | 0,029 | −0,010 ± 0,006 (peor, en el borde de `d_s`) |
+| ninguna de las dos | `w = 1` | `v^d ta` | 0,044 | 0,013 | +0,006 ± 0,0003 (mejor) |
 
 **Con la ventana recortada las cuatro ya no dan lo mismo**, y hay que decirlo:
 sacar la rampa baja el error un 16–19 %, y sacar la rampa y mirar al horizonte,
@@ -247,8 +247,7 @@ copiada del LEEME) y, por cada prueba, arma la ventana en dos pasos:
 De esa ventana salen, por peatón, las condiciones que el enunciado fija:
 posición y velocidad iniciales (la velocidad, como diferencia finita sobre 5
 cuadros: una diferencia entre cuadros consecutivos mide el ruido del
-seguimiento), target final (la última posición medida; si el seguimiento se pierde antes
-del final de la ventana, la primera en que se lo vuelve a medir) y rapidez deseada (el
+seguimiento), target final (la última posición medida) y rapidez deseada (el
 largo del camino medido sobre su duración).
 
 El peatón que el LEEME deja sin identificar en la prueba 2 (`sale izquierda
@@ -290,8 +289,8 @@ Con ese tramo (`make eventos-figuras`):
 | instantes | 1375 de los 3941 que declara el LEEME (35 %) |
 | `Nm` por evento | 60 a 80 (4,0 a 5,3 s) |
 | `v_d` | 1,15 a 1,63 m/s, media 1,32 |
-| ángulo entre `v(0)` y la recta al target | mediana 6°, máximo 29° |
-| `y` del target final | 1,83 a 2,16 m (el corredor está en `y ≈ 2`) |
+| ángulo entre `v(0)` y la recta al target | mediana 5°, máximo 29° |
+| `y` del target final | 1,83 a 2,22 m (el corredor está en `y ≈ 2`) |
 | el cruce cae en | entre el 47 % y el 56 % de la ventana |
 | huecos de seguimiento adentro | uno: el peatón 36 del evento 1, 29 instantes |
 
@@ -301,11 +300,13 @@ más tarde ya parado en la fila (`x = 0,59 m`). Un cuadro sin muestra **no
 cierra la ventana**: el evento sigue hasta que el otro peatón llega a
 `x = 7,7 m` (`Nm = 71`), igual que los demás. En los 29 instantes sin muestra
 el agente 36 se simula igual —hace falta para acoplarlo con el otro— pero su
-error no se evalúa, y su target final es la posición en que se lo vuelve a
-medir, que es adonde iba. En una versión anterior la ventana se cortaba donde
+error no se evalúa. Su target final es, como dice el enunciado y como en los
+otros 37 peatones, **la última posición de su trayectoria medida** (3,19;
+2,22): llega ahí cuando se le acaban los datos y se queda (oscila unos 0,2 m
+alrededor, porque no hay regla de frenado) mientras el otro termina de salir. En una versión anterior la ventana se cortaba donde
 se pierde el seguimiento (`Nm = 42`) y los dos quedaban en la mitad del
 corredor; la cátedra lo marcó el 12/11. Los óptimos no se movieron con el
-cambio; `<E(1)>` pasó de 0,062 a 0,064 m² y `<E(2)>` de 0,0191 a 0,0195 m².
+cambio; `<E(1)>` pasó de 0,062 a 0,064 m² y `<E(2)>` de 0,0191 a 0,0193 m².
 
 Si con un tramo angosto los dos peatones coinciden adentro más de una vez (uno
 de los dos todavía en la fila), la ventana es el tramo continuo que contiene
@@ -317,9 +318,9 @@ la mínima distancia medida: el cruce.
 |---|---|---|---|
 | 0,80 a 7,90 | 82 | (2,0 s, 0,12 m) · 0,113 · −92 % | (2,0 s, 0,12 m) · 0,027 · −96 % |
 | 1,00 a 8,00 | 74 | (4,0 s, 0,10 m) · 0,079 · −92 % | (1,5 s, 0,14 m) · 0,027 · −94 % |
-| **1,00 a 7,70** | **72** | **(2,1 s, 0,14 m) · 0,065 · −93 %** | **(1,5 s, 0,14 m) · 0,0195 · −94 %** |
-| 1,25 a 7,45 | 64 | (1,3 s, 0,18 m) · 0,044 · −94 % | (1,3 s, 0,18 m) · 0,017 · −95 % |
-| 1,50 a 7,20 | 56 | (4,0 s, 0,08 m) · 0,020 · −96 % | (4,0 s, 0,12 m) · 0,011 · −94 % |
+| **1,00 a 7,70** | **72** | **(2,1 s, 0,14 m) · 0,065 · −93 %** | **(1,5 s, 0,14 m) · 0,0193 · −94 %** |
+| 1,25 a 7,45 | 64 | (1,3 s, 0,18 m) · 0,043 · −94 % | (1,3 s, 0,18 m) · 0,017 · −94 % |
+| 1,50 a 7,20 | 56 | (4,0 s, 0,08 m) · 0,020 · −96 % | (4,0 s, 0,12 m) · 0,010 · −94 % |
 | 2,00 a 6,70 | 43 | (4,0 s, 0,10 m) · 0,011 · −95 % | (4,0 s, 0,12 m) · 0,008 · −90 % |
 
 `<E>` baja al acortar la ventana porque una trayectoria más corta acumula menos
@@ -339,9 +340,9 @@ contacto. El primer paso usa `a(−Δt) = a(0)`.
 El paso es `dt = Δt_exp / n` con `n` **entero**, de modo que cada instante
 experimental cae exactamente en un paso de la simulación y las dos
 trayectorias se comparan sin interpolar. `make convergencia` barre `n` de 1 a
-512 y mide cuánto se aparta `<E>` del valor del paso más fino: 1,6 % con
-`n = 1`, 0,3 % con `n = 16`, **0,11 % con `n = 64`** y 0,002 % con `n = 128`.
-Se usa **`n = 64`** (`dt = 1,04 ms`): 0,11 % es cien veces menos que el error
+512 y mide cuánto se aparta `<E>` del valor del paso más fino: 1,4 % con
+`n = 1`, 0,3 % con `n = 16`, **0,10 % con `n = 64`** y 0,007 % con `n = 128`.
+Se usa **`n = 64`** (`dt = 1,04 ms`): 0,10 % es cien veces menos que el error
 estándar de `<E(1)>` entre eventos (10 %), y el barrido fino entero tarda medio
 minuto. La convergencia no es monótona (de `n = 2` a `n = 4` el apartamiento
 sube de 0,7 % a 1,4 %), así que se informa el valor y no un orden.
@@ -421,9 +422,9 @@ Todo con la ventana `1,0 m ≤ x ≤ 7,7 m`, 19 eventos, `dt = Δt_exp/64`.
 
 | | sin capa (`t_a = 0`) | con la capa calibrada (2,15 s, 0,13 m) |
 |---|---|---|
-| eventos con contacto entre los dos agentes | **19 de 19** (solapamiento de hasta 4,9 cm) | **0 de 19** |
-| `<E(1)>` | 0,930 m² | 0,064 m² |
-| `<E(2)>` | 0,341 m² | 0,023 m² (0,0195 con su propio óptimo) |
+| eventos con contacto entre los dos agentes | **19 de 19** (solapamiento de hasta 5,1 cm) | **0 de 19** |
+| `<E(1)>` | 0,907 m² | 0,064 m² |
+| `<E(2)>` | 0,328 m² | 0,023 m² (0,0193 con su propio óptimo) |
 | elude por el mismo lado que las personas | — | **18 de 19** (19 de 19 con el óptimo de la métrica 2) |
 
 Los cuatro eventos que se muestran (`EVENTOS_FIG`):
@@ -443,34 +444,34 @@ distancia de paso es una sola para todos los pares**.
 
 | | métrica 1 (iguales tiempos) | métrica 2 (punto más cercano) |
 |---|---|---|
-| sin capa (`t_a = 0`) | 0,930 m² (RMS 0,96 m) | 0,341 m² (RMS 0,58 m) |
+| sin capa (`t_a = 0`) | 0,907 m² (RMS 0,95 m) | 0,328 m² (RMS 0,57 m) |
 | óptimo | **2,15 s, 0,13 m** | **1,50 s, 0,14 m** |
-| `<E>` en el óptimo | 0,0640 ± 0,0063 m² (RMS 0,25 m) | 0,0195 ± 0,0017 m² (RMS 0,14 m) |
+| `<E>` en el óptimo | 0,0637 ± 0,0063 m² (RMS 0,25 m) | 0,0193 ± 0,0017 m² (RMS 0,14 m) |
 | cuánto baja la capa | **93 %** | **94 %** |
 | valores que empatan con el óptimo | `t_a` 1,35–4,00 s, `d_s` 0,07–0,22 m | `t_a` 1,50–4,00 s, `d_s` 0,07–0,27 m |
 | distancia de paso `D = 2r + d_s` | 0,63 m | 0,64 m |
 
 Los dos óptimos coinciden en `d_s` y difieren en `t_a`. Usar el óptimo de la
-métrica 2 cuesta un 2,6 % de `<E(1)>`; al revés, un 17 % de `<E(2)>`.
+métrica 2 cuesta un 2,3 % de `<E(1)>`; al revés, un 17 % de `<E(2)>`.
 
-`t_a` queda determinado **sólo por abajo**: `<E(1)>` cae de 0,93 a 0,08 m²
-entre 0 y 1,5 s y después es plano (0,067 m² en 4 s). Tiene una explicación
+`t_a` queda determinado **sólo por abajo**: `<E(1)>` cae de 0,91 a 0,08 m²
+entre 0 y 1,5 s y después es plano (0,066 m² en 4 s). Tiene una explicación
 geométrica: al empezar el evento los dos peatones están a unos 6,2 m y la
 mínima distancia medida llega entre 2,1 y 2,7 s después (mediana 2,4 s); con
 más anticipación que eso el conflicto se declara desde el primer instante, y
 `t_a` sólo entra a través del peso de urgencia. El techo de la grilla se
 verifica con un barrido aparte hasta 8 s (`data/barrido/p1largo`, figura
-`techo_ta`): entre 4 y 8 s `<E>` se mueve un 2,6 % (métrica 1) y un 1,5 %
+`techo_ta`): entre 4 y 8 s `<E>` se mueve un 2,6 % (métrica 1) y un 1,4 %
 (métrica 2).
 
 Lo mismo pasa evento por evento, y por eso el histograma de los óptimos
 individuales de `t_a` (ítem c) tiene el pico en 4 s: **es el techo de la
 grilla, no un mínimo**. Con el techo en 12 s (`sweep --p1 0:12:121 --p2
 0:0.6:61`, un minuto) 17 de los 19 óptimos individuales se van más allá de
-4 s —11 hasta los 12 s en la métrica 1 y 15 en la 2— y el error individual
+4 s —11 hasta los 12 s en la métrica 1 y 14 en la 2— y el error individual
 baja apenas un 4 % y un 6 %. En ese barrido el mínimo poblacional de la
 métrica 1 también se muda, de (2,15 s; 0,13 m) a (12 s; 0,09 m), con una
-diferencia pareada de 0,002 ± 0,008 m²: un empate. El de la métrica 2 no se
+diferencia pareada de 0,001 ± 0,008 m²: un empate. El de la métrica 2 no se
 mueve de (1,5 s; 0,14 m). Lo que los datos fijan de `t_a` es que sea mayor que
 ≈ 1,5 s.
 
@@ -491,11 +492,11 @@ fija por dónde se pasa.
 |---|---|---|
 | `t_a` individual (mediana, rango) | 4,00 s (1,50–4,00) | 4,00 s (1,45–4,00) |
 | eventos con `t_a` en el borde de la grilla (4 s) | 14 de 19 | 16 de 19 |
-| `d_s` individual (mediana, rango) | 0,07 m (0,03–0,24) | 0,14 m (0,03–0,37) |
+| `d_s` individual (mediana, rango) | 0,06 m (0,03–0,24) | 0,14 m (0,03–0,41) |
 | eventos con `t_a = 0` | ninguno | ninguno |
-| `<E_m>` con los poblacionales | 0,0640 m² | 0,0195 m² |
-| `<E_m>` con los individuales | 0,0502 m² | 0,0142 m² |
-| **cuánto se gana** | **22 %** (pareado 0,014 ± 0,006) | **27 %** (pareado 0,0053 ± 0,0004) |
+| `<E_m>` con los poblacionales | 0,0637 m² | 0,0193 m² |
+| `<E_m>` con los individuales | 0,0500 m² | 0,0140 m² |
+| **cuánto se gana** | **22 %** (pareado 0,014 ± 0,006) | **27 %** (pareado 0,0052 ± 0,0004) |
 
 Se muestran como histograma de cada parámetro con una línea vertical en el
 óptimo global. Lo que se lee:
@@ -503,7 +504,7 @@ Se muestran como histograma de cada parámetro con una línea vertical en el
 - **En `t_a` casi todos se van al borde**: evento por evento, más anticipación
   nunca molesta. El óptimo global queda en 2,15 s (o 1,50 s) por los dos
   eventos de los escalones, no porque haya un tiempo de anticipación preferido.
-- **En `d_s` cada par tiene el suyo**, de 0,03 a 0,37 m: es la misma dispersión
+- **En `d_s` cada par tiene el suyo**, de 0,03 a 0,41 m: es la misma dispersión
   que tiene la distancia mínima medida (0,49 a 0,92 m). El global es un
   compromiso, y eso es lo que se gana al individualizar.
 - Casi la mitad de la ganancia de la métrica 1 es **un solo evento**, el 17
@@ -538,23 +539,23 @@ métrica 1 cae en 2,10 s y 0,14 m).
 
 | | métrica 1 | métrica 2 |
 |---|---|---|
-| poblacional (1 juego) | 0,0650 m² | 0,0195 m² |
-| 2 por evento (ítem c) | 0,0504 m² (−22 %) | 0,0143 m² (−26 %) |
-| **4 por evento (opcional)** | **0,0451 m² (−11 % más)** | **0,0099 m² (−31 % más)** |
-| ganancia pareada, 4 contra 2 | 0,0053 ± 0,0012 m² (4,5 σ) | 0,0044 ± 0,0011 m² (4,0 σ) |
-| los dos peatones eligen el mismo par | 0 de 19 | 1 de 19 |
+| poblacional (1 juego) | 0,0647 m² | 0,0193 m² |
+| 2 por evento (ítem c) | 0,0502 m² (−22 %) | 0,0141 m² (−27 %) |
+| **4 por evento (opcional)** | **0,0450 m² (−10 % más)** | **0,0097 m² (−31 % más)** |
+| ganancia pareada, 4 contra 2 | 0,0052 ± 0,0012 m² (4,4 σ) | 0,0044 ± 0,0011 m² (4,1 σ) |
+| los dos peatones eligen el mismo par | 0 de 19 | 0 de 19 |
 
 Se muestra como histograma de los 38 óptimos de cada parámetro, con la línea
 vertical en el óptimo global del ítem b. Lo que se lee:
 
-1. **Los dos peatones de un par casi nunca quieren los mismos parámetros** (0
-   de 19 con la métrica 1 y 1 de 19, el evento 1, con la 2). Es la misma asimetría que se
+1. **Los dos peatones de un par nunca quieren los mismos parámetros** (0 de 19
+   con las dos métricas). Es la misma asimetría que se
    mide directamente en las trayectorias y que el extra de `α` describe con un
    solo número: en cada par uno de los dos cede más.
-2. **En `t_a`, 29 de los 38 peatones piden 3,5 s o más**, igual que en el ítem
+2. **En `t_a`, 28 de los 38 peatones piden 3,5 s o más**, igual que en el ítem
    c; en `d_s`, 31 de los 38 quedan en 0,15 m o menos.
 3. **Con la métrica 2 se gana de verdad**: 31 % más que con dos por evento.
-   Con la métrica 1, 11 % más.
+   Con la métrica 1, 10 % más.
 
 Y la contra: **describe pero no predice**. Son cuatro números por evento, así
 que para un par nuevo no hay con qué estimarlos. Lo que se valida en el ítem d
@@ -577,7 +578,7 @@ Con los parámetros poblacionales de la métrica 1:
   0,44 a 0,58 (media 0,53): en la figura del lado los puntos quedan en una
   franja horizontal.
 - **Contacto.** Sin la capa hay contacto en los 19 eventos (solapamiento de
-  hasta 4,9 cm); con la capa calibrada, en ninguno. En los datos, un solo
+  hasta 5,1 cm); con la capa calibrada, en ninguno. En los datos, un solo
   evento tiene distancia mínima por debajo de `2r`.
 
 Como referencia, la calibración del AA-CPM de la cátedra sobre su propio
@@ -595,17 +596,17 @@ recorte en `x` no queda ninguna.
 
 | | métrica 1 | métrica 2 |
 |---|---|---|
-| ítem b (calibra y mide con los 19) | 0,0640 m² | 0,0195 m² |
-| entrenamiento (500 particiones de 13/6) | 0,061 ± 0,005 m² | 0,019 ± 0,001 m² |
+| ítem b (calibra y mide con los 19) | 0,0637 m² | 0,0193 m² |
+| entrenamiento (500 particiones de 13/6) | 0,060 ± 0,005 m² | 0,018 ± 0,001 m² |
 | validación | 0,086 ± 0,027 m² (**+35 %**) | 0,026 ± 0,010 m² (**+35 %**) |
-| dejando uno afuera (19 de 18/1) | 0,081 m² (+26 %) | 0,025 m² (+28 %) |
-| sin capa, como referencia | 0,930 m² | 0,341 m² |
+| dejando uno afuera (19 de 18/1) | 0,080 m² (+26 %) | 0,025 m² (+28 %) |
+| sin capa, como referencia | 0,907 m² | 0,328 m² |
 
 El error de validación queda un tercio por encima del del ítem b, y la causa
 es concreta: **los eventos 16 y 17**, los de los escalones. Cuando uno de los
 dos queda en el conjunto de validación, la calibración no tiene cómo saber que
 ese evento necesita un `t_a` de un lado u otro del escalón. Separando las
-particiones: si ninguno de los dos está en validación el error es 0,069 m² (un
+particiones: si ninguno de los dos está en validación el error es 0,068 m² (un
 7 % sobre el ítem b); si está el 17, 0,104; si están los dos, 0,158. Todas las
 particiones con error de validación mayor que 0,09 m² tienen al 16 o al 17 en
 validación.
@@ -631,11 +632,11 @@ El factor 2 hace que `α = 0,5` sea exactamente la capa simétrica. Con `t_a` y
 
 | | métrica 1 | métrica 2 |
 |---|---|---|
-| simétrica (`α = 0,5`) | 0,0640 ± 0,0063 | 0,0195 ± 0,0017 |
-| `α` global óptimo | **0,600** · 0,0630 (gana 2 %, pareado 0,0011 ± 0,0009) | **0,575** · 0,0192 (gana 1 %, pareado 0,0003 ± 0,0005) |
-| `α` propio de cada evento | 0,0593 (gana 7 %, pareado 0,0048 ± 0,0013) | 0,0159 (gana **18 %**, pareado 0,0036 ± 0,0009) |
+| simétrica (`α = 0,5`) | 0,0637 ± 0,0063 | 0,0193 ± 0,0017 |
+| `α` global óptimo | **0,600** · 0,0626 (gana 2 %, pareado 0,0012 ± 0,0009) | **0,575** · 0,0190 (gana 1 %, pareado 0,0003 ± 0,0005) |
+| `α` propio de cada evento | 0,0591 (gana 7 %, pareado 0,0046 ± 0,0013) | 0,0157 (gana **19 %**, pareado 0,0036 ± 0,0009) |
 | `α` por evento | media 0,62 · de 0,28 a 0,97 | media 0,59 · de 0,12 a 0,95 |
-| correlación con el `α` medido | r = 0,69 | **r = 0,88** |
+| correlación con el `α` medido | r = 0,65 | **r = 0,88** |
 
 - **Como población, la capa simétrica alcanza**: el mejor `α` global está un
   poco por encima de 0,5 pero gana 1–2 %, dentro del error pareado. Dejar
@@ -645,7 +646,7 @@ El factor 2 hace que `α = 0,5` sea exactamente la capa simétrica. Con `t_a` y
 - **El `α` calibrado es el que se mide.** `α` también se puede medir sin
   simular: la fracción del desvío lateral en el cruce (respecto de la propia
   recta de arranque a target) que hizo el que sale de la izquierda. Medido da
-  media 0,58, de 0,17 a 0,99, y correlaciona con el calibrado con r = 0,69
+  media 0,59, de 0,17 a 0,99, y correlaciona con el calibrado con r = 0,65
   (métrica 1) y 0,88 (métrica 2). No es un parámetro que absorbe residuo.
 - **Describe pero no predice**: es un número por par, y para un par nuevo la
   mejor estimación es ≈ 0,5.
