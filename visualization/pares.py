@@ -39,6 +39,9 @@ COLUMNS = ("m", "metrica", "p1_izq", "p2_izq", "p1_der", "p2_der", "Em_cuatro",
 
 def read_pairs(path: Path) -> dict:
     values = np.loadtxt(path, comments="#")
+    # Por evento y por metrica: con --reanudar el motor agrega al final los
+    # eventos que faltaban, y el resto del script supone el orden de eventos.
+    values = values[np.lexsort((values[:, 1], values[:, 0]))]
     return {name: values[:, k] for k, name in enumerate(COLUMNS)}
 
 

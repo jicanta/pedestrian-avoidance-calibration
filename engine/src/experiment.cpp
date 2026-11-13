@@ -89,33 +89,80 @@ int lastFrameIn(const Track& track, int from, int to) {
 // donde parten y adonde llegan todos: las cabeceras de las dos filas estan en
 // x = 0,6 m y en x = 8,1 m, y entre una y otra los peatones caminan por el
 // corredor. El recorte es entonces una restriccion sobre el eje x, la misma
-// para los 19 eventos: la ventana va del primer cuadro al ultimo en que los
-// dos peatones estan adentro de [xMin, xMax]. Empieza cuando el ultimo de los
-// dos entra al tramo y termina cuando el primero de los dos lo deja.
+// para los 19 eventos: la ventana es el tramo continuo, alrededor del cruce,
+// en que a ninguno de los dos se lo ve afuera de [xMin, xMax]. Empieza cuando
+// el ultimo de los dos entra al tramo y termina cuando el primero lo deja.
 //
-// Los cuadros en que a alguno le falta la muestra (huecos de seguimiento) no
-// abren ni cierran la ventana, pero pueden quedar adentro: ahi el error no se
-// evalua (ver experiment.hpp).
+// Un cuadro en que a alguno le falta la muestra (hueco de seguimiento) no
+// cierra la ventana: queda adentro, y ahi el error de ese peaton no se evalua
+// (ver experiment.hpp). Es el caso del evento 1: al peaton 36 se le pierde el
+// seguimiento en x = 3,2 m, despues del cruce, y la ventana sigue hasta que el
+// otro llega a xMax. Cortarla donde se pierde el seguimiento dejaba a los dos
+// en la mitad del corredor (la catedra lo marco el 12/11).
 void trimToCorridor(const Track& left, const Track& right, double xMin, double xMax,
                     int& first, int& last) {
-  int insideFirst = -1;
-  int insideLast = -1;
+  const auto outside = [&](const Track& track, int frame) {
+    const auto found = track.byFrame.find(frame);
+    return found != track.byFrame.end() &&
+           (found->second.x < xMin || found->second.x > xMax);
+  };
+  const auto present = [](const Track& track, int frame) {
+    return track.byFrame.find(frame) != track.byFrame.end();
+  };
+
+  const auto bothInside = [&](int frame) {
+    return present(left, frame) && present(right, frame) && !outside(left, frame) &&
+           !outside(right, frame);
+  };
+
+  // El cruce: el cuadro de minima distancia medida con los dos adentro del
+  // tramo. La ventana es el tramo continuo que lo contiene. (Con un tramo
+  // angosto puede haber otra coincidencia breve, antes o despues, mientras
+  // alguno hace la fila; esa no es el evento.)
+  int crossing = -1;
+  double closest = 0.0;
   for (int frame = first; frame <= last; ++frame) {
-    const auto a = left.byFrame.find(frame);
-    const auto b = right.byFrame.find(frame);
-    if (a == left.byFrame.end() || b == right.byFrame.end()) {
+    if (!bothInside(frame)) {
       continue;
     }
-    const bool inside = a->second.x >= xMin && a->second.x <= xMax &&
-                        b->second.x >= xMin && b->second.x <= xMax;
-    if (inside) {
-      if (insideFirst < 0) {
-        insideFirst = frame;
-      }
-      insideLast = frame;
+    const double distance =
+        norm(left.byFrame.find(frame)->second - right.byFrame.find(frame)->second);
+    if (crossing < 0 || distance < closest) {
+      crossing = frame;
+      closest = distance;
     }
   }
-  if (insideFirst < 0 || insideLast - insideFirst < 2) {
+  if (crossing < 0) {
+    throw std::invalid_argument("los dos peatones no coinciden dentro del tramo de x pedido");
+  }
+
+  // Hacia atras y hacia adelante desde el cruce, hasta el ultimo cuadro antes
+  // de que a alguno de los dos se lo VEA afuera del tramo. Un cuadro sin
+  // muestra no corta la ventana.
+  int insideFirst = crossing;
+  for (int frame = crossing - 1; frame >= first; --frame) {
+    if (outside(left, frame) || outside(right, frame)) {
+      break;
+    }
+    insideFirst = frame;
+  }
+  int insideLast = crossing;
+  for (int frame = crossing + 1; frame <= last; ++frame) {
+    if (outside(left, frame) || outside(right, frame)) {
+      break;
+    }
+    insideLast = frame;
+  }
+  // La ventana empieza con los dos medidos (de ahi salen r(0) y v(0)) y no
+  // termina en un cuadro sin ninguna muestra.
+  while (insideFirst < crossing && !bothInside(insideFirst)) {
+    ++insideFirst;
+  }
+  while (insideLast > crossing && !present(left, insideLast) &&
+         !present(right, insideLast)) {
+    --insideLast;
+  }
+  if (insideLast - insideFirst < 2) {
     throw std::invalid_argument("los dos peatones no coinciden dentro del tramo de x pedido");
   }
   first = insideFirst;
@@ -156,7 +203,13 @@ std::vector<Row> readTable(const std::string& path) {
 // Trayectoria de un peaton sobre la ventana [first, last], con las condiciones
 // que el enunciado fija a partir de ella: posicion y velocidad iniciales,
 // target final y rapidez media.
-Pedestrian build(int id, const Track& track, int first, int last, double sampling) {
+//
+// El target final es la ultima posicion medida de la ventana. Si al peaton se
+// le perdio el seguimiento antes del final de la ventana, es la primera
+// posicion en que se lo vuelve a medir (hasta `limit`, el ultimo cuadro que
+// declara el LEEME): sigue siendo un dato medido, y es adonde iba.
+Pedestrian build(int id, const Track& track, int first, int last, int limit,
+                 double sampling) {
   Pedestrian pedestrian;
   pedestrian.id = id;
   pedestrian.experimental.resize(static_cast<std::size_t>(last - first + 1));
@@ -194,6 +247,12 @@ Pedestrian build(int id, const Track& track, int first, int last, double samplin
     if (pedestrian.experimental[k].present) {
       pedestrian.target = pedestrian.experimental[k].position;
       break;
+    }
+  }
+  if (!pedestrian.experimental.back().present) {
+    const auto next = track.byFrame.upper_bound(last);
+    if (next != track.byFrame.end() && next->first <= limit) {
+      pedestrian.target = next->second;
     }
   }
 
@@ -273,9 +332,9 @@ Experiment readExperiment(const std::string& trajectories, const std::string& ta
     event.firstFrame = firstFrame;
     event.instants = lastFrame - firstFrame + 1;
     event.duration = (event.instants - 1) * experiment.sampling;
-    event.left = build(row.left, left->second, firstFrame, lastFrame, experiment.sampling);
+    event.left = build(row.left, left->second, firstFrame, lastFrame, row.lastFrame, experiment.sampling);
     event.right =
-        build(row.right, right->second, firstFrame, lastFrame, experiment.sampling);
+        build(row.right, right->second, firstFrame, lastFrame, row.lastFrame, experiment.sampling);
 
     event.minimumDistance = -1.0;
     for (int k = 0; k < event.instants; ++k) {

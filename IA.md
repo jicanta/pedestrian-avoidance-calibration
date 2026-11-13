@@ -14,9 +14,10 @@ el cambio. Las entradas 1 a 14 son las que quedaron documentadas en la historia
 del repositorio (`git log`, `PLAN.md`, `README.md`); de la 15 en adelante se
 anotan **en el momento**, porque el detalle se pierde rápido. Las entradas 15 a
 17 salen de la primera revisión con la cátedra (el recorte de la ventana y la
-asimetría del par) y las 18 a 24, de la consulta del 11/11/2026
-(`FEEDBACK.md`), después de la cual **todos los números cambiaron**: las cifras
-que citan las entradas 1 a 14 son las de la ventana de entonces.
+asimetría del par), las 18 a 24, de la consulta del 11/11/2026
+(`FEEDBACK.md`), después de la cual **todos los números cambiaron** (las cifras
+que citan las entradas 1 a 14 son las de la ventana de entonces), y la 25, de
+la devolución del 12/11 sobre el evento 1.
 
 ---
 
@@ -28,7 +29,7 @@ instante inicial. Es incorrecto: con la rampa de urgencia `w = 1 − τ*/ta`, `t
 sigue entrando en el cálculo aunque el conflicto se detecte desde `t = 0`, así
 que ese número no acota nada. Se reemplazó por la medición que corresponde: un
 barrido aparte hasta `8 s` que muestra que entre 4 y 8 s `<E>` se mueve un
-2,5 % (métrica 1) y un 1,3 % (métrica 2): el techo no esconde nada.
+2,6 % (métrica 1) y un 1,5 % (métrica 2): el techo no esconde nada.
 *(commit `e95b7c3`; `PLAN.md` §«ítem b»)*
 
 **2. Promedió los 19 eventos como una sola población — y la corrección fue
@@ -56,7 +57,7 @@ Propuso una sola familia y la presentó como la solución. La Teórica 7 sugiere
 mirar capas basadas en campos, así que se implementaron **tres más** (isotrópica
 con el término social del SFM como dirección, lateral y predictiva con
 repulsión), todas de dos parámetros y todas como target temporal, y se
-compararon con la diferencia pareada. La isotrópica queda lejos (−66 % contra
+compararon con la diferencia pareada. La isotrópica queda lejos (−67 % contra
 −94 %: de frente la repulsión apunta hacia atrás y no tiene componente
 lateral); el campo predictivo empata; el lateral da un error algo menor pero
 con el óptimo en el borde de la grilla (`B = 5 m` es empujar de costado
@@ -71,7 +72,7 @@ fuera la única. Se dejaron las otras tres detrás de `--sin-rampa` y
 `--mira-horizonte` para poder compararlas, y el criterio de elección pasó a ser
 explícito y geométrico — **la única continua en los dos bordes del disparo**.
 Con la primera ventana las cuatro daban lo mismo dentro del 2 %; con la
-recortada ya no (sin la rampa el error baja un 15–20 %), y eso está dicho en el
+recortada ya no (sin la rampa el error baja un 16–19 %), y eso está dicho en el
 README y va como pregunta a la cátedra.
 *(commit `f73afef`; `README.md` §«variantes de diseño»)*
 
@@ -100,10 +101,10 @@ está en `y ≈ 2`. Lo marcó la cátedra.
 La capa hace que los dos peatones del par se corran lo mismo, y eso se dio por
 bueno sin medirlo. Midiéndolo —el desvío lateral de cada peatón respecto de su
 propia recta, en el instante del cruce— la fracción que se lleva el de la
-izquierda tiene media 0,57 pero va de **0,17 a 0,99**: en cada par uno de los
+izquierda tiene media 0,58 pero va de **0,17 a 0,99**: en cada par uno de los
 dos cede más. Se le agregó a la capa el reparto `α` (`--alfa`). El `α` global
 óptimo queda cerca de 0,5 (la capa simétrica alcanza como modelo de población),
-pero par por par baja `<E(2)>` un **19 %**, y el `α` calibrado correlaciona con
+pero par por par baja `<E(2)>` un **18 %**, y el `α` calibrado correlaciona con
 el medido con **r = 0,88**. Por pedido de la cátedra se muestra **al final,
 como extra**, sin reemplazar la calibración de `(t_a, d_s)`.
 *(`engine/include/avoidance.hpp`, `visualization/asymmetry.py`)*
@@ -205,6 +206,20 @@ rapidez deseada de cada agente estaba en la diapositiva de parámetros. Es parte
 del modelo, no de los casos estudiados: pasó a la Introducción, antes de la
 capa.
 *(consulta del 11/11; `report/presentacion.tex`)*
+
+**25. Cortó la ventana del evento 1 donde se pierde el seguimiento de un
+peatón.**
+Al pasar al recorte en `x`, definió el final de la ventana como el último
+cuadro con muestra de los **dos** peatones adentro del tramo. Al peatón 36 se le
+pierde el seguimiento en `x = 3,19 m`, justo después del cruce, así que el
+evento 1 terminaba ahí (`Nm = 42`) con los dos en la mitad del corredor, y lo
+dejó anotado como "duda para la consulta" en vez de verlo como un defecto de la
+condición de corte. La cátedra lo marcó al ver el GIF de los 19 eventos. Ahora
+un cuadro sin muestra no cierra la ventana: termina cuando a alguno de los dos
+se lo ve salir de `1,0 m ≤ x ≤ 7,7 m` (`Nm = 71`), el error del 36 no se evalúa
+donde no hay muestra y su target es la posición en que reaparece. Los óptimos
+no cambiaron; `<E(1)>` pasó de 0,062 a 0,064 m².
+*(devolución del 12/11; `engine/src/experiment.cpp`, `trimToCorridor`)*
 
 ## Proceso de entrega
 

@@ -33,7 +33,7 @@ struct Pedestrian {
   std::vector<Sample> experimental;  // una muestra por instante de la ventana
   Vec2 start;                        // posicion experimental inicial
   Vec2 initialVelocity;              // velocidad experimental inicial
-  Vec2 target;                       // ultima posicion experimental: target final
+  Vec2 target;                       // target final: ultima posicion medida (ver build)
   double desiredSpeed = 0.0;         // rapidez media de la trayectoria
   double pathLength = 0.0;
   int samples = 0;                   // muestras presentes (el Nm de este peaton)

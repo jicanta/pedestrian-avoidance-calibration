@@ -146,7 +146,14 @@ rápido no importa, pero es en lo que más tiempo hay que gastar.
 | 8 | Para la optimización por peatón: **histograma de los parámetros con una línea vertical en el óptimo global**. | Así quedaron las dos: los óptimos por evento (`slide-27`) y los óptimos por peatón del opcional (`slide-29`), un panel por parámetro. El extra de `α` usa el mismo formato. |
 
 Lo que aparece con el recorte nuevo y hay que llevar el viernes está en
-`PLAN.md` §8: el valor del tramo, el evento 1 (se queda corto por un hueco de
-seguimiento), la rampa de urgencia (sin ella el error baja un 15–20 %) y la
-validación cruzada (+36 %, por dos eventos en los que el lado depende de
-`t_a`).
+`PLAN.md` §8: el valor del tramo, el evento 1 (resuelto el 12/11, abajo), la rampa de
+urgencia (sin ella el error baja un 16–19 %) y la validación cruzada (+35 %,
+por dos eventos en los que el lado depende de `t_a`).
+
+---
+
+## Devolución del 12/11/2026 sobre el GIF de los 19 eventos (Ariel Salgado)
+
+| Qué dijo | Cómo quedó |
+|---|---|
+| **El evento 1 está mal**: los dos peatones quedan en la mitad del corredor y ninguno llega al final. Se arregla con el recorte entre 1 y 7,7 m; la ventana tiene que ser siempre ese tramo. | El final de la ventana estaba mal: se cortaba en el último cuadro con muestra de **los dos** peatones adentro del tramo, y al peatón 36 se le pierde el seguimiento en `x = 3,19 m` (reaparece 33 cuadros después, ya en la fila). Ahora un cuadro sin muestra no cierra la ventana: termina cuando a alguno de los dos **se lo ve** salir del tramo, o sea cuando el peatón 3 llega a 7,7 m (`Nm` pasa de 42 a 71). En esos 29 instantes el agente 36 se simula pero su error no se evalúa, y su target final es la posición en que se lo vuelve a medir (`trimToCorridor` y `build` en `engine/src/experiment.cpp`). Los otros 18 eventos no cambian. Se recalculó todo: los óptimos quedaron iguales, `<E(1)>` pasó de 0,062 a 0,064 m² y `<E(2)>` de 0,0191 a 0,0195 m². |

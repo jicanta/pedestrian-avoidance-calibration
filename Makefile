@@ -58,7 +58,7 @@ X_MAX    ?= 7.7
 SUBDIV   ?= 64
 SUBDIVS  ?= 1,2,4,8,16,32,64,128,256,512
 # Tolerancia sobre el apartamiento relativo de <E> respecto del paso mas fino:
-# 0,2 %, cincuenta veces menos que el error estandar de <E> entre eventos (11 %).
+# 0,2 %, cincuenta veces menos que el error estandar de <E> entre eventos (10 %).
 TOLERANCIA ?= 2e-3
 
 # --- grilla de parametros --------------------------------------------------

@@ -159,9 +159,9 @@ y la velocidad deseada pasa a ser `v_i^d ê_i^d` con
 Contra la predictiva se probaron tres capas basadas en **campos** de
 repulsión (`A exp(−(d − 2r)/B)` como dirección, nunca como fuerza): isotrópica
 (Helbing como dirección), lateral y predictiva (en `d*`, Karamouzas como
-target). La isotrópica queda lejos (−66 % contra −94 %: de frente no tiene
+target). La isotrópica queda lejos (−67 % contra −94 %: de frente no tiene
 componente lateral); el campo predictivo empata; el lateral da un error algo
-menor (0,014 contra 0,019 m²) pero con el óptimo en el borde de la grilla,
+menor (0,014 contra 0,0195 m²) pero con el óptimo en el borde de la grilla,
 `B = 5 m`, que es empujar de costado siempre. La tabla completa está en el
 README.
 
@@ -171,13 +171,13 @@ motor):
 
 | variante | peso de urgencia | punto de mira | `<E(1)>` mín. | `<E(2)>` mín. |
 |---|---|---|---|---|
-| **la que corre** | `w = 1 − τ*/ta` | `v^d τ*` (el conflicto) | 0,063 | 0,019 |
-| sin rampa | `w = 1` | `v^d τ*` | 0,051 | 0,016 |
-| mira al horizonte | `w = 1 − τ*/ta` | `v^d ta` | 0,111 | 0,029 |
-| ninguna de las dos | `w = 1` | `v^d ta` | 0,042 | 0,013 |
+| **la que corre** | `w = 1 − τ*/ta` | `v^d τ*` (el conflicto) | 0,065 | 0,0195 |
+| sin rampa | `w = 1` | `v^d τ*` | 0,053 | 0,016 |
+| mira al horizonte | `w = 1 − τ*/ta` | `v^d ta` | 0,121 | 0,031 |
+| ninguna de las dos | `w = 1` | `v^d ta` | 0,044 | 0,014 |
 
 Con la ventana recortada **ya no dan lo mismo**: sin la rampa el error baja un
-15–20 % (la diferencia pareada es significativa). Corre la primera porque es la
+16–19 % (la diferencia pareada es significativa). Corre la primera porque es la
 **única continua en los dos bordes del disparo** y porque es la que se discutió
 con la cátedra; cambiarla es la duda 3 de §8.
 
@@ -215,23 +215,26 @@ cada peatón más una banda en `y`, que recortaba bien pero con un criterio
 rebuscado y difícil de defender. La historia está en `FEEDBACK.md` y en `git
 log`.
 
-Con el tramo quedan 1346 instantes (el 34 % de los que declara el LEEME), `Nm`
-de 42 a 80, las 19 distancias mínimas adentro (entre el 47 % y el 80 % de la
+Con el tramo quedan 1375 instantes (el 35 % de los que declara el LEEME), `Nm`
+de 60 a 80, las 19 distancias mínimas adentro (entre el 47 % y el 56 % de la
 ventana) y los 38 peatones arrancando hacia su target (ángulo máximo 29°).
 `make ventana` mide cuánto cambia la calibración con otros cinco tramos: la
 capa baja el error entre 90 % y 96 % con cualquiera.
 
 ### 4.3 Huecos de seguimiento
 
-Con la ventana recortada **no queda ningún hueco adentro**. Si quedara, no se
-interpola: el agente se simula igual (hace falta para acoplarlo con el otro)
-pero el error no se evalúa en los instantes sin muestra.
+Un hueco **no se interpola y no cierra la ventana**: el agente se simula igual
+(hace falta para acoplarlo con el otro) pero el error no se evalúa en los
+instantes sin muestra.
 
-El único hueco que importa está en el borde: al peatón 36 (evento 1) se le
-corta el seguimiento 32 cuadros justo después del cruce, y cuando reaparece ya
-está en la fila. Su última muestra adentro del tramo está en `x = 3,45 m`, así
-que la ventana del evento 1 termina ahí (`Nm = 42`, la más corta). El cruce
-queda adentro.
+Con la ventana recortada queda uno solo adentro: al peatón 36 (evento 1) se le
+pierde el seguimiento justo después del cruce, en `x = 3,19 m`, y reaparece 33
+cuadros más tarde ya en la fila (`x = 0,59 m`). La ventana del evento 1 sigue
+hasta que el otro peatón llega a `x = 7,7 m` (`Nm = 71`, con 29 instantes del
+36 sin muestra), y el target final del 36 es la posición en que se lo vuelve a
+medir. Antes la ventana se cortaba donde se pierde el seguimiento (`Nm = 42`)
+y los dos quedaban en la mitad del corredor: la cátedra lo marcó el 12/11
+(`FEEDBACK.md`). Los óptimos no cambiaron.
 
 ### 4.4 La velocidad inicial
 
@@ -259,8 +262,8 @@ ni modifique las reglas propias del modelo elegido".
 `dt = Δt_exp / n` con `n` entero, para que cada instante experimental caiga
 exactamente en un paso y no haya que interpolar para comparar. El barrido de
 `n` (`make convergencia`) da un apartamiento de `<E>` respecto del paso más
-fino de 1,5 % con `n = 1`, 0,3 % con `n = 16`, **0,11 % con `n = 64`** y
-0,005 % con `n = 128`. Se usa **`n = 64`** (`dt = 1,04 ms`): 0,11 % es cien
+fino de 1,6 % con `n = 1`, 0,3 % con `n = 16`, **0,11 % con `n = 64`** y
+0,002 % con `n = 128`. Se usa **`n = 64`** (`dt = 1,04 ms`): 0,11 % es cien
 veces menos que el error estándar de `<E(1)>` entre eventos, y el barrido fino
 entero tarda medio minuto.
 
@@ -310,7 +313,7 @@ tp-5/
 Proceso en dos etapas: una grilla gruesa (17 × 21) para acotar el plano y una
 fina (81 × 61) sobre `t_a ∈ [0, 4] s` y `d_s ∈ [0, 0,6] m`, que es la que se usa.
 El techo de `t_a` se verifica con un barrido aparte hasta 8 s en la `d_s` de
-cada óptimo: entre 4 y 8 s `<E>` se mueve un 2,5 % (métrica 1) y un 1,3 %
+cada óptimo: entre 4 y 8 s `<E>` se mueve un 2,6 % (métrica 1) y un 1,5 %
 (métrica 2). El de `d_s` sale de la grilla gruesa: más allá de 0,6 m `<E>` sube
 monótono. Los mapas de `<E>(t_a, d_s)` van **simples**, como los de los TP
 anteriores: el mapa en escala logarítmica, la barra de color y el óptimo.
@@ -381,15 +384,14 @@ viernes 13/11 queda:
    ventana del que sale por la izquierda termina ya frenando contra la fila de
    la derecha. La tabla de `make ventana` muestra que el resultado no depende
    de eso.
-2. **El evento 1.** Al peatón 36 se le corta el seguimiento 32 cuadros después
-   del cruce, así que su ventana termina en `x = 3,45 m` (`Nm = 42`). Se dejó
-   así, con el cruce adentro. ¿Prefieren que se interpole el hueco o que el
-   evento quede afuera?
+2. **El evento 1.** *Resuelto el 12/11:* la ventana no se corta donde al
+   peatón 36 se le pierde el seguimiento; va, como las demás, hasta que el
+   primero de los dos sale del tramo (`Nm = 71`). Ver §4.3.
 3. **La rampa de urgencia.** Con la ventana nueva las cuatro variantes de la
-   capa ya no empatan: sin la rampa (`w = 1`) el error baja un 15–20 %, a costa
+   capa ya no empatan: sin la rampa (`w = 1`) el error baja un 16–19 %, a costa
    de que la dirección deseada salte al entrar en conflicto. ¿Vale la pena
    cambiar la capa a esta altura, o alcanza con decirlo?
-4. **La validación cruzada.** El error de validación queda un 36 % por encima
+4. **La validación cruzada.** El error de validación queda un 35 % por encima
    del del ítem b, y es por dos eventos (16 y 17) en los que el lado por el que
    elude el modelo depende de `t_a`. ¿Lo presentamos así, explicando la causa?
 5. **Peatón sin identificar.** ¿Confirman que el "V?" de la prueba 2 es el id
@@ -400,6 +402,6 @@ viernes 13/11 queda:
 7. **¿Fijar `t_a`?** El óptimo individual de `t_a` cae en el techo de la
    grilla (4 s) en 14 de 19 eventos, y con el techo en 12 s se van hasta ahí:
    más allá del tiempo al cruce (2,1 a 2,7 s) `t_a` casi no cambia nada. Fijar
-   `t_a = 4 s` cuesta +3 % de `<E(1)>` (empate) pero +38 % de `<E(2)>`, y en el
+   `t_a = 4 s` cuesta +2 % de `<E(1)>` (empate) pero +35 % de `<E(2)>`, y en el
    ajuste individual los eventos 16 y 17 piden 2,15 y 1,5 s. ¿Se puede sacar
    `t_a` y calibrar sólo `d_s` (y `α`), o lo dejamos y lo decimos así?
