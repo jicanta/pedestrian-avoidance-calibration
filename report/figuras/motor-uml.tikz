@@ -40,8 +40,8 @@
   \node[clase=3.4cm, right=1.1cm of sim] (avo) {
     \textbf{Avoidance}
     \nodepart{two}
-    \texttt{anticipation} $= p_1$\\
-    \texttt{margin} $= p_2$\\[0.15em]
+    \texttt{anticipation} $= t_a$\\
+    \texttt{margin} $= d_s$\\[0.15em]
     \texttt{temporaryTarget()}};
 
   \node[clase=3.9cm, right=1.1cm of avo] (mod) {

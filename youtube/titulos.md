@@ -23,13 +23,13 @@ por instante medido, a 15 cuadros por segundo: corren en tiempo real.
 **Descripción:** Simulación de Sistemas (ITBA, 2026 Q2) — TP5, Problema 1,
 Grupo 10, comisión S2. Evento 10 de los datos experimentales de elusión 1
 contra 1 de frente, simulado con SFM sin fuerza social y la capa de elusión
-calibrada (p1 = 2,15 s, p2 = 0,13 m). Es el evento que más gana con la capa.
+calibrada (t_a = 2,15 s, d_s = 0,13 m). Es el evento que más gana con la capa.
 
 ### 02 — Evento 10 sin la capa (PENDIENTE-02)
 
 **Título:** SdS TP5 G10 — Elusión 1 contra 1: evento 10 sin la capa (SFM puro)
 
-**Descripción:** El mismo evento con la capa apagada (p1 = 0): el SFM sin
+**Descripción:** El mismo evento con la capa apagada (t_a = 0): el SFM sin
 fuerza social no anticipa, los dos agentes van derecho a su target y se chocan
 de frente. El desvío lo produce la fuerza de contacto, tarde.
 
@@ -61,25 +61,25 @@ por el lado contrario al que usaron las personas.
 **Título:** SdS TP5 G10 — La capa de elusión en acción: cruce de frente con tres márgenes
 
 **Descripción:** Cruce sintético de dos agentes a 1 m/s, 8 m aparte y corridos
-4 cm, con tres márgenes de espacio personal p2 a la vez (un carril por valor,
-p1 = 2,15 s). Se dibuja lo que la capa calcula en cada instante: las posiciones
+4 cm, con tres márgenes de espacio personal d_s a la vez (un carril por valor,
+t_a = 2,15 s). Se dibuja lo que la capa calcula en cada instante: las posiciones
 predichas al instante de mínima aproximación (discos punteados), la
 separación predicha d* (trazo entre ellos) y el target temporal (cruz).
 
-### 07 — Apoyo: qué hace p2 (PENDIENTE-07)
+### 07 — Apoyo: qué hace d_s (PENDIENTE-07)
 
-**Título:** SdS TP5 G10 — Qué hace p2: el evento 10 con el margen recorriendo su rango
+**Título:** SdS TP5 G10 — Qué hace d_s: el evento 10 con el margen recorriendo su rango
 
-**Descripción:** El evento 10 simulado con p2 de 0 a 0,6 m (p1 = 1,5 s) y, al
-lado, el corte de <E(2)> del ítem b con el punto que marca dónde está. p2 fija
+**Descripción:** El evento 10 simulado con d_s de 0 a 0,6 m (t_a = 1,5 s) y, al
+lado, el corte de <E(2)> del ítem b con el punto que marca dónde está. d_s fija
 por dónde se pasa.
 
-### 08 — Apoyo: qué hace p1 (PENDIENTE-08)
+### 08 — Apoyo: qué hace t_a (PENDIENTE-08)
 
-**Título:** SdS TP5 G10 — Qué hace p1: el evento 10 con la anticipación recorriendo su rango
+**Título:** SdS TP5 G10 — Qué hace t_a: el evento 10 con la anticipación recorriendo su rango
 
-**Descripción:** El evento 10 simulado con p1 de 0 a 4 s (p2 = 0,14 m) y, al
-lado, el corte de <E(2)>. p1 decide si llegan a correrse; desde ~1,5 s casi no
+**Descripción:** El evento 10 simulado con t_a de 0 a 4 s (d_s = 0,14 m) y, al
+lado, el corte de <E(2)>. t_a decide si llegan a correrse; desde ~1,5 s casi no
 cambia.
 
 ### 09 — Apoyo: la capa de elusión paso a paso (PENDIENTE-09)

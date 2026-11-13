@@ -303,9 +303,9 @@
 
             \rotulo{Los dos parámetros a ajustar}
             \begin{itemize}\setlength{\itemsep}{0.3em}
-                \item $p_1 = \ta$: \textbf{tiempo de anticipación} (s). Sólo se
+                \item $\ta$: \textbf{tiempo de anticipación} (s). Sólo se
                       reacciona a lo que va a pasar dentro de \ta.
-                \item $p_2 = \ds$: \textbf{margen de espacio personal} (m). El
+                \item $\ds$: \textbf{margen de espacio personal} (m). El
                       agente quiere pasar a más de $\Dreq = r_i + r_j + \ds$.
             \end{itemize}
             \vspace{0.3em}
@@ -383,14 +383,14 @@
     \figbulw[0.4em]{slide-09-capa-en-accion.png}{%
         \item Cruce sintético: dos agentes a \SI{1}{\meter\per\second},
               \SI{8}{\meter} aparte, corridos \SI{4}{\centi\meter}; un carril por
-              $p_2$, mismo $p_1$.
+              $d_s$, mismo $t_a$.
         \item Discos punteados: posiciones \textbf{predichas} en $\tdca$; el
               trazo entre ellos es $\ddca$; la cruz, el target temporal, unida
               al agente.
-        \item A igual $\tdca$, cuanto mayor es $p_2$ más lejos del camino nominal
+        \item A igual $\tdca$, cuanto mayor es $d_s$ más lejos del camino nominal
               queda el target: falta más separación, $\Dreq - \ddca$. Es la
               diapositiva anterior, en movimiento.
-        \cond{$p_1 = \SI{2.15}{\second}$; $t = \SI{2.4}{\second}$, con el conflicto ya declarado en los tres carriles}
+        \cond{$t_a = \SI{2.15}{\second}$; $t = \SI{2.4}{\second}$, con el conflicto ya declarado en los tres carriles}
     }
     \begin{center}\video{https://youtu.be/PENDIENTE-06}\end{center}
 \end{frame}
@@ -483,8 +483,8 @@
               \textbf{forma y tiempo de paso}; la 2, \textbf{sólo la forma}.
         \item \rotulo{Error de un evento}: el promedio sobre sus 2 peatones,
               $E_m = \tfrac{1}{2}(E_{\text{izq}} + E_{\text{der}})$.
-              \rotulo{Error poblacional}: $\langle E \rangle (p_1,p_2) =
-              \frac{1}{M}\sum_{m=1}^{M} E_m(p_1,p_2)$.
+              \rotulo{Error poblacional}: $\langle E \rangle (t_a,d_s) =
+              \frac{1}{M}\sum_{m=1}^{M} E_m(t_a,d_s)$.
         \item \rotulo{Barra de error} de $\langle E \rangle$: el error estándar de
               la media entre eventos, $\sigma/\sqrt{M}$. Para decidir qué valores
               \textbf{empatan} con el óptimo se usa la diferencia \textbf{pareada}
@@ -502,9 +502,9 @@
         \item \textbf{Los 19 eventos}, cada uno sobre su ventana: los cruces
               caen entre el \SI{47}{\percent} y el \SI{80}{\percent} de la
               ventana, \textbf{ninguno queda recortado}.
-        \item \textbf{Barrido}: $p_1$ de 0 a \SI{4}{\second} en 81 valores $\times$
-              $p_2$ de 0 a \SI{0.6}{\meter} en 61 $\times$ 19 eventos:
-              \num{93879} corridas, \SI{32}{\second}; el techo de $p_1$ se
+        \item \textbf{Barrido}: $t_a$ de 0 a \SI{4}{\second} en 81 valores $\times$
+              $d_s$ de 0 a \SI{0.6}{\meter} en 61 $\times$ 19 eventos:
+              \num{93879} corridas, \SI{32}{\second}; el techo de $t_a$ se
               verifica aparte hasta \SI{8}{\second}.
         \item \textbf{Individual}: por evento (2 parámetros) y por peatón (4
               por evento, sobre una grilla de $17 \times 25$).
@@ -529,7 +529,7 @@
         \item Es cien veces menos que el error estándar de \mEuno{} entre
               eventos (\SI{11}{\percent}), y el barrido entero tarda medio
               minuto: no hace falta un paso más fino.
-        \cond{los 19 eventos, con $p_1 = \SI{2.15}{\second}$ y $p_2 = \SI{0.13}{\meter}$; tolerancia marcada: \SI{0.2}{\percent}}
+        \cond{los 19 eventos, con $t_a = \SI{2.15}{\second}$ y $d_s = \SI{0.13}{\meter}$; tolerancia marcada: \SI{0.2}{\percent}}
     }
 \end{frame}
 
@@ -545,7 +545,7 @@
             \item $\Euno_m = \SI{1.91}{\meter\squared}$ y
                   $\Edos_m = \SI{0.99}{\meter\squared}$: el peor de los 19 con
                   la métrica 1.
-            \cond{$p_1 = 0$ (capa apagada); congelada justo antes del choque simulado, $t = \SI{3.13}{\second}$. Disco lleno: simulado; punteado: medido}}
+            \cond{$t_a = 0$ (capa apagada); congelada justo antes del choque simulado, $t = \SI{3.13}{\second}$. Disco lleno: simulado; punteado: medido}}
     }
     \begin{center}\video{https://youtu.be/PENDIENTE-02}\end{center}
 \end{frame}
@@ -563,7 +563,7 @@
                   \SI{0.068}{\meter\squared} y $\Edos_m$ de $0{,}99$ a
                   \SI{0.019}{\meter\squared}}. Con la capa \textbf{no hay
                   contacto en ninguno} de los 19 eventos.
-            \cond{$p_1 = \SI{2.15}{\second}$, $p_2 = \SI{0.13}{\meter}$; congelada en el último instante en conflicto antes del cruce simulado, $t = \SI{2.40}{\second}$}}
+            \cond{$t_a = \SI{2.15}{\second}$, $d_s = \SI{0.13}{\meter}$; congelada en el último instante en conflicto antes del cruce simulado, $t = \SI{2.40}{\second}$}}
     }
     \begin{center}\video{https://youtu.be/PENDIENTE-01}\end{center}
 \end{frame}
@@ -579,7 +579,7 @@
         \colvin{%
             \item \textbf{17}: el único de los 19 en que el modelo elude
                   \textbf{por el lado opuesto}.
-            \cond{$p_1 = \SI{2.15}{\second}$, $p_2 = \SI{0.13}{\meter}$; escala igual en los dos ejes. Azul: sale por la izquierda; rojo: por la derecha}}
+            \cond{$t_a = \SI{2.15}{\second}$, $d_s = \SI{0.13}{\meter}$; escala igual en los dos ejes. Azul: sale por la izquierda; rojo: por la derecha}}
     }
 \end{frame}
 
@@ -594,7 +594,7 @@
         \item \alert{$\Euno_m = \SI{0.068}{\meter\squared}$ y
               $\Edos_m = \SI{0.019}{\meter\squared}$}: un apartamiento RMS de
               26 y \SI{14}{\centi\meter}.
-        \cond{evento 10, $N_m = 76$ instantes, $p_1 = \SI{2.15}{\second}$, $p_2 = \SI{0.13}{\meter}$}
+        \cond{evento 10, $N_m = 76$ instantes, $t_a = \SI{2.15}{\second}$, $d_s = \SI{0.13}{\meter}$}
     }
 \end{frame}
 
@@ -602,11 +602,11 @@
     \figbulw[0.5em]{slide-21-evento10-distancia.png}{%
         \item La distancia simulada toca el fondo en \SI{0.53}{\meter}, por
               encima del contacto ($2r = \SI{0.5}{\meter}$) y cerca de la que
-              pide la capa, $\Dreq = 2r + p_2 = \SI{0.63}{\meter}$.
+              pide la capa, $\Dreq = 2r + d_s = \SI{0.63}{\meter}$.
         \item Medida, el mínimo es \SI{0.63}{\meter}: la capa calibrada pasa un
               poco \textbf{más cerca} que las personas.
         \item Sin la capa los dos discos llegan a solaparse (\SI{0.48}{\meter}).
-        \cond{evento 10, $p_1 = \SI{2.15}{\second}$, $p_2 = \SI{0.13}{\meter}$}
+        \cond{evento 10, $t_a = \SI{2.15}{\second}$, $d_s = \SI{0.13}{\meter}$}
     }
 \end{frame}
 
@@ -615,20 +615,20 @@
     \begin{columns}[c,onlytextwidth]
         \begin{column}{0.62\textwidth}
             \centering
-            \includegraphics[width=\linewidth,height=0.70\textheight,keepaspectratio]{slide-22-que-hace-p2.png}
+            \includegraphics[width=\linewidth,height=0.70\textheight,keepaspectratio]{slide-22-que-hace-ds.png}
         \end{column}\hfill
         \begin{column}{0.36\textwidth}
             \small
             \begin{itemize}\setlength{\itemsep}{0.25em}
-                \item El evento 10 con $p_2$ recorriendo su rango; al lado, el
+                \item El evento 10 con $d_s$ recorriendo su rango; al lado, el
                       corte de \mEdos{} con el punto donde está.
-                \item $p_2$ fija \textbf{por dónde se pasa}: con $0{,}14$ pasan
+                \item $d_s$ fija \textbf{por dónde se pasa}: con $0{,}14$ pasan
                       como las personas; con $0$ se rozan y con $0{,}3$ y
                       $0{,}6$ se abren de más, y \mEdos{} sube.
-                \item $p_1$ (animación aparte) decide \textbf{si llegan a
+                \item $t_a$ (animación aparte) decide \textbf{si llegan a
                       correrse}: con \SI{0.5}{\second} reaccionan tarde; desde
                       $\approx \SI{1.5}{\second}$ casi no cambia.
-                \cond{$p_1 = \SI{1.5}{\second}$; $p_2 = 0$, $0{,}14$, $0{,}3$ y \SI{0.6}{\meter}, un punto por valor en el corte}
+                \cond{$t_a = \SI{1.5}{\second}$; $d_s = 0$, $0{,}14$, $0{,}3$ y \SI{0.6}{\meter}, un punto por valor en el corte}
             \end{itemize}
         \end{column}
     \end{columns}
@@ -639,13 +639,13 @@
     \figbulw[0.45em]{slide-23-superficie-metrica1.png}{%
         \item El color es \mEuno{}, en escala logarítmica; el punto blanco, el
               mínimo.
-        \item \alert{Óptimo en $p_1 = \SI{2.15}{\second}$,
-              $p_2 = \SI{0.13}{\meter}$}, con
+        \item \alert{Óptimo en $t_a = \SI{2.15}{\second}$,
+              $d_s = \SI{0.13}{\meter}$}, con
               $\mEuno = 0{,}062 \pm \SI{0.007}{\meter\squared}$ (RMS
               \SI{0.25}{\meter}); sin capa, \SI{0.87}{\meter\squared}:
               \textbf{la capa baja el error un \SI{93}{\percent}}.
-        \item Abajo ($p_1 < \SI{1}{\second}$) y a la izquierda
-              ($p_2 < \SI{0.05}{\meter}$) la capa reacciona tarde o no pide
+        \item Abajo ($t_a < \SI{1}{\second}$) y a la izquierda
+              ($d_s < \SI{0.05}{\meter}$) la capa reacciona tarde o no pide
               separación, y el error es casi el del modelo solo.
         \cond{19 eventos, $81 \times 61$ pares, $\dt = \dtexp/64$}
     }
@@ -654,7 +654,7 @@
 \begin{frame}{Ítem b: cortes por el óptimo, métrica 1}
     \figancha[0.86]{slide-24-cortes-metrica1.png}{%
         \colvin{%
-            \item $p_1$ \textbf{sólo queda determinado por abajo}: \mEuno{} cae
+            \item $t_a$ \textbf{sólo queda determinado por abajo}: \mEuno{} cae
                   de $0{,}87$ a \SI{0.07}{\meter\squared} entre 0 y
                   \SI{1.5}{\second} y después es plano (en \SI{4}{\second} vale
                   $0{,}065$, y hasta \SI{8}{\second} se mueve un
@@ -663,7 +663,7 @@
                   para el cruce: con más anticipación que eso el conflicto ya se
                   declara desde el primer instante.}
         \colvin{%
-            \item $p_2$ sí tiene un mínimo claro en \SI{0.13}{\meter} y sube
+            \item $d_s$ sí tiene un mínimo claro en \SI{0.13}{\meter} y sube
                   después: es el parámetro que fija por dónde se pasa.
             \cond{barra: error estándar de la media entre los 19 eventos; franja verde: los valores que empatan con el óptimo según la diferencia pareada}}
     }
@@ -675,8 +675,8 @@
               $\mEdos = \SI{0.32}{\meter\squared}$ y en el óptimo
               $0{,}019 \pm \SI{0.002}{\meter\squared}$ (RMS \SI{0.14}{\meter}),
               \alert{un \SI{94}{\percent} menos}.
-        \item \alert{Óptimo en $p_1 = \SI{1.50}{\second}$,
-              $p_2 = \SI{0.14}{\meter}$}.
+        \item \alert{Óptimo en $t_a = \SI{1.50}{\second}$,
+              $d_s = \SI{0.14}{\meter}$}.
         \item Los dos óptimos piden la misma distancia de paso:
               $\Dreq = 0{,}63$ y \SI{0.64}{\meter}.
         \cond{19 eventos, $81 \times 61$ pares, $\dt = \dtexp/64$}
@@ -686,15 +686,15 @@
 \begin{frame}{Ítem b: cortes de la métrica 2 y comparación de los óptimos}
     \figancha[0.86]{slide-26-cortes-metrica2.png}{%
         \colvin{%
-            \item Los dos óptimos coinciden en $p_2$ ($0{,}13$ y
-                  \SI{0.14}{\meter}) y difieren en $p_1$ ($2{,}15$ y
+            \item Los dos óptimos coinciden en $d_s$ ($0{,}13$ y
+                  \SI{0.14}{\meter}) y difieren en $t_a$ ($2{,}15$ y
                   \SI{1.50}{\second}), que es el parámetro plano.
             \item Usar el óptimo de la métrica 2 cuesta un \SI{1.9}{\percent}
                   de \mEuno{}; al revés, un \SI{18}{\percent} de \mEdos{}.}
         \colvin{%
-            \item Los escalones de \mEdos{} en $p_1 \approx 1{,}5$ y
+            \item Los escalones de \mEdos{} en $t_a \approx 1{,}5$ y
                   \SI{2.2}{\second} son \textbf{dos eventos} (17 y 16) en los
-                  que el lado por el que elude el modelo cambia con $p_1$.
+                  que el lado por el que elude el modelo cambia con $t_a$.
             \cond{mismas 19 realizaciones; franja verde: los valores que empatan con el óptimo}}
     }
 \end{frame}
@@ -704,12 +704,12 @@
         \colvin{%
             \item El par que minimiza el error de \textbf{cada evento}; la
                   línea vertical es el óptimo global (ítem b).
-            \item \alert{En $p_1$, 17 de los 19 piden más de
+            \item \alert{En $t_a$, 17 de los 19 piden más de
                   \SI{3.75}{\second}} (14, el borde de la grilla): evento por
                   evento, más anticipación nunca molesta. El global queda en \SI{2.15}{\second} por los dos
                   eventos en que cambia el lado.}
         \colvin{%
-            \item En $p_2$ la mediana individual es \SI{0.07}{\meter} (de $0{,}03$
+            \item En $d_s$ la mediana individual es \SI{0.07}{\meter} (de $0{,}03$
                   a $0{,}35$): cada par pasa a \textbf{su propia distancia}, y el
                   global es un compromiso.
             \cond{métrica 1, misma grilla de $81 \times 61$ pares}}
@@ -741,7 +741,7 @@
         \colvin{%
             \item \alert{En ningún evento los dos peatones eligen el mismo par}:
                   es la asimetría del reparto, vista en los parámetros. En
-                  $p_1$, 29 de los 38 piden \SI{3.5}{\second} o más; en $p_2$,
+                  $t_a$, 29 de los 38 piden \SI{3.5}{\second} o más; en $d_s$,
                   30 quedan en \SI{0.15}{\meter} o menos.
             \cond{métrica 1; grilla de $17 \times 25$ pares por peatón}}
     }
@@ -772,7 +772,7 @@
               La forma --- lo que la capa decide --- es el \SI{39}{\percent}.
         \item El evento 17 es la excepción: casi todo su error es de forma,
               porque el modelo eludió por el otro lado.
-        \cond{$p_1 = \SI{2.15}{\second}$, $p_2 = \SI{0.13}{\meter}$; ordenados por $\Euno_m$}
+        \cond{$t_a = \SI{2.15}{\second}$, $d_s = \SI{0.13}{\meter}$; ordenados por $\Euno_m$}
     }
 \end{frame}
 
@@ -788,7 +788,7 @@
               pasaron a entre $0{,}49$ y \SI{0.92}{\meter} y el modelo siempre a
               $\approx \SI{0.53}{\meter}$. Los puntos quedan en una franja
               horizontal.
-        \cond{$p_1 = \SI{2.15}{\second}$, $p_2 = \SI{0.13}{\meter}$}
+        \cond{$t_a = \SI{2.15}{\second}$, $d_s = \SI{0.13}{\meter}$}
     }
 \end{frame}
 
@@ -803,8 +803,8 @@
         \colvin{%
             \item $\Euno_m = \SI{0.155}{\meter\squared}$, el mayor de los 19:
                   todo el error es \textbf{el lado}. Con
-                  $p_1 = \SI{1.5}{\second}$ elude por el lado correcto.
-            \cond{$p_1 = \SI{2.15}{\second}$, $p_2 = \SI{0.13}{\meter}$; congelada en el último instante en conflicto, $t = \SI{2.00}{\second}$}}
+                  $t_a = \SI{1.5}{\second}$ elude por el lado correcto.
+            \cond{$t_a = \SI{2.15}{\second}$, $d_s = \SI{0.13}{\meter}$; congelada en el último instante en conflicto, $t = \SI{2.00}{\second}$}}
     }
     \begin{center}\video{https://youtu.be/PENDIENTE-05}\end{center}
 \end{frame}
@@ -830,11 +830,11 @@
               particiones, y el más frecuente,
               $(\SI{1.5}{\second},\ \SI{0.14}{\meter})$, aparece en el
               \SI{46}{\percent}.
-        \item \alert{$p_2$ se queda entre $0{,}07$ y \SI{0.14}{\meter}}; $p_1$
+        \item \alert{$d_s$ se queda entre $0{,}07$ y \SI{0.14}{\meter}}; $t_a$
               salta entre $1{,}5$, $2{,}15$ y \SI{4}{\second}, según qué eventos
               entren al entrenamiento.
-        \item Es la misma conclusión del ítem b, medida de otra manera: $p_2$
-              está determinado y $p_1$ sólo por abajo.
+        \item Es la misma conclusión del ítem b, medida de otra manera: $d_s$
+              está determinado y $t_a$ sólo por abajo.
         \cond{métrica 1, 500 particiones de 13/6; el tamaño del punto es cuántas particiones eligieron ese par}
     }
 \end{frame}
@@ -855,7 +855,7 @@
         \item Los óptimos son $(\SI{2.15}{\second},\ \SI{0.13}{\meter})$ y
               $(\SI{1.50}{\second},\ \SI{0.14}{\meter})$: las dos métricas piden la
               \textbf{misma distancia de paso}, $\Dreq \approx \SI{0.63}{\meter}$.
-        \item $p_2$ queda bien determinado y \textbf{$p_1$ sólo por abajo}: desde
+        \item $d_s$ queda bien determinado y \textbf{$t_a$ sólo por abajo}: desde
               \SI{1.5}{\second} de anticipación el error es plano, hasta
               \SI{8}{\second}.
         \item El modelo elude \textbf{por el mismo lado que las personas en 18 de
@@ -866,7 +866,7 @@
               agente camina a velocidad constante.
         \item En validación cruzada el error sube un \SI{36}{\percent}
               ($0{,}084$ contra \SI{0.062}{\meter\squared}), por dos eventos en que
-              el lado depende de $p_1$; sigue siendo diez veces menor que sin capa.
+              el lado depende de $t_a$; sigue siendo diez veces menor que sin capa.
     \end{itemize}
 \end{frame}
 
@@ -924,7 +924,7 @@
                   $\vT_i^{*} = \vq_i + w\,2\alpha_i\,(\Dreq - \ddca)\,\shat$, con
                   $\alpha_{\text{izq}} = \alpha$ y $\alpha_{\text{der}} = 1 - \alpha$.}
         \colvin{%
-            \item Con $p_1$ y $p_2$ en su óptimo, \alert{el mejor $\alpha$ global
+            \item Con $t_a$ y $d_s$ en su óptimo, \alert{el mejor $\alpha$ global
                   es $0{,}625$ y $0{,}575$}, y gana un \SI{2}{\percent} y un
                   \SI{1}{\percent}: dentro del error pareado. Como población,
                   \textbf{la capa simétrica alcanza}.
@@ -943,7 +943,7 @@
             \item Con el $\alpha$ propio de cada par, \mEdos{} baja de $0{,}019$
                   a \SI{0.016}{\meter\squared}, un \SI{19}{\percent}
                   (\SI{7}{\percent} con la métrica 1).
-            \cond{$p_1$ y $p_2$ fijos en el óptimo de cada métrica}}
+            \cond{$t_a$ y $d_s$ fijos en el óptimo de cada métrica}}
     }
 \end{frame}
 
@@ -988,7 +988,7 @@
               caía fuera del corredor y el modelo eludía por el lado opuesto en 7
               de 19 eventos. $\to$ Con el recorte en $x$ es una sola población y
               acierta el lado en 18.
-        \item \rotulo{Justificó el techo de $p_1$ con un argumento falso}
+        \item \rotulo{Justificó el techo de $t_a$ con un argumento falso}
               (la mediana del tiempo al cruce inicial). $\to$ Barrido aparte
               hasta \SI{8}{\second}.
         \item \rotulo{Decidió qué pares empatan con la barra de error de
@@ -1007,7 +1007,7 @@
     \vspace{0.3em}
     \footnotesize
     \begin{itemize}\setlength{\itemsep}{0.3em}
-        \item \rotulo{Sobrecargó los mapas de $\langle E \rangle(p_1,p_2)$}:
+        \item \rotulo{Sobrecargó los mapas de $\langle E \rangle(t_a,d_s)$}:
               escala de color de potencia, curvas de nivel rotuladas y un velo
               sobre los pares que empatan. $\to$ El mapa, la barra de color y el
               óptimo, como en los TP anteriores.

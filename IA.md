@@ -22,9 +22,9 @@ que citan las entradas 1 a 14 son las de la ventana de entonces.
 
 ## Metodología y modelado
 
-**1. Justificó el techo de la grilla de `p1` con un argumento falso.**
-Puso como razón que `p1` no podía pasar de la mediana del tiempo al cruce en el
-instante inicial. Es incorrecto: con la rampa de urgencia `w = 1 − τ*/ta`, `p1`
+**1. Justificó el techo de la grilla de `t_a` con un argumento falso.**
+Puso como razón que `t_a` no podía pasar de la mediana del tiempo al cruce en el
+instante inicial. Es incorrecto: con la rampa de urgencia `w = 1 − τ*/ta`, `t_a`
 sigue entrando en el cálculo aunque el conflicto se detecte desde `t = 0`, así
 que ese número no acota nada. Se reemplazó por la medición que corresponde: un
 barrido aparte hasta `8 s` que muestra que entre 4 y 8 s `<E>` se mueve un
@@ -172,7 +172,7 @@ contra el que se mide el apartamiento, que por construcción vale cero. (Hoy la
 tolerancia marcada es 0,2 % y la leyenda la escribe con su cifra.)
 *(commit `e95b7c3`; `convergence.py`)*
 
-**11, 12 y 21. Sobrecargó los mapas de `<E>(p1,p2)`.**
+**11, 12 y 21. Sobrecargó los mapas de `<E>(t_a,d_s)`.**
 Fueron tres pasos en la misma dirección. Primero la escala de color lineal,
 donde todo el valle quedaba de un tono; se corrigió con una escala de potencia
 y **curvas de nivel rotuladas en múltiplos del mínimo** (12). Encima fue la

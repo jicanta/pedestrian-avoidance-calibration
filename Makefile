@@ -391,8 +391,8 @@ youtube:
 	cp "$(AN)/evento14.mp4" "youtube/04 - SdS TP5 G10 - Evento 14 el cruce mas holgado.mp4"
 	cp "$(AN)/evento17.mp4" "youtube/05 - SdS TP5 G10 - Evento 17 lado opuesto.mp4"
 	cp "$(AN)/apoyo_cabeza_a_cabeza.mp4" "youtube/06 - SdS TP5 G10 - Apoyo - La capa de elusion cabeza a cabeza.mp4"
-	cp "$(AN)/apoyo_barrido_p2_evento10.mp4" "youtube/07 - SdS TP5 G10 - Apoyo - Que hace p2.mp4"
-	cp "$(AN)/apoyo_barrido_p1_evento10.mp4" "youtube/08 - SdS TP5 G10 - Apoyo - Que hace p1.mp4"
+	cp "$(AN)/apoyo_barrido_p2_evento10.mp4" "youtube/07 - SdS TP5 G10 - Apoyo - Que hace d_s.mp4"
+	cp "$(AN)/apoyo_barrido_p1_evento10.mp4" "youtube/08 - SdS TP5 G10 - Apoyo - Que hace t_a.mp4"
 	cp "$(AN)/apoyo_capa_paso_a_paso.mp4" "youtube/09 - SdS TP5 G10 - Apoyo - La capa de elusion paso a paso.mp4"
 	cp "$(AN)/los19_grilla.mp4" "youtube/10 - SdS TP5 G10 - Los 19 eventos.mp4"
 
@@ -454,11 +454,11 @@ slides-images:
 	cp $(SL)/a_capa_de_elusion/trayectorias_representativas_diapositiva.png   $(FIGS)/slide-19-trayectorias-representativas.png
 	cp $(SL)/a_capa_de_elusion/evento10_observable_diapositiva.png            $(FIGS)/slide-20-evento10-observable.png
 	cp $(SL)/a_capa_de_elusion/evento10_distancia_diapositiva.png             $(FIGS)/slide-21-evento10-distancia.png
-	cp $(SL)/animaciones/apoyo_barrido_p2_evento10_resumen.png                $(FIGS)/slide-22-que-hace-p2.png
-	cp $(SL)/animaciones/apoyo_barrido_p1_evento10_resumen.png                $(FIGS)/slide-22b-que-hace-p1.png
+	cp $(SL)/animaciones/apoyo_barrido_p2_evento10_resumen.png                $(FIGS)/slide-22-que-hace-ds.png
+	cp $(SL)/animaciones/apoyo_barrido_p1_evento10_resumen.png                $(FIGS)/slide-22b-que-hace-ta.png
 	cp $(SL)/b_calibracion_poblacional/superficie_metrica1_diapositiva.png    $(FIGS)/slide-23-superficie-metrica1.png
 	cp $(SL)/b_calibracion_poblacional/cortes_metrica1_diapositiva.png        $(FIGS)/slide-24-cortes-metrica1.png
-	cp $(SL)/b_calibracion_poblacional/techo_p1_diapositiva.png               $(FIGS)/slide-24b-techo-p1.png
+	cp $(SL)/b_calibracion_poblacional/techo_ta_diapositiva.png               $(FIGS)/slide-24b-techo-ta.png
 	cp $(SL)/b_calibracion_poblacional/superficie_metrica2_diapositiva.png    $(FIGS)/slide-25-superficie-metrica2.png
 	cp $(SL)/b_calibracion_poblacional/cortes_metrica2_diapositiva.png        $(FIGS)/slide-26-cortes-metrica2.png
 	cp $(SL)/c_calibracion_individual/optimos_metrica1_diapositiva.png        $(FIGS)/slide-27-optimos-individuales.png

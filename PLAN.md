@@ -51,7 +51,7 @@ promedio sobre los `M` eventos.
 
 **Ítems:** (a) implementar y mostrar animaciones con las trayectorias
 superpuestas; (b) calibración poblacional con cada métrica, con la superficie
-`<E>(p1,p2)` y cortes con barras de error; (c) calibración individual por
+`<E>(t_a,d_s)` y cortes con barras de error; (c) calibración individual por
 evento y cuánto se gana; (d) validación cruzada.
 
 ---
@@ -100,10 +100,10 @@ reglas del modelo, y tiene que depender de **exactamente 2 parámetros**.
 
 ### 3.2 Los dos parámetros
 
-- `p1 = ta`: **tiempo de anticipación** (s). Sólo se reacciona a conflictos que
+- `t_a`: **tiempo de anticipación** (s). Sólo se reacciona a conflictos que
   van a ocurrir dentro de los próximos `ta` segundos. Con `ta = 0` la capa está
   apagada y queda el SFM puro, que es la referencia del trabajo.
-- `p2 = ds`: **margen de espacio personal** (m). El agente quiere pasar a más
+- `d_s`: **margen de espacio personal** (m). El agente quiere pasar a más
   de `D = r_i + r_j + ds` del otro. Con `ds = 0` quiere pasar rozándolo.
 
 Son los dos parámetros de la familia predictiva de la literatura (Karamouzas
@@ -308,11 +308,11 @@ tp-5/
 ### Ítem b — calibración poblacional
 
 Proceso en dos etapas: una grilla gruesa (17 × 21) para acotar el plano y una
-fina (81 × 61) sobre `p1 ∈ [0, 4] s` y `p2 ∈ [0, 0,6] m`, que es la que se usa.
-El techo de `p1` se verifica con un barrido aparte hasta 8 s en la `p2` de
+fina (81 × 61) sobre `t_a ∈ [0, 4] s` y `d_s ∈ [0, 0,6] m`, que es la que se usa.
+El techo de `t_a` se verifica con un barrido aparte hasta 8 s en la `d_s` de
 cada óptimo: entre 4 y 8 s `<E>` se mueve un 2,5 % (métrica 1) y un 1,3 %
-(métrica 2). El de `p2` sale de la grilla gruesa: más allá de 0,6 m `<E>` sube
-monótono. Los mapas de `<E>(p1, p2)` van **simples**, como los de los TP
+(métrica 2). El de `d_s` sale de la grilla gruesa: más allá de 0,6 m `<E>` sube
+monótono. Los mapas de `<E>(t_a, d_s)` van **simples**, como los de los TP
 anteriores: el mapa en escala logarítmica, la barra de color y el óptimo.
 
 La **región compatible** con el óptimo no se calcula con el error estándar de

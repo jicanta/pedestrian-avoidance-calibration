@@ -69,8 +69,8 @@ están en el README (21, 26, 35, 33, 30, 10, 16, en ese orden).
   extrapoladas mientras avanza τ.
 - El instante en que esa distancia es mínima es τ*, y la distancia, d*. Las dos
   salen de una cuenta cerrada con Δr y Δv.
-- Los dos parámetros: p1 = t_a, el tiempo de anticipación (sólo se reacciona a
-  lo que va a pasar dentro de t_a), y p2 = d_s, el margen de espacio personal:
+- Los dos parámetros: t_a, el tiempo de anticipación (sólo se reacciona a
+  lo que va a pasar dentro de t_a), y d_s, el margen de espacio personal:
   D = 2r + d_s es a cuánto se quiere pasar.
 - Hay conflicto si 0 < τ* ≤ t_a y d* < D.
 
@@ -97,7 +97,7 @@ están en el README (21, 26, 35, 33, 30, 10, 16, en ese orden).
 ## 9. La capa en acción — `slide-09-capa-en-accion.png` — 0:25 (GIF 06)
 
 - Cruce sintético, tres márgenes a la vez. Discos punteados: posiciones
-  predichas en τ*; trazo: d*; cruz: target temporal. A mayor p2, más lejos del
+  predichas en τ*; trazo: d*; cruz: target temporal. A mayor d_s, más lejos del
   camino queda el target.
 
 ## 10. ¿Y con campos? — `slide-10-alternativas.png` — 0:25
@@ -190,10 +190,10 @@ están en el README (21, 26, 35, 33, 30, 10, 16, en ese orden).
 
 - El mínimo simulado es 0,53 m, sobre el contacto; medido, 0,63.
 
-## 22. Qué hace cada parámetro — `slide-22-que-hace-p2.png` — 0:20 (GIF 07)
+## 22. Qué hace cada parámetro — `slide-22-que-hace-ds.png` — 0:20 (GIF 07)
 
-- p2 fija por dónde se pasa: con 0,14 como las personas, con 0 se rozan, con
-  0,3 y 0,6 se abren de más. p1 decide si llegan a correrse: con 0,5 s
+- d_s fija por dónde se pasa: con 0,14 como las personas, con 0 se rozan, con
+  0,3 y 0,6 se abren de más. t_a decide si llegan a correrse: con 0,5 s
   reaccionan tarde; desde 1,5 s casi no cambia.
 
 ## 23. Mapa, métrica 1 — `slide-23-superficie-metrica1.png` — 0:25
@@ -203,9 +203,9 @@ están en el README (21, 26, 35, 33, 30, 10, 16, en ese orden).
 
 ## 24. Cortes, métrica 1 — `slide-24-cortes-metrica1.png` — 0:25
 
-- p1 sólo queda determinado por abajo: cae hasta 1,5 s y después es plano,
+- t_a sólo queda determinado por abajo: cae hasta 1,5 s y después es plano,
   hasta 8 s. El cruce llega entre 2,1 y 2,7 s después de empezar: con más
-  anticipación el conflicto se declara desde el primer instante. p2 sí tiene
+  anticipación el conflicto se declara desde el primer instante. d_s sí tiene
   mínimo claro en 0,13 m.
 
 ## 25. Mapa, métrica 2 — `slide-25-superficie-metrica2.png` — 0:20 (C)
@@ -215,13 +215,13 @@ están en el README (21, 26, 35, 33, 30, 10, 16, en ese orden).
 
 ## 26. Cortes, métrica 2 — `slide-26-cortes-metrica2.png` — 0:15
 
-- Coinciden en p2 y difieren en p1, el parámetro plano. Los escalones son dos
-  eventos (16 y 17) en los que el lado cambia con p1.
+- Coinciden en d_s y difieren en t_a, el parámetro plano. Los escalones son dos
+  eventos (16 y 17) en los que el lado cambia con t_a.
 
 ## 27. Óptimos individuales — `slide-27-optimos-individuales.png` — 0:25
 
-- Histograma de cada parámetro, con el global como línea vertical. En p1, 17
-  de 19 piden más de 3,75 s: más anticipación nunca molesta. En p2 cada par
+- Histograma de cada parámetro, con el global como línea vertical. En t_a, 17
+  de 19 piden más de 3,75 s: más anticipación nunca molesta. En d_s cada par
   tiene el suyo, de 0,03 a 0,35 m.
 
 ## 28. Cuánto se gana — `slide-28-errores-por-evento.png` — 0:20
@@ -256,7 +256,7 @@ están en el README (21, 26, 35, 33, 30, 10, 16, en ese orden).
 
 ## 33. Evento 17 — `slide-33-animacion-evento17.png` — 0:10 (GIF 05)
 
-- Arrancan casi alineados y el modelo elige el otro lado. Con p1 = 1,5 s elude
+- Arrancan casi alineados y el modelo elige el otro lado. Con t_a = 1,5 s elude
   por el correcto.
 
 ## 34. Validación cruzada — `slide-34-validacion-error.png` — 0:25
@@ -268,14 +268,14 @@ están en el README (21, 26, 35, 33, 30, 10, 16, en ese orden).
 
 ## 35. Qué par elige cada partición — `slide-35-validacion-parametros.png` — 0:10
 
-- 6 pares distintos; p2 entre 0,07 y 0,14 m, p1 salta entre 1,5, 2,15 y 4 s.
+- 6 pares distintos; d_s entre 0,07 y 0,14 m, t_a salta entre 1,5, 2,15 y 4 s.
 
 ## Conclusiones (separador) — 0:05
 
 ## 36. Conclusiones — 0:45
 
 - Leer las seis, cada una con su cifra: −93 % y −94 %, y sin contacto; óptimos
-  con la misma distancia de paso; p1 sólo por abajo; mismo lado en 18 de 19, y
+  con la misma distancia de paso; t_a sólo por abajo; mismo lado en 18 de 19, y
   cada par a su propia distancia; el 61 % del residuo es ritmo; validación
   +36 % por dos eventos.
 
@@ -297,7 +297,7 @@ hay tiempo.
 - La capa calibrada es simétrica: los dos se corren lo mismo. Se le agrega α,
   la fracción de la separación que falta que se lleva el que sale de la
   izquierda; 0,5 es la capa simétrica.
-- Con p1 y p2 en su óptimo, el mejor α global es 0,625 y 0,575, y gana 2 % y
+- Con t_a y d_s en su óptimo, el mejor α global es 0,625 y 0,575, y gana 2 % y
   1 %: dentro del error. Como población, la capa simétrica alcanza.
 
 ### Extra 2 — `slide-extra-2-alfa-histograma.png`

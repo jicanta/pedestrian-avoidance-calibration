@@ -12,8 +12,8 @@
   \addlinespace[0.5em]
   \multicolumn{3}{@{}l}{\rotulo{Capa de elusión: lo que se calibra}}\\
   \midrule
-  tiempo de anticipación      & $p_1 = \ta$ & \SIrange{0}{4}{\second}\\
-  margen personal             & $p_2 = \ds$ & \SIrange{0}{0.6}{\meter}\\
+  tiempo de anticipación      & $\ta$ & \SIrange{0}{4}{\second}\\
+  margen personal             & $\ds$ & \SIrange{0}{0.6}{\meter}\\
   \addlinespace[0.5em]
   \multicolumn{3}{@{}l}{\rotulo{De cada evento (de su trayectoria medida)}}\\
   \midrule

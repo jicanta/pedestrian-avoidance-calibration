@@ -173,7 +173,7 @@ def head_on(arguments):
 
     figure, panels = plt.subplots(len(runs), 1, figsize=(10.0, 2.3 * len(runs) + 0.6),
                                   sharex=True)
-    lanes = [Lane(axes, run, f"$p_2 = {common.decimal(value, 2)}$ m, "
+    lanes = [Lane(axes, run, f"$d_s = {common.decimal(value, 2)}$ m, "
                              f"$D = {common.decimal(0.5 + value, 2)}$ m")
              for axes, run, value in zip(np.atleast_1d(panels), runs, values)]
     panels[-1].set_xlabel(common.AXIS_X)
@@ -192,7 +192,7 @@ def head_on(arguments):
     def update(index):
         for lane in lanes:
             lane.update(index)
-        header.set_text(f"cabeza a cabeza, $p_1 = {common.decimal(arguments.p1, 2)}$ s, "
+        header.set_text(f"cabeza a cabeza, $t_a = {common.decimal(arguments.p1, 2)}$ s, "
                         f"$t$ = {common.decimal(time[index], 2)} s")
 
     out_dir = common.folder("anim", arguments.figures)
@@ -276,7 +276,7 @@ def sweep(arguments):
                     markeredgecolor="#1a1a1a")
     cut.set_xlabel(label)
     cut.set_ylabel(common.METRIC_AVERAGE[arguments.metrica])
-    other = "$p_1$" if arguments.parametro == "p2" else "$p_2$"
+    other = "$t_a$" if arguments.parametro == "p2" else "$d_s$"
     unit = "s" if arguments.parametro == "p2" else "m"
     cut.set_title(f"{other} $= {common.decimal(fixed, 2)}$ {unit}, los 19 eventos",
                   fontsize=matplotlib.rcParams["legend.fontsize"])
@@ -289,7 +289,7 @@ def sweep(arguments):
             lines[side].set_data(simulated[:, side, 0], simulated[:, side, 1])
         dot.set_data([values[index]], [curve_values[index]])
         unit_value = "s" if arguments.parametro == "p1" else "m"
-        name = "p_1" if arguments.parametro == "p1" else "p_2"
+        name = "t_a" if arguments.parametro == "p1" else "d_s"
         title.set_text(f"evento {arguments.evento}, ${name} = "
                        f"{common.decimal(values[index], 2)}$ {unit_value}")
 
@@ -339,7 +339,7 @@ def summary(arguments, runs, values, curve_values, wanted, experimental, label, 
         plane.plot(experimental[visible, side, 0], experimental[visible, side, 1],
                    color=common.EXPERIMENT_COLOR[side], linewidth=2.6, alpha=0.45,
                    label="medida" if side == 0 else None)
-    name = "p_1" if arguments.parametro == "p1" else "p_2"
+    name = "t_a" if arguments.parametro == "p1" else "d_s"
     unit = "s" if arguments.parametro == "p1" else "m"
     color, marker = common.METRIC_STYLE[arguments.metrica]
     cut.plot(values, curve_values, color=color, linewidth=1.8)
@@ -363,7 +363,7 @@ def summary(arguments, runs, values, curve_values, wanted, experimental, label, 
                  columnspacing=0.9, handlelength=1.5)
     plane.set_title(f"evento {arguments.evento}", loc="left",
                     fontsize=matplotlib.rcParams["legend.fontsize"])
-    other_name = "$p_1$" if arguments.parametro == "p2" else "$p_2$"
+    other_name = "$t_a$" if arguments.parametro == "p2" else "$d_s$"
     other_unit = "s" if arguments.parametro == "p2" else "m"
     cut.set_title(f"{other_name} $= {common.decimal(fixed, 2)}$ {other_unit}, los 19 eventos",
                   fontsize=matplotlib.rcParams["legend.fontsize"])

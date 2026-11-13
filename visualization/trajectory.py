@@ -109,7 +109,7 @@ def separation(run: Path, figures, style: str, name: str):
     axes.axhline(contact, color="#6e7680", linestyle=":", linewidth=1.6,
                  label="contacto, $2r$")
     axes.axhline(contact + static["p2"], color="#2ca02c", linestyle="-.", linewidth=1.6,
-                 label="$D = 2r + p_2$")
+                 label="$D = 2r + d_s$")
     axes.set_xlabel(common.AXIS_TIME)
     axes.set_ylabel(common.AXIS_DISTANCE)
     axes.set_ylim(0.0, None)

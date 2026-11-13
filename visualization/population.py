@@ -96,9 +96,9 @@ def cuts(p1, p2, event_error, region, metric, figures, style):
         axes.axvline(best, color="#2ca02c", linestyle="--", linewidth=1.8)
         axes.set_xlabel(label)
         axes.set_ylabel(common.METRIC_AVERAGE[metric])
-    axesrow[0].set_title(f"$p_2 = {common.decimal(p2[j], 3)}$ m",
+    axesrow[0].set_title(f"$d_s = {common.decimal(p2[j], 3)}$ m",
                          fontsize=matplotlib.rcParams["axes.labelsize"])
-    axesrow[1].set_title(f"$p_1 = {common.decimal(p1[i], 2)}$ s",
+    axesrow[1].set_title(f"$t_a = {common.decimal(p1[i], 2)}$ s",
                          fontsize=matplotlib.rcParams["axes.labelsize"])
     figure.tight_layout()
     common.save(figure, common.folder("b", figures) /
@@ -122,14 +122,14 @@ def ceiling(path: Path, figures, style):
         color, marker = common.METRIC_STYLE[metric]
         j = min(metric - 1, len(p2) - 1)
         axes.plot(p1, mean[:, j] / mean[:, j].min(), color=color, marker=marker, markersize=4,
-                  label=f"{common.METRIC_LABEL[metric]}, $p_2 = {common.decimal(p2[j], 2)}$ m")
+                  label=common.METRIC_LABEL[metric])
     axes.axvline(4.0, color="#2ca02c", linestyle="--", linewidth=1.8,
                  label="techo de la grilla fina")
     axes.set_xlabel(common.AXIS_P1)
     axes.set_ylabel("$\\langle E \\rangle / \\langle E \\rangle_{\\min}$")
     axes.set_ylim(0.9, 2.5)
     common.legend_inside(axes)
-    common.save(figure, common.folder("b", figures) / f"techo_p1_{style}.png")
+    common.save(figure, common.folder("b", figures) / f"techo_ta_{style}.png")
     plt.close(figure)
     for metric, event_error in ((1, error1), (2, error2)):
         mean, _ = common.population(event_error)

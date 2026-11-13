@@ -64,8 +64,8 @@ AXIS_TIME = "$t$ (s)"
 AXIS_STEP = "$\\Delta t$ (s)"
 # p1 y p2 son los nombres del enunciado; ta y ds, los del modelo. Los ejes
 # llevan los dos porque la diapositiva de la capa los define juntos.
-AXIS_P1 = "$p_1 = t_a$ (s)"
-AXIS_P2 = "$p_2 = d_s$ (m)"
+AXIS_P1 = "$t_a$ (s)"
+AXIS_P2 = "$d_s$ (m)"
 AXIS_E1 = "$\\langle E^{(1)} \\rangle$ (m$^2$)"
 AXIS_E2 = "$\\langle E^{(2)} \\rangle$ (m$^2$)"
 AXIS_EM1 = "$E^{(1)}_m$ (m$^2$)"
