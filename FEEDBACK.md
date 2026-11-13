@@ -154,6 +154,10 @@ por dos eventos en los que el lado depende de `t_a`).
 
 ## Devolución del 12/11/2026 sobre el GIF de los 19 eventos (Ariel Salgado)
 
+La transmitió Nico el 13/11. No quedó claro qué versión del GIF vio Ariel (la
+del recorte en `x` es del 12/11 a la tarde), así que el hueco de seguimiento
+del peatón 36 se vuelve a plantear, con opciones, en `PLAN.md` §8.
+
 | Qué dijo | Cómo quedó |
 |---|---|
 | **El evento 1 está mal**: los dos peatones quedan en la mitad del corredor y ninguno llega al final. Se arregla con el recorte entre 1 y 7,7 m; la ventana tiene que ser siempre ese tramo. | El final de la ventana estaba mal: se cortaba en el último cuadro con muestra de **los dos** peatones adentro del tramo, y al peatón 36 se le pierde el seguimiento en `x = 3,19 m` (reaparece 33 cuadros después, ya en la fila). Ahora un cuadro sin muestra no cierra la ventana: termina cuando a alguno de los dos **se lo ve** salir del tramo, o sea cuando el peatón 3 llega a 7,7 m (`Nm` pasa de 42 a 71). En esos 29 instantes el agente 36 se simula pero su error no se evalúa; su target final es, como dice el enunciado, la última posición de su trayectoria medida (3,19; 2,22), así que llega ahí y se queda mientras el otro termina de salir (`trimToCorridor` en `engine/src/experiment.cpp`). Los otros 18 eventos no cambian. Se recalculó todo: los óptimos quedaron iguales, `<E(1)>` pasó de 0,062 a 0,064 m² y `<E(2)>` de 0,0191 a 0,0193 m². |

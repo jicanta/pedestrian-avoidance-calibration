@@ -377,32 +377,48 @@ lista de prescindibles está en el README.
 
 ## 8. Dudas para plantear a los docentes
 
-Lo que se resolvió en la consulta del 11/11 está en `FEEDBACK.md`. Para la del
-viernes 13/11 queda:
+Lo que se resolvió en la consulta del 11/11 está en `FEEDBACK.md`. Releídas
+contra el enunciado el 13/11, queda **una sola duda de método** y una
+confirmación; el resto de lo que había en esta lista no eran dudas.
 
-1. **El tramo de `x`.** Quedó en `1,0 m ≤ x ≤ 7,7 m` (0,4 m adentro de cada
-   cabecera de fila; a ojo se había dicho 1 y 8). ¿Les cierra? Con 1 a 8 la
-   ventana del que sale por la izquierda termina ya frenando contra la fila de
-   la derecha. La tabla de `make ventana` muestra que el resultado no depende
-   de eso.
-2. **El evento 1.** *Resuelto el 12/11:* la ventana no se corta donde al
-   peatón 36 se le pierde el seguimiento; va, como las demás, hasta que el
-   primero de los dos sale del tramo (`Nm = 71`). Ver §4.3.
-3. **La rampa de urgencia.** Con la ventana nueva las cuatro variantes de la
-   capa ya no empatan: sin la rampa (`w = 1`) el error baja un 16–19 %, a costa
-   de que la dirección deseada salte al entrar en conflicto. ¿Vale la pena
-   cambiar la capa a esta altura, o alcanza con decirlo?
-4. **La validación cruzada.** El error de validación queda un 35 % por encima
-   del del ítem b, y es por dos eventos (16 y 17) en los que el lado por el que
-   elude el modelo depende de `t_a`. ¿Lo presentamos así, explicando la causa?
-5. **Peatón sin identificar.** ¿Confirman que el "V?" de la prueba 2 es el id
+1. **El evento 1 (la duda).** Al peatón 36 le faltan 33 cuadros de seguimiento
+   justo después del cruce (20133 a 20165; ninguna otra pista del archivo los
+   cubre), y el enunciado supone la trayectoria completa de los dos. No se
+   arregla con el recorte en `x`. Conviene preguntarlo mostrando el GIF actual
+   de los 19 eventos, con las tres opciones medidas:
+
+   | opción | qué se ve | `<E(1)>` | `<E(2)>` |
+   |---|---|---|---|
+   | **A. ventana hasta 7,7 m; el 36 sin error donde no hay muestra (lo que corre)** | el agente 36 llega a su target (3,2 m) 1,9 s antes del final y rebota ahí | 0,0637 | 0,0193 |
+   | B. cortar el evento donde se acaban los datos del 36 (`Nm = 42`) | los dos quedan en la mitad del corredor | 0,0617 | 0,0191 |
+   | C. dejar el evento 1 afuera (18 eventos) | — | 0,0640 | 0,0193 |
+
+   Con las tres los óptimos son (2,15 s; 0,13 m) y (1,50 s; 0,14 m) y la capa
+   baja el error 93 % y 94 %: la conclusión no depende de cuál se elija. El
+   rebote del agente 36 no es una duda aparte: es consecuencia de A (no hay
+   regla de llegada; el primer rebote es de 0,2 m y después queda a 2–5 cm) y
+   no toca ningún número, porque en ese tramo el 36 no tiene muestras y está a
+   más de 1,6 m del otro.
+2. **Peatón sin identificar (confirmación).** ¿El "V?" de la prueba 2 es el id
    1000 del archivo (§4.1)?
-6. **El 2 c) opcional.** Se minimiza `E_m` (el promedio de los 2 peatones) con
-   los cuatro parámetros juntos, porque el problema no es separable. ¿Es lo que
-   esperan?
-7. **¿Fijar `t_a`?** El óptimo individual de `t_a` cae en el techo de la
-   grilla (4 s) en 14 de 19 eventos, y con el techo en 12 s se van hasta ahí:
-   más allá del tiempo al cruce (2,1 a 2,7 s) `t_a` casi no cambia nada. Fijar
-   `t_a = 4 s` cuesta +2 % de `<E(1)>` (empate) pero +36 % de `<E(2)>`, y en el
-   ajuste individual los eventos 16 y 17 piden 2,15 y 1,5 s. ¿Se puede sacar
-   `t_a` y calibrar sólo `d_s` (y `α`), o lo dejamos y lo decimos así?
+3. **El 2 c) opcional (a chequear por el grupo).** El PDF del enunciado que
+   está en `docs/enunciado/` tiene los puntos a) a d) y no nombra un opcional.
+   Confirmar de dónde sale el texto que cita el `Makefile` antes de dedicarle
+   dos diapositivas.
+
+Lo que **no** se pregunta, y qué se contesta si lo preguntan ellos:
+
+- **El tramo de `x`** quedó en `1,0 m ≤ x ≤ 7,7 m` (0,4 m adentro de cada
+  cabecera). La ventana termina cuando el primero de los dos sale, así que en
+  7 eventos el más lento queda entre 6,0 y 6,7 m: es lo que dice el enunciado
+  (target = última posición de la ventana). `make ventana` muestra que el
+  resultado no depende del valor exacto.
+- **La rampa de urgencia.** Sin ella (`w = 1`) el error baja un 16–19 %, a
+  costa de que la dirección deseada salte al entrar en conflicto. La capa es
+  una decisión de diseño del grupo y las dos cumplen el enunciado; no se
+  cambia a tres días de la entrega.
+- **La validación cruzada** da +35 % sobre el ítem b, por los eventos 16 y 17.
+  Es el resultado del ítem d, no una duda.
+- **Fijar `t_a`** no se puede: el enunciado pide exactamente dos parámetros a
+  ajustar. Que `t_a` quede determinado sólo por abajo (fijarlo en 4 s cuesta
+  +2 % de `<E(1)>` y +36 % de `<E(2)>`) es un resultado.

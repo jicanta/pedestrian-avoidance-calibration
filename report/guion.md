@@ -26,8 +26,9 @@ están en el README (21, 26, 35, 33, 30, 10, 16, en ese orden).
 - Una persona sale de la fila izquierda, otra de la fila de abajo a la
   derecha, y se cruzan de frente alrededor de y = 2 m. La cátedra da las dos
   trayectorias medidas a 15 cuadros por segundo: 19 eventos, 38 peatones.
-- Pasan a entre 0,49 y 0,92 m, con 2r = 0,5 m: se eluden **sin tocarse**. Lo
-  que hay que proponer es una capa de dos parámetros que reproduzca eso.
+- Pasan a entre 0,49 y 0,92 m: se eluden **sin chocarse** (el radio del
+  modelo, que fija el enunciado, es r = 0,25 m). Lo que hay que proponer es
+  una capa de dos parámetros que reproduzca eso.
 
 ## 3. Los datos y el tramo que se simula — `slide-03-eventos-trayectorias.png` — 0:30
 
@@ -98,6 +99,10 @@ están en el README (21, 26, 35, 33, 30, 10, 16, en ese orden).
 - Es la geometría de Karamouzas (Teórica 7) resuelta como "goal temporario"
   y no como fuerza. Diferencia: se predice con las velocidades actuales de los
   dos, así la elusión sale recíproca.
+- *Si preguntan por qué la rampa w:* sin ella (w = 1) el error baja 16–19 %,
+  pero la dirección deseada salta al entrar en conflicto; con la rampa la capa
+  es continua en los dos bordes del disparo. Las dos bajan el error más de un
+  90 % respecto del modelo sin capa.
 
 ## 9. La capa en acción — `slide-09-capa-en-accion.png` — 0:25 (GIF 06)
 
