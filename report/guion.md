@@ -233,14 +233,14 @@ están en el README (21, 26, 35, 33, 30, 10, 16, en ese orden).
 
 - Cuatro parámetros por evento, dos por peatón. Los dos agentes están
   acoplados, así que el mínimo se busca en la grilla de los cuatro a la vez:
-  425 × 425 combinaciones por evento, 3,4 millones de corridas.
+  1271 × 1271 combinaciones por evento, 30,7 millones de corridas.
 - Histograma de los 38 óptimos con el global como línea vertical. En ningún
   evento los dos peatones eligen el mismo par: es la asimetría del reparto.
 
 ## 30. Opcional: cuánto se gana — `slide-30-errores-por-peaton.png` — 0:15
 
-- Sobre la misma grilla: con dos por evento ⟨E(1)⟩ baja 24 %, con cuatro un
-  11 % más (27 % y 31 % más con la métrica 2). Describe pero no predice: para
+- Sobre la misma grilla: con dos por evento ⟨E(1)⟩ baja 23 %, con cuatro un
+  11 % más (26 % y 31 % más con la métrica 2). Describe pero no predice: para
   un par nuevo no hay con qué estimar sus cuatro parámetros.
 
 ## 31. Ritmo y forma — `slide-31-residuo-descomposicion.png` — 0:15

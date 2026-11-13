@@ -17,7 +17,7 @@ void printUsage() {
       << "              [--dir ../data/barrido]\n\n"
       << "  asymmetry   [--p1 2.15] [--p2 0:0.6:61] [--alfas 0:1:41]\n"
       << "              [--subdivisiones 64] [--dir ../data/asimetria]\n\n"
-      << "  pairs       [--p1 0:4:17] [--p2 0:0.6:25] [--subdivisiones 64]\n"
+      << "  pairs       [--p1 0:4:41] [--p2 0:0.6:31] [--subdivisiones 64]\n"
       << "              [--dir ../data/individual]\n\n"
       << "  convergence [--p1 2] [--p2 0.4] [--subdivisiones 1,2,...,512]\n"
       << "              [--dir ../data/convergencia]\n\n"

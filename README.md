@@ -189,7 +189,7 @@ make corridas              # los 19 eventos con cada óptimo y con la capa apaga
 make check                 # validación: métricas recalculadas en Python, contactos, grilla temporal
 make poblacional-figuras   # ítem b: mapa de <E>(t_a,d_s) y cortes, por métrica
 make individual-figuras    # ítem c: histogramas de los óptimos individuales y error por evento
-make pares                 # ítem c opcional: los 4 parámetros por evento, 2 por peatón (5 min con 8 hilos)
+make pares                 # ítem c opcional: los 4 parámetros por evento, 2 por peatón (44 min con 8 hilos)
 make pares-figuras         # ítem c opcional: histogramas de los óptimos por peatón y el error con 1, 2 y 4 juegos
 make residuo-figuras       # de dónde viene el error que queda: ritmo/forma y lado
 make validacion-figuras    # ítem d: validación cruzada
@@ -217,7 +217,7 @@ cd engine && make
 ./build/elusion events                                     # verifica la lectura de los datos
 ./build/elusion run --pruebas 10 --p1 2.15 --p2 0.13       # una corrida con cuadros
 ./build/elusion sweep --p1 0:4:81 --p2 0:0.6:61            # la grilla de parámetros
-./build/elusion pairs --p1 0:4:17 --p2 0:0.6:25            # los 4 parámetros por evento (2 c opcional)
+./build/elusion pairs --p1 0:4:41 --p2 0:0.6:31            # los 4 parámetros por evento (2 c opcional)
 ./build/elusion asymmetry --p1 2.15 --alfas 0:1:41         # extra: el reparto de la elusión
 ./build/elusion convergence --subdivisiones 1,2,4,...,512  # el paso de integración
 ```
@@ -506,35 +506,36 @@ No es el barrido de dos parámetros hecho dos veces: **los dos agentes están
 acoplados**, así que el error de cada peatón depende también de los parámetros
 del otro (si el de la izquierda se corre más, el de la derecha necesita
 correrse menos). El mínimo hay que buscarlo en la grilla de los cuatro a la
-vez, que es lo que hace el comando `pairs` del motor: `425 × 425 = 180 625`
-combinaciones por evento, 3,4 millones de corridas en total (5 min repartidas
-en 8 hilos). La grilla de cada peatón es más gruesa que la del ítem b —paso de
-0,25 s y de 0,025 m— porque el costo va al cuadrado; `make pares-noche` lo
-repite con el paso fino (`4941 × 4941` por evento, unas 11 h con 8 hilos). Se
+vez, que es lo que hace el comando `pairs` del motor: `1271 × 1271 ≈ 1,6 millones`
+de combinaciones por evento, 30,7 millones de corridas en total (44 min
+repartidas en 8 hilos). La grilla de cada peatón tiene el doble del paso de la
+del ítem b —0,1 s y 0,02 m— porque el costo va al cuadrado; `make pares-noche`
+lo repite con el paso fino (`4941 × 4941` por evento, unas 11 h con 8 hilos). Se
 minimiza `E_m`, el promedio sobre los 2 peatones, que es lo que el enunciado
 define como error del evento.
 
-La grilla es más gruesa que la de la calibración poblacional —`t_a` en 17
-valores de 0 a 4 s, `d_s` en 25 de 0 a 0,6 m— porque el costo va al cuadrado.
-Para que la comparación diga algo, **los tres juegos se miden sobre esa misma
+La grilla es `t_a` en 41 valores de 0 a 4 s y `d_s` en 31 de 0 a 0,6 m. Con
+una grilla cuatro veces más gruesa en cada eje (17 × 25) los números de la
+tabla son los mismos hasta el segundo decimal del porcentaje: el resultado no
+depende del paso. Para que la comparación diga algo, **los tres juegos se miden sobre esa misma
 grilla**: una grilla más fina baja el error de los tres a la vez. Por eso el
 "poblacional" y el "2 por evento" de esta tabla no son exactamente los de
-arriba, que salen de la grilla fina (en esta grilla, con `t_a` de a 0,25 s, el
-óptimo poblacional de la métrica 1 cae en 4,00 s y 0,10 m).
+arriba, que salen de la grilla fina (en esta grilla el óptimo poblacional de la
+métrica 1 cae en 2,10 s y 0,14 m).
 
 | | métrica 1 | métrica 2 |
 |---|---|---|
-| poblacional (1 juego) | 0,0634 m² | 0,0192 m² |
-| 2 por evento (ítem c) | 0,0484 m² (−24 %) | 0,0141 m² (−27 %) |
-| **4 por evento (opcional)** | **0,0433 m² (−11 % más)** | **0,0097 m² (−31 % más)** |
-| ganancia pareada, 4 contra 2 | 0,0051 ± 0,0012 m² (4,3 σ) | 0,0044 ± 0,0011 m² (4,1 σ) |
-| los dos peatones eligen el mismo par | 0 de 19 | 1 de 19 |
+| poblacional (1 juego) | 0,0626 m² | 0,0191 m² |
+| 2 por evento (ítem c) | 0,0483 m² (−23 %) | 0,0141 m² (−26 %) |
+| **4 por evento (opcional)** | **0,0432 m² (−11 % más)** | **0,0097 m² (−31 % más)** |
+| ganancia pareada, 4 contra 2 | 0,0051 ± 0,0012 m² (4,2 σ) | 0,0044 ± 0,0011 m² (4,1 σ) |
+| los dos peatones eligen el mismo par | 0 de 19 | 0 de 19 |
 
 Se muestra como histograma de los 38 óptimos de cada parámetro, con la línea
 vertical en el óptimo global del ítem b. Lo que se lee:
 
-1. **Los dos peatones de un par casi nunca quieren los mismos parámetros** (0
-   de 19 con la métrica 1, 1 de 19 con la 2). Es la misma asimetría que se
+1. **Los dos peatones de un par nunca quieren los mismos parámetros** (0 de 19
+   con las dos métricas). Es la misma asimetría que se
    mide directamente en las trayectorias y que el extra de `α` describe con un
    solo número: en cada par uno de los dos cede más.
 2. **En `t_a`, 29 de los 38 peatones piden 3,5 s o más**, igual que en el ítem

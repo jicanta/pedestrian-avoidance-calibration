@@ -30,7 +30,7 @@
 #   make documentos     report/presentacion.tex -> report/build/presentacion.pdf
 #   make entrega        SdS_TP5_2026Q2G10S2_Codigo.zip y ..._Presentación.pdf
 #   make todo           eventos + convergencia + barrido + alternativas + corridas + asimetria
-#                       (make pares va aparte: 5 minutos con 8 hilos)
+#                       (make pares va aparte: 44 minutos con 8 hilos)
 #   make figuras        todas las figuras de analisis (estilo informe)
 #   make clean-figures  borra data/figures y data/figuras_diapositivas
 #
@@ -207,11 +207,12 @@ asimetria-figuras:
 # minimo se busca en la grilla de los cuatro a la vez (G x G por evento), y de
 # la MISMA grilla sale el optimo de dos parametros con el que se compara.
 #
-# La grilla es mas gruesa que la de la calibracion poblacional porque el costo
-# va al cuadrado: 17 x 25 = 425 pares por agente son 180.625 combinaciones por
-# evento.
-P1_PARES ?= 0:4:17
-P2_PARES ?= 0:0.6:25
+# La grilla tiene el doble del paso de la de la calibracion poblacional porque
+# el costo va al cuadrado: 41 x 31 = 1271 pares por agente son 1,6 millones de
+# combinaciones por evento (44 minutos con 8 hilos). Con 17 x 25 (5 minutos)
+# los resultados son los mismos.
+P1_PARES ?= 0:4:41
+P2_PARES ?= 0:0.6:31
 PARES    ?= $(DATA)/individual
 
 pares: build
@@ -236,7 +237,7 @@ pares-figuras:
 #
 # Mas corto: make pares-noche P2_NOCHE=0:0.4:41 (5 horas con 8 hilos; ningun
 # optimo de la grilla gruesa paso de 0,4 m) o P1_NOCHE=0:4:41 P2_NOCHE=0:0.6:31
-# (45 minutos).
+# (44 minutos; es la grilla de make pares).
 P1_NOCHE ?= $(P1_FINO)
 P2_NOCHE ?= $(P2_FINO)
 HILOS    ?= $(shell nproc)

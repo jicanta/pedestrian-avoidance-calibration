@@ -49,8 +49,8 @@
 int runPairs(const Arguments& arguments) {
   const Experiment experiment = experimentFromArguments(arguments);
   const Model model = modelFromArguments(arguments);
-  const std::vector<double> anticipations = linearGrid("p1", arguments.text("p1", "0:4:17"));
-  const std::vector<double> margins = linearGrid("p2", arguments.text("p2", "0:0.6:25"));
+  const std::vector<double> anticipations = linearGrid("p1", arguments.text("p1", "0:4:41"));
+  const std::vector<double> margins = linearGrid("p2", arguments.text("p2", "0:0.6:31"));
   const int subdivisions = arguments.integer("subdivisiones", 64);
   const std::string directory = arguments.text("dir", "../data/individual");
   const unsigned available = std::max(1u, std::thread::hardware_concurrency());

@@ -507,7 +507,7 @@
               \num{93879} corridas, \SI{32}{\second}; el techo de $t_a$ se
               verifica aparte hasta \SI{8}{\second}.
         \item \textbf{Individual}: por evento (2 parámetros) y por peatón (4
-              por evento, sobre una grilla de $17 \times 25$).
+              por evento, sobre una grilla de $41 \times 31$).
         \item \textbf{Validación cruzada}: 500 particiones de 13/6, más dejando
               uno afuera.
         \cond{una curva por evento; la horizontal es $2r$}
@@ -735,7 +735,7 @@
         \colvin{%
             \item Cuatro parámetros por evento, dos por peatón. Los dos agentes
                   están acoplados, así que el mínimo se busca en la grilla de
-                  los cuatro a la vez: $425 \times 425$ combinaciones por evento.
+                  los cuatro a la vez: $1271 \times 1271$ combinaciones por evento.
             \item Histograma de los 38 óptimos de cada parámetro, con el óptimo
                   global como línea vertical.}
         \colvin{%
@@ -743,7 +743,7 @@
                   es la asimetría del reparto, vista en los parámetros. En
                   $t_a$, 29 de los 38 piden \SI{3.5}{\second} o más; en $d_s$,
                   30 quedan en \SI{0.15}{\meter} o menos.
-            \cond{métrica 1; grilla de $17 \times 25$ pares por peatón}}
+            \cond{métrica 1; grilla de $41 \times 31$ pares por peatón}}
     }
 \end{frame}
 
@@ -751,10 +751,10 @@
     \figbulw[0.45em]{slide-30-errores-por-peaton.png}{%
         \item $E_m$ de cada evento con un juego para todos, con dos por evento y
               con cuatro por evento, los tres sobre \textbf{la misma grilla}.
-        \item \alert{Con dos por evento \mEuno{} baja un \SI{24}{\percent}
+        \item \alert{Con dos por evento \mEuno{} baja un \SI{23}{\percent}
               ($0{,}063 \to \SI{0.048}{\meter\squared}$); con cuatro, un
               \SI{11}{\percent} más} ($\to 0{,}043$; pareado
-              $0{,}005 \pm 0{,}001$). Con la métrica 2, \SI{27}{\percent} y
+              $0{,}005 \pm 0{,}001$). Con la métrica 2, \SI{26}{\percent} y
               \SI{31}{\percent} más.
         \item Describe pero \textbf{no predice}: para un par nuevo no hay con
               qué estimar sus cuatro parámetros. Lo que se valida en el ítem d
