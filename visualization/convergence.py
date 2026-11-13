@@ -50,10 +50,10 @@ def main() -> None:
         axes.plot(step[shown], relative[metric][shown], marker=marker, color=color,
                   label=common.METRIC_LABEL[metric])
     axes.axhline(arguments.tolerancia, color="#6e7680", linestyle="--", linewidth=1.4,
-                 label=f"tolerancia {common.decimal(100 * arguments.tolerancia)} %")
+                 label="tolerancia")
     index = int(np.argmin(np.abs(subdivisions - chosen)))
     axes.axvline(step[index], color="#2ca02c", linestyle=":", linewidth=1.8,
-                 label=f"$\\Delta t$ elegido = $\\Delta t_{{exp}}/{chosen}$")
+                 label="$\\Delta t$ elegido")
     axes.set_xscale("log")
     axes.set_yscale("log")
     axes.set_xlabel(common.AXIS_STEP)

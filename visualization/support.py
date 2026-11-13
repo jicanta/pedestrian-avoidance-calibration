@@ -192,7 +192,7 @@ def head_on(arguments):
     def update(index):
         for lane in lanes:
             lane.update(index)
-        header.set_text(f"cabeza a cabeza, $p_1 = {common.decimal(arguments.p1, 1)}$ s, "
+        header.set_text(f"cabeza a cabeza, $p_1 = {common.decimal(arguments.p1, 2)}$ s, "
                         f"$t$ = {common.decimal(time[index], 2)} s")
 
     out_dir = common.folder("anim", arguments.figures)

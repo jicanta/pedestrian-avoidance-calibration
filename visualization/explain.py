@@ -183,8 +183,11 @@ def build(style: str):
             middle = 0.5 * (a + b)
             art["gap_text"].set_position((middle[0] + 0.18, middle[1] + 0.05))
             art["gap_text"].set_text(r"$d(\tau)$" if step == 1 else r"$d^{*}$")
+            # El rotulo del reloj es de los pasos 2 y 3; despues queda d* y
+            # el rotulo se va, que si no se lee como subtitulo de otro paso.
             art["clock"].set_text(r"$\tau$ avanza…" if step == 1 else
-                                  r"en $\tau = \tau^{*}$ la distancia es mínima")
+                                  r"en $\tau = \tau^{*}$ la distancia es mínima"
+                                  if step == 2 else "")
         else:
             art["gap"].set_data([], [])
             art["gap_text"].set_text("")

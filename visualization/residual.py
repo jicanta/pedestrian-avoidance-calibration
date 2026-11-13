@@ -84,12 +84,12 @@ def sides(labels, offsets, figures, style):
     axes.axhspan(-limit, 0, xmin=0.5, xmax=1.0, color="#d62728", alpha=0.07)
     axes.plot(offsets[agree, 0], offsets[agree, 1], linestyle="none", marker="o",
               color=common.EXPERIMENT_COLOR[0], markersize=8,
-              label=f"mismo lado ({int(agree.sum())} de {len(agree)})")
+              label="mismo lado")
     if (~agree).any():
         axes.plot(offsets[~agree, 0], offsets[~agree, 1], linestyle="none", marker="o",
                   markerfacecolor="none", markeredgewidth=2.0,
                   color=common.EXPERIMENT_COLOR[1], markersize=9,
-                  label=f"lado opuesto ({int((~agree).sum())} de {len(agree)})")
+                  label="lado opuesto")
     axes.plot([-limit, limit], [-limit, limit], color="#6e7680", linestyle=":",
               linewidth=1.4, label="simulado = medido")
     axes.axhline(0.0, color="#1a1a1a", linewidth=1.0)

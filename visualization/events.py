@@ -54,8 +54,7 @@ def trajectories(events: list[dict], tracks: dict, table: dict, x_range, figures
                       label=f"sale por la {name}" if index == 0 else None)
     for k, edge in enumerate(x_range):
         axes.axvline(edge, color="#1a1a1a", linestyle="--", linewidth=1.6,
-                     label=f"tramo simulado, ${common.decimal(x_range[0])} \\leq x \\leq "
-                           f"{common.decimal(x_range[1])}$ m" if k == 0 else None)
+                     label="tramo simulado" if k == 0 else None)
     axes.set_xlabel(common.AXIS_X)
     axes.set_ylabel(common.AXIS_Y)
     axes.set_aspect("equal")
@@ -86,7 +85,7 @@ def distance(events: list[dict], tracks: dict, framerate: float, figures, style:
                   label="eventos medidos" if index == 0 else None)
         minima.append(min(gap))
     axes.axhline(0.5, color=common.EXPERIMENT_COLOR[1], linestyle="--", linewidth=1.6,
-                 label="contacto, $2r = 0{,}5$ m")
+                 label="contacto, $2r$")
     axes.set_xlabel(common.AXIS_TIME)
     axes.set_ylabel(common.AXIS_DISTANCE)
     axes.set_ylim(0.0, None)

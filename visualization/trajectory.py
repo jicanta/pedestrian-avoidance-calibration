@@ -83,7 +83,7 @@ def primary(run: Path, figures, style: str, name: str):
         scalars[metric] = float(np.nanmean(curve))
         axes.plot(time, curve, color=color, label=common.METRIC_LABEL[metric])
         axes.axhline(scalars[metric], color=color, linestyle="--", linewidth=1.4,
-                     label=f"$E^{{({metric})}}_m = {common.decimal(scalars[metric], 3)}$ m$^2$")
+                     label=f"$E^{{({metric})}}_m$, su promedio")
     axes.set_xlabel(common.AXIS_TIME)
     axes.set_ylabel("$e(t)$ (m$^2$)")
     axes.set_ylim(0.0, None)
@@ -107,9 +107,9 @@ def separation(run: Path, figures, style: str, name: str):
               label="simulada")
     contact = 2.0 * static["r"]
     axes.axhline(contact, color="#6e7680", linestyle=":", linewidth=1.6,
-                 label=f"contacto, $2r = {common.decimal(contact, 1)}$ m")
+                 label="contacto, $2r$")
     axes.axhline(contact + static["p2"], color="#2ca02c", linestyle="-.", linewidth=1.6,
-                 label=f"$D = 2r + p_2 = {common.decimal(contact + static['p2'], 2)}$ m")
+                 label="$D = 2r + p_2$")
     axes.set_xlabel(common.AXIS_TIME)
     axes.set_ylabel(common.AXIS_DISTANCE)
     axes.set_ylim(0.0, None)
