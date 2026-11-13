@@ -96,7 +96,7 @@ def main() -> None:
         axes.errorbar(shares[::every], mean[::every], yerr=sem[::every], color=color,
                       marker=marker, **common.ERRORBAR)
         axes.axvline(shares[best], color=common.GLOBAL_COLOR, linestyle="--", linewidth=2.2,
-                     label=f"óptimo, $\\alpha = {common.decimal(shares[best], 3)}$")
+                     label="óptimo")
         axes.set_xlabel(common.AXIS_ALPHA)
         axes.set_ylabel(common.METRIC_AVERAGE[metric])
         common.legend_inside(axes)
@@ -105,7 +105,7 @@ def main() -> None:
         axes.hist(own_share, bins=np.linspace(0.0, 1.0, 11), color=common.EXPERIMENT_COLOR[0],
                   alpha=0.85, edgecolor="white", linewidth=0.8)
         axes.axvline(shares[best], color=common.GLOBAL_COLOR, linestyle="--", linewidth=2.4,
-                     label=f"óptimo global, ${common.decimal(shares[best], 3)}$")
+                     label="óptimo global")
         axes.set_xlabel(common.AXIS_ALPHA + f" óptimo de cada evento, métrica {metric}")
         axes.set_ylabel(common.AXIS_COUNT)
         axes.set_xlim(0.0, 1.0)
@@ -116,7 +116,7 @@ def main() -> None:
         correlation = float(np.corrcoef(measured, own_share)[0, 1])
         axes.plot([0, 1], [0, 1], color="#6e7680", linestyle=":", linewidth=1.4)
         axes.plot(measured, own_share, linestyle="none", marker=marker, color=color,
-                  markersize=8, alpha=0.85, label=f"un evento ($r = {common.decimal(correlation, 2)}$)")
+                  markersize=8, alpha=0.85, label="un evento")
         axes.set_xlabel(common.AXIS_ALPHA + " medido en las trayectorias")
         axes.set_ylabel(common.AXIS_ALPHA + f" calibrado, métrica {metric}")
         axes.set_xlim(-0.03, 1.03)

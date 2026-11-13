@@ -42,7 +42,8 @@ def compatible(event_error: np.ndarray, i: int, j: int) -> np.ndarray:
 def surface(p1, p2, mean, metric, figures, style):
     """Mapa de <E> sobre la grilla, como los mapas de los TP anteriores: el
     color es <E>, en escala logaritmica (entre el SFM puro y el optimo hay un
-    orden de magnitud), y lo unico que va encima es el optimo."""
+    orden de magnitud), y lo unico que va encima es el optimo, un punto con la leyenda "optimo" y nada
+    mas (los valores van en el texto de la diapositiva)."""
     common.use_style(style)
     figure, axes = plt.subplots()
     axes.grid(False)
@@ -56,9 +57,9 @@ def surface(p1, p2, mean, metric, figures, style):
         if f"{value:.0e}"[0] in "25" else ""))
     bar.ax.tick_params(which="minor", labelsize=matplotlib.rcParams["ytick.labelsize"])
     i, j = np.unravel_index(np.argmin(mean), mean.shape)
-    axes.plot(p2[j], p1[i], marker="*", color="white", markersize=18, linestyle="none",
+    axes.plot(p2[j], p1[i], marker="o", color="white", markersize=10, linestyle="none",
               markeredgecolor="#1a1a1a", markeredgewidth=1.0,
-              label=f"óptimo $({common.decimal(p1[i], 2)}$ s$,\\ {common.decimal(p2[j], 2)}$ m$)$")
+              label="óptimo")
     axes.set_xlabel(common.AXIS_P2)
     axes.set_ylabel(common.AXIS_P1)
     axes.legend(loc="upper right", framealpha=0.9,
@@ -108,7 +109,7 @@ def cuts(p1, p2, event_error, region, metric, figures, style):
 def ceiling(path: Path, figures, style):
     """Por que la grilla de p1 termina en 4 s: <E> contra p1 hasta 8 s, con la
     p2 del optimo de cada metrica. Mas alla del tiempo que falta para el cruce
-    al empezar el evento (entre 2,4 y 3 s) el conflicto se declara desde el primer
+    al empezar el evento (entre 2,1 y 2,7 s) el conflicto se declara desde el primer
     instante y <E> ya no baja."""
     if not Path(path).exists():
         print(f"(sin {path}: no se dibuja el techo de p1)")

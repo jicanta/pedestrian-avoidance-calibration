@@ -397,3 +397,9 @@ viernes 13/11 queda:
 6. **El 2 c) opcional.** Se minimiza `E_m` (el promedio de los 2 peatones) con
    los cuatro parámetros juntos, porque el problema no es separable. ¿Es lo que
    esperan?
+7. **¿Fijar `t_a`?** El óptimo individual de `t_a` cae en el techo de la
+   grilla (4 s) en 14 de 19 eventos, y con el techo en 12 s se van hasta ahí:
+   más allá del tiempo al cruce (2,1 a 2,7 s) `t_a` casi no cambia nada. Fijar
+   `t_a = 4 s` cuesta +3 % de `<E(1)>` (empate) pero +38 % de `<E(2)>`, y en el
+   ajuste individual los eventos 16 y 17 piden 2,15 y 1,5 s. ¿Se puede sacar
+   `t_a` y calibrar sólo `d_s` (y `α`), o lo dejamos y lo decimos así?

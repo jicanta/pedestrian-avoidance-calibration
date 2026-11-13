@@ -9,6 +9,7 @@
 #   make barrido        items b, c y d: la grilla gruesa y la fina de (p1, p2)
 #   make corridas       las corridas con cuadros: los dos optimos y la capa apagada
 #   make pares          item c opcional: los 4 parametros por evento (2 por peaton)
+#   make pares-noche    lo mismo sobre la grilla fina (81 x 61 por agente): horas, se puede reanudar
 #   make asimetria      EXTRA: t_a fijo y barrido del par (d_s, alfa)
 #   make poblacional-figuras   item b: superficie <E>(p1,p2) y cortes, por metrica
 #   make individual-figuras    item c: histogramas de los optimos individuales y error por evento
@@ -21,14 +22,15 @@
 #   make animations     videos de los eventos elegidos y el cuadro fijo de cada uno
 #   make apoyo          animaciones de apoyo: la capa paso a paso, cabeza a cabeza y que hace cada parametro
 #   make youtube        copia los videos con nombres legibles en youtube/
-#   make gifs           los videos como GIF en gif/ (para embeber en la presentacion en vivo)
+#   make gifs           los videos como GIF en gif/ (para embeber en la presentacion en vivo),
+#                       mas los 19 eventos sueltos (gif/todos/) y las tandas de cinco
 #   make figuras-diapositivas  todas las figuras con tipografia de presentacion
 #   make slides-images  las imagenes de la presentacion numeradas por diapositiva
 #   make slides-images-tikz    solo los esquemas TikZ de las diapositivas, renderizados a PNG
 #   make documentos     report/presentacion.tex -> report/build/presentacion.pdf
 #   make entrega        SdS_TP5_2026Q2G10S2_Codigo.zip y ..._Presentación.pdf
 #   make todo           eventos + convergencia + barrido + alternativas + corridas + asimetria
-#                       (make pares va aparte: tarda media hora)
+#                       (make pares va aparte: 5 minutos con 8 hilos)
 #   make figuras        todas las figuras de analisis (estilo informe)
 #   make clean-figures  borra data/figures y data/figuras_diapositivas
 #
@@ -117,9 +119,9 @@ ALFAS    ?= 0:1:41
 ASIM     := $(DATA)/asimetria
 
 .PHONY: all todo build eventos eventos-figuras convergencia convergencia-figuras \
-        ventana asimetria asimetria-figuras pares pares-figuras barrido corridas poblacional-figuras individual-figuras residuo-figuras \
+        ventana asimetria asimetria-figuras pares pares-noche pares-figuras barrido corridas poblacional-figuras individual-figuras residuo-figuras \
         validacion-figuras trayectorias-figuras alternativas alternativas-figuras \
-        check animations apoyo youtube gifs \
+        check animations apoyo youtube gifs gifs-todos \
         figuras figuras-diapositivas slides-images slides-images-tikz documentos \
         entrega clean-figures
 
@@ -210,7 +212,7 @@ asimetria-figuras:
 # evento.
 P1_PARES ?= 0:4:17
 P2_PARES ?= 0:0.6:25
-PARES    := $(DATA)/individual
+PARES    ?= $(DATA)/individual
 
 pares: build
 	$(ELUSION) pairs $(COMUN) --p1 $(P1_PARES) --p2 $(P2_PARES) \
@@ -219,8 +221,41 @@ pares: build
 	    --subdivisiones $(SUBDIV) --dir $(PARES)
 
 pares-figuras:
-	$(PY) visualization/pares.py
-	$(PY) visualization/pares.py --figures $(SLIDES) --estilo diapositiva
+	$(PY) visualization/pares.py --pares $(PARES)
+	$(PY) visualization/pares.py --pares $(PARES) --figures $(SLIDES) --estilo diapositiva
+
+# Lo mismo sobre la grilla FINA del item b (81 x 61 = 4941 pares por agente,
+# 24,4 millones de combinaciones por evento, 464 millones de corridas): es para
+# dejarlo corriendo toda la noche. Usa todos los hilos del equipo (HILOS=n para
+# cambiarlo); con 8 hilos son unas 11 horas. Cada evento se guarda apenas
+# termina, y si se corta, volver a correr el mismo comando sigue desde el
+# ultimo evento completo (--reanudar). Al terminar arma las figuras y deja las
+# cuatro del opcional en slides-images/. Lo unico que hay que pasarle al resto
+# del grupo es data/individual-fino/ (pares.txt, errores.txt y pares-noche.log)
+# y slides-images/.
+#
+# Mas corto: make pares-noche P2_NOCHE=0:0.4:41 (5 horas con 8 hilos; ningun
+# optimo de la grilla gruesa paso de 0,4 m) o P1_NOCHE=0:4:41 P2_NOCHE=0:0.6:31
+# (45 minutos).
+P1_NOCHE ?= $(P1_FINO)
+P2_NOCHE ?= $(P2_FINO)
+HILOS    ?= $(shell nproc)
+NOCHE    := $(DATA)/individual-fino
+
+pares-noche: build
+	mkdir -p $(NOCHE)
+	bash -o pipefail -c '$(ELUSION) pairs $(COMUN) --p1 $(P1_NOCHE) --p2 $(P2_NOCHE) \
+	    --subdivisiones $(SUBDIV) --hilos $(HILOS) --dir $(NOCHE) --reanudar \
+	    2>&1 | tee -a $(NOCHE)/pares-noche.log'
+	$(ELUSION) sweep $(COMUN) --p1 $(P1_NOCHE) --p2 $(P2_NOCHE) \
+	    --subdivisiones $(SUBDIV) --dir $(NOCHE)
+	$(MAKE) pares-figuras PARES=$(NOCHE)
+	mkdir -p $(FIGS)
+	cp $(SL)/c_calibracion_individual/pares_optimos_metrica1_diapositiva.png  $(FIGS)/slide-29-optimos-por-peaton.png
+	cp $(SL)/c_calibracion_individual/pares_optimos_metrica2_diapositiva.png  $(FIGS)/slide-29b-optimos-por-peaton-metrica2.png
+	cp $(SL)/c_calibracion_individual/pares_errores_metrica1_diapositiva.png  $(FIGS)/slide-30-errores-por-peaton.png
+	cp $(SL)/c_calibracion_individual/pares_errores_metrica2_diapositiva.png  $(FIGS)/slide-30b-errores-por-peaton-metrica2.png
+	@echo "listo: $(NOCHE)/pares.txt y las slide-29/30 en $(FIGS)/"
 
 # --------------------------------------------------------------------------
 # Barrido de la grilla de parametros (items b, c y d)
@@ -361,13 +396,37 @@ youtube:
 	cp "$(AN)/apoyo_capa_paso_a_paso.mp4" "youtube/09 - SdS TP5 G10 - Apoyo - La capa de elusion paso a paso.mp4"
 	cp "$(AN)/los19_grilla.mp4" "youtube/10 - SdS TP5 G10 - Los 19 eventos.mp4"
 
-gifs:
-	mkdir -p gif && rm -rf gif/*.gif gif/estudio
+# Los GIF de la presentacion (los de youtube/) y, ademas, TODO el material para
+# elegir a mano cual mostrar: los 19 eventos sueltos en gif/todos/ y las dos
+# vistas de conjunto (la grilla de 19 paneles y las tandas de cinco
+# superpuestas). Nada de esto se borra por no estar en las diapositivas: el
+# grupo elige entre ellos.
+AGIF   = ffmpeg -loglevel error -y -i
+PALETA = split[a][b];[a]palettegen[p];[b][p]paletteuse
+
+gifs: gifs-todos
+	mkdir -p gif && rm -f gif/*.gif
 	@for f in youtube/*.mp4; do \
 	  name=$$(basename "$$f" .mp4); \
 	  case "$$name" in 10*) ancho=1400;; *) ancho=900;; esac; \
-	  ffmpeg -loglevel error -y -i "$$f" -vf "fps=12,scale=$$ancho:-1:flags=lanczos,split[a][b];[a]palettegen[p];[b][p]paletteuse" "gif/$$name.gif"; \
+	  $(AGIF) "$$f" -vf "fps=12,scale=$$ancho:-1:flags=lanczos,$(PALETA)" "gif/$$name.gif"; \
 	done
+	$(PY) visualization/mosaico.py --runs $(RUNS)/optimo-metrica1 --modo tandas \
+	    --name los19 --figures $(SLIDES) --estilo diapositiva
+	$(AGIF) "$(AN)/los19_tandas.mp4" -vf "fps=12,scale=900:-1:flags=lanczos,$(PALETA)" \
+	    "gif/11 - SdS TP5 G10 - Los 19 eventos en tandas de cinco.gif"
+
+# Un GIF por evento, los 19, con el optimo de la metrica 1 (gif/todos/).
+gifs-todos:
+	mkdir -p gif/todos && rm -f gif/todos/*.gif
+	@for m in $$(seq 1 19); do \
+	  n=$$(printf %02d $$m); \
+	  $(PY) visualization/animate.py --run $(RUNS)/optimo-metrica1/m$$m --fps $(FPS) \
+	      --name todos-evento$$n --figures $(SLIDES) --estilo diapositiva >/dev/null; \
+	  $(AGIF) "$(AN)/todos-evento$$n.mp4" -vf "fps=12,scale=760:-1:flags=lanczos,$(PALETA)" \
+	      "gif/todos/evento-$$n.gif"; \
+	done
+	@ls gif/todos | wc -l
 
 # --------------------------------------------------------------------------
 # Presentacion

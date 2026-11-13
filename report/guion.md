@@ -204,7 +204,7 @@ están en el README (21, 26, 35, 33, 30, 10, 16, en ese orden).
 ## 24. Cortes, métrica 1 — `slide-24-cortes-metrica1.png` — 0:25
 
 - p1 sólo queda determinado por abajo: cae hasta 1,5 s y después es plano,
-  hasta 8 s. Al empezar faltan entre 2,4 y 3 s para el cruce: con más
+  hasta 8 s. El cruce llega entre 2,1 y 2,7 s después de empezar: con más
   anticipación el conflicto se declara desde el primer instante. p2 sí tiene
   mínimo claro en 0,13 m.
 

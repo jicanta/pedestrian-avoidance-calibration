@@ -89,7 +89,7 @@ def optima(table, metric, population, grid, figures, style):
                   color=common.EXPERIMENT_COLOR[0], alpha=0.85, edgecolor="white",
                   linewidth=0.8)
         axes.axvline(best, color=common.GLOBAL_COLOR, linestyle="--", linewidth=2.4,
-                     label=f"óptimo global, ${common.decimal(best, 2)}$ {unit}")
+                     label="óptimo global")
         axes.set_xlabel(label)
         axes.set_ylabel(common.AXIS_COUNT_PEDESTRIANS)
         axes.set_xlim(edges[0], edges[-1])
@@ -111,11 +111,11 @@ def errors(table, metric, population_errors, labels, figures, style):
     figure, axes = plt.subplots()
     positions = np.arange(len(order))
     axes.bar(positions - 0.27, population_errors[order], width=0.27, color="#9aa3ad",
-             label=f"poblacional (media {common.decimal(population_errors.mean(), 4)})")
+             label="poblacional")
     axes.bar(positions, two[order], width=0.27, color=common.EXPERIMENT_COLOR[0],
-             alpha=0.85, label=f"2 por evento (media {common.decimal(two.mean(), 4)})")
+             alpha=0.85, label="2 por evento")
     axes.bar(positions + 0.27, four[order], width=0.27, color=common.EXPERIMENT_COLOR[1],
-             alpha=0.85, label=f"4 por evento (media {common.decimal(four.mean(), 4)})")
+             alpha=0.85, label="4 por evento")
     axes.set_xticks(positions)
     axes.set_xticklabels([str(int(labels[k])) for k in order])
     axes.tick_params(axis="x", labelsize=plt.rcParams["xtick.labelsize"] - 4)

@@ -82,7 +82,7 @@ def main() -> None:
              yerr=[row[2]["sem"] for row in rows], capsize=4,
              color=[common.EXPERIMENT_COLOR[0]] + ["#9aa3ad"] * (len(rows) - 1))
     axes.axhline(rows[0][2]["without"], color="#1a1a1a", linestyle="--", linewidth=1.4,
-                 label=f"sin capa, {common.decimal(rows[0][2]['without'], 2)} m$^2$")
+                 label="sin capa")
     axes.set_xticks(positions)
     axes.set_xticklabels([row["label"].replace(" (la que corre)", "\n(la que corre)").replace("campo ", "campo\n")
                           for row in rows],

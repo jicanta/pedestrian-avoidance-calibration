@@ -157,6 +157,7 @@ tp-5/
 ├── slides-images/      # todas las imágenes de la presentación, numeradas por diapositiva
 ├── youtube/            # titulos.md con el título y la descripción de cada video (los .mp4 no se versionan)
 ├── gif/                # los videos como GIF, para embeber en la presentación en vivo
+│   └── todos/          #   los 19 eventos sueltos, un GIF por evento
 └── data/               # salidas de simulación y figuras (ignoradas por git)
     ├── experimental/   #   resumen de los 19 eventos tal como los lee el motor
     ├── convergencia/   #   barrido del paso de integración
@@ -185,7 +186,7 @@ make corridas              # los 19 eventos con cada óptimo y con la capa apaga
 make check                 # validación: métricas recalculadas en Python, contactos, grilla temporal
 make poblacional-figuras   # ítem b: mapa de <E>(p1,p2) y cortes, por métrica
 make individual-figuras    # ítem c: histogramas de los óptimos individuales y error por evento
-make pares                 # ítem c opcional: los 4 parámetros por evento, 2 por peatón (media hora)
+make pares                 # ítem c opcional: los 4 parámetros por evento, 2 por peatón (5 min con 8 hilos)
 make pares-figuras         # ítem c opcional: histogramas de los óptimos por peatón y el error con 1, 2 y 4 juegos
 make residuo-figuras       # de dónde viene el error que queda: ritmo/forma y lado
 make validacion-figuras    # ítem d: validación cruzada
@@ -195,7 +196,8 @@ make asimetria-figuras     # extra: <E>(α), histograma de α por evento y α ca
 make animations            # videos de los cuatro eventos, su cuadro fijo y los 19 eventos a la vez
 make apoyo                 # animaciones de apoyo: la capa paso a paso, cabeza a cabeza y qué hace cada parámetro
 make youtube               # copia los videos con nombres legibles en youtube/
-make gifs                  # los videos como GIF en gif/
+make gifs                  # los videos como GIF en gif/, más los 19 eventos sueltos (gif/todos/) y las tandas
+make pares-noche           # ítem c opcional sobre la grilla fina (81 × 61 por agente): ~11 h con 8 hilos, se reanuda solo
 make figuras               # todas las figuras de análisis, en los dos estilos
 make slides-images         # las imágenes de la presentación, numeradas por diapositiva
 make documentos            # report/presentacion.tex -> report/build/presentacion.pdf
@@ -437,12 +439,24 @@ métrica 2 cuesta un 1,9 % de `<E(1)>`; al revés, un 18 % de `<E(2)>`.
 
 `p1` queda determinado **sólo por abajo**: `<E(1)>` cae de 0,87 a 0,07 m²
 entre 0 y 1,5 s y después es plano (0,065 m² en 4 s). Tiene una explicación
-geométrica: al empezar el evento los dos peatones están a unos 6,2 m y se
-acercan a entre 2,1 m/s (todavía acelerando) y 2,6 m/s, así que faltan entre
-2,4 y 3 s para el cruce; con más anticipación que eso el conflicto se declara
-desde el primer instante, y `p1` sólo entra a través del peso de urgencia. El techo de la grilla se verifica
-con un barrido aparte hasta 8 s (`data/barrido/p1largo`, figura `techo_p1`):
-entre 4 y 8 s `<E>` se mueve un 2,5 % (métrica 1) y un 1,3 % (métrica 2).
+geométrica: al empezar el evento los dos peatones están a unos 6,2 m y la
+mínima distancia medida llega entre 2,1 y 2,7 s después (mediana 2,4 s); con
+más anticipación que eso el conflicto se declara desde el primer instante, y
+`p1` sólo entra a través del peso de urgencia. El techo de la grilla se
+verifica con un barrido aparte hasta 8 s (`data/barrido/p1largo`, figura
+`techo_p1`): entre 4 y 8 s `<E>` se mueve un 2,5 % (métrica 1) y un 1,3 %
+(métrica 2).
+
+Lo mismo pasa evento por evento, y por eso el histograma de los óptimos
+individuales de `p1` (ítem c) tiene el pico en 4 s: **es el techo de la
+grilla, no un mínimo**. Con el techo en 12 s (`sweep --p1 0:12:121 --p2
+0:0.6:61`, un minuto) 17 de los 19 óptimos individuales se van más allá de
+4 s —11 hasta los 12 s en la métrica 1 y 15 en la 2— y el error individual
+baja apenas un 4 % y un 5 %. En ese barrido el mínimo poblacional de la
+métrica 1 también se muda, de (2,15 s; 0,13 m) a (12 s; 0,09 m), con una
+diferencia pareada de −0,001 ± 0,008 m²: un empate. El de la métrica 2 no se
+mueve de (1,5 s; 0,14 m). Lo que los datos fijan de `p1` es que sea mayor que
+≈ 1,5 s.
 
 La curva no es lisa: tiene **escalones** en `p1 ≈ 1,5` y `2,2 s`. Son dos
 eventos, el 17 y el 16, en los que el lado por el que elude el modelo cambia
@@ -490,7 +504,10 @@ acoplados**, así que el error de cada peatón depende también de los parámetr
 del otro (si el de la izquierda se corre más, el de la derecha necesita
 correrse menos). El mínimo hay que buscarlo en la grilla de los cuatro a la
 vez, que es lo que hace el comando `pairs` del motor: `425 × 425 = 180 625`
-combinaciones por evento, 3,4 millones de corridas en total (36 min). Se
+combinaciones por evento, 3,4 millones de corridas en total (5 min repartidas
+en 8 hilos). La grilla de cada peatón es más gruesa que la del ítem b —paso de
+0,25 s y de 0,025 m— porque el costo va al cuadrado; `make pares-noche` lo
+repite con el paso fino (`4941 × 4941` por evento, unas 11 h con 8 hilos). Se
 minimiza `E_m`, el promedio sobre los 2 peatones, que es lo que el enunciado
 define como error del evento.
 
@@ -673,6 +690,13 @@ fórmula de cada paso), el cruce sintético cabeza a cabeza con tres `p2` a la
 vez (diapositiva 9), y el evento 10 con `p2` y con `p1` recorriendo su rango al
 lado del corte de `<E>` (diapositiva 22). Con los cuatro eventos, el evento 10
 sin capa y los 19 eventos a la vez son **diez GIF** en `gif/`.
+
+Además de esos diez, `make gifs` deja **todo el material para elegir a mano**
+qué mostrar: los 19 eventos sueltos en `gif/todos/evento-NN.gif` (con el óptimo
+de la métrica 1 y la ventana `1,0 ≤ x ≤ 7,7 m`) y las tandas de cinco eventos
+superpuestos en un solo panel (`gif/11 - … Los 19 eventos en tandas de
+cinco.gif`). Que un GIF no esté en las diapositivas no es motivo para sacarlo
+del repositorio.
 
 Los links de YouTube de la beamer dicen `PENDIENTE-0n`: hay que reemplazarlos
 por los reales en `report/presentacion.tex` (y en la presentación de Google

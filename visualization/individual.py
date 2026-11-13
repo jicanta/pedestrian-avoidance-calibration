@@ -44,7 +44,7 @@ def histogram_panel(axes, values, edges, best, label, unit, digits, ylabel):
     axes.hist(values, bins=edges, color=common.EXPERIMENT_COLOR[0], alpha=0.85,
               edgecolor="white", linewidth=0.8)
     axes.axvline(best, color=common.GLOBAL_COLOR, linestyle="--", linewidth=2.4,
-                 label=f"óptimo global, ${common.decimal(best, digits)}$ {unit}")
+                 label="óptimo global")
     axes.set_xlabel(label)
     axes.set_ylabel(ylabel)
     axes.set_xlim(edges[0], edges[-1])
@@ -78,10 +78,10 @@ def comparison(rows, labels, metric, figures, style):
              label="parámetros individuales")
     axes.axhline(rows[:, 3].mean(), color=common.EXPERIMENT_COLOR[1], linestyle="--",
                  linewidth=1.6,
-                 label=f"promedio poblacional {common.decimal(rows[:, 3].mean(), 3)} m$^2$")
+                 label="promedio poblacional")
     axes.axhline(rows[:, 2].mean(), color=common.EXPERIMENT_COLOR[0], linestyle=":",
                  linewidth=1.8,
-                 label=f"promedio individual {common.decimal(rows[:, 2].mean(), 3)} m$^2$")
+                 label="promedio individual")
     axes.set_xticks(positions)
     axes.set_xticklabels([str(int(labels[k])) for k in order])
     axes.tick_params(axis="x", labelsize=matplotlib.rcParams["xtick.labelsize"] - 3)

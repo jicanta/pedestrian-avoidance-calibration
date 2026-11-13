@@ -59,6 +59,8 @@ void printUsage() {
       << "  minimo se busca en la grilla de los cuatro a la vez, G x G por evento;\n"
       << "  de la misma grilla sale tambien el optimo de dos parametros (la\n"
       << "  diagonal), que es con lo que se compara.\n"
+      << "  Reparte las corridas en --hilos hilos (todos, por omision) y con\n"
+      << "  --reanudar saltea los eventos que ya estan en pares.txt.\n"
       << "  convergence elige el paso de integracion.\n";
 }
 

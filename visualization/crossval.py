@@ -64,9 +64,9 @@ def error_figure(rows, reference, metric, figures, style):
     axes.hist(rows[:, 2], bins=24, color="#6e7680", histtype="step", linewidth=1.8,
               label="entrenamiento")
     axes.axvline(reference, color="#2ca02c", linestyle="--", linewidth=2.0,
-                 label=f"item b, $\\langle E \\rangle = {common.decimal(reference, 3)}$ m$^2$")
+                 label="ítem b")
     axes.axvline(rows[:, 3].mean(), color=color, linestyle=":", linewidth=2.0,
-                 label=f"media de validación {common.decimal(rows[:, 3].mean(), 3)} m$^2$")
+                 label="media de validación")
     axes.set_xlabel(common.METRIC_EVENT[metric])
     axes.set_ylabel("particiones")
     common.legend_inside(axes)
@@ -81,11 +81,10 @@ def parameter_figure(rows, best, metric, p1, p2, figures, style):
     pairs, counts = np.unique(rows[:, :2], axis=0, return_counts=True)
     axes.scatter(pairs[:, 0], pairs[:, 1], s=18 + 220 * counts / counts.max(), color=color,
                  alpha=0.55, edgecolors="none",
-                 label="par calibrado (tamaño: cuántas particiones)")
-    axes.plot([best[0]], [best[1]], marker="*", color="#2ca02c", markersize=18,
+                 label="par calibrado")
+    axes.plot([best[0]], [best[1]], marker="o", color="#2ca02c", markersize=10,
               linestyle="none", markeredgecolor="#1a1a1a", markeredgewidth=0.8,
-              label=f"item b $({common.decimal(best[0], 2)}$ s$,\\ "
-                    f"{common.decimal(best[1], 3)}$ m$)$")
+              label="ítem b")
     axes.set_xlabel(common.AXIS_P1)
     axes.set_ylabel(common.AXIS_P2)
     axes.set_xlim(p1.min() - 0.1, p1.max() + 0.1)
@@ -116,7 +115,7 @@ def size_figure(event_error, p1, p2, sizes, partitions, seed, reference, metric,
                   label="validación", **common.ERRORBAR)
     axes.plot(sizes, test_mean, color=color, linewidth=1.6)
     axes.axhline(reference, color="#2ca02c", linestyle="--", linewidth=1.8,
-                 label="item b (calibra y mide con los $M$)")
+                 label="ítem b")
     axes.set_xlabel("eventos de entrenamiento")
     axes.set_ylabel(common.METRIC_AVERAGE[metric])
     common.legend_inside(axes)

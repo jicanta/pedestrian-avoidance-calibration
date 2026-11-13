@@ -35,13 +35,13 @@ def frame_index(times: np.ndarray, target: float) -> int:
 
 def caption(static: dict, t: float, simulated: np.ndarray, experimental: np.ndarray) -> str:
     computed = float(np.hypot(*(simulated[0, :2] - simulated[1, :2])))
-    text = (f"evento {static['evento']}    $t$ = {common.decimal(t, 2):>5} s"
-            f"    $d$ simulada = {common.decimal(computed, 2)} m")
+    text = (f"evento {static['evento']}   $t$ = {common.decimal(t, 2):>5} s"
+            f"   $d$ simulada = {common.decimal(computed, 2)} m")
     if experimental[0, 2] > 0.5 and experimental[1, 2] > 0.5:
         measured = float(np.hypot(*(experimental[0, :2] - experimental[1, :2])))
-        text += f"    medida = {common.decimal(measured, 2)} m"
+        text += f"   medida = {common.decimal(measured, 2)} m"
     if simulated[:, 6].max() > 0.5:
-        text += "    conflicto"
+        text += "   conflicto"
     return text
 
 
@@ -98,8 +98,10 @@ class Scene:
                   markersize=9, markeredgewidth=2.0, label="target temporal")
         axes.legend(loc="lower center", ncol=3,
                     fontsize=plt.rcParams["legend.fontsize"] - 1)
+        # Dos puntos menos que el resto: con "conflicto" el rotulo es mas
+        # ancho que los ejes y el video lo cortaba.
         self.text = axes.text(0.0, 1.02, "", transform=axes.transAxes,
-                              fontsize=plt.rcParams["font.size"], va="bottom")
+                              fontsize=plt.rcParams["font.size"] - 2, va="bottom")
 
     def update(self, index):
         for side in (0, 1):

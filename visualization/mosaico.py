@@ -166,6 +166,9 @@ def batches(events, limits, fps, path, sizes, hold):
     caption = axes.text(0.0, 1.02, "", transform=axes.transAxes,
                         fontsize=plt.rcParams["font.size"], va="bottom")
     figure.tight_layout(pad=0.6)
+    # El rotulo de la tanda va por encima de los ejes: sin este margen el
+    # video lo corta.
+    figure.subplots_adjust(top=0.86)
 
     # Cada tanda se arma sobre los mismos ejes y se apaga cuando termina: los
     # artistas de todas las tandas se crean una sola vez, al principio.
