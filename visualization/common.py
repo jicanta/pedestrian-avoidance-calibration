@@ -62,8 +62,8 @@ AXIS_X = "$x$ (m)"
 AXIS_Y = "$y$ (m)"
 AXIS_TIME = "$t$ (s)"
 AXIS_STEP = "$\\Delta t$ (s)"
-# p1 y p2 son los nombres del enunciado; ta y ds, los del modelo. Los ejes
-# llevan los dos porque la diapositiva de la capa los define juntos.
+# p1 y p2 son los nombres del enunciado; t_a y d_s, los del modelo, que son
+# los que llevan los ejes (la diapositiva de la capa los define).
 AXIS_P1 = "$t_a$ (s)"
 AXIS_P2 = "$d_s$ (m)"
 AXIS_E1 = "$\\langle E^{(1)} \\rangle$ (m$^2$)"
@@ -161,6 +161,12 @@ def decimal(value: float, digits: int | None = None) -> str:
     """Numero con coma decimal, como en el texto de las diapositivas."""
     text = f"{value:.{digits}f}" if digits is not None else f"{value:g}"
     return text.replace(".", ",")
+
+
+def math_decimal(value: float, digits: int | None = None) -> str:
+    """Lo mismo para usar ADENTRO de $...$: en modo matematico la coma suelta
+    deja un espacio despues ("0, 14"); entre llaves no."""
+    return decimal(value, digits).replace(",", "{,}")
 
 
 def comma_ticks(figure) -> None:

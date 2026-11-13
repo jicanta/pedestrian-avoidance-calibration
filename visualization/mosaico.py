@@ -76,14 +76,16 @@ class EventArt:
 
     def __init__(self, axes, event, faded=False, discs=True):
         self.event = event
-        self.discs, self.ghosts, self.trails = [], [], []
+        self.discs, self.ghosts, self.trails, self.measured = [], [], [], []
         radius = event["r"]
         present = event["exp"][:, :, 2] > 0.5
         for side in (0, 1):
             colour = common.EXPERIMENT_COLOR[side]
             visible = present[:, side]
-            axes.plot(event["exp"][visible, side, 0], event["exp"][visible, side, 1],
-                      color=colour, linewidth=1.0, alpha=0.25 if faded else 0.45, zorder=2)
+            measured, = axes.plot(event["exp"][visible, side, 0],
+                                  event["exp"][visible, side, 1], color=colour,
+                                  linewidth=1.0, alpha=0.25 if faded else 0.45, zorder=2)
+            self.measured.append(measured)
             trail, = axes.plot([], [], color=colour, linewidth=1.8, zorder=3)
             self.trails.append(trail)
             if discs:
@@ -210,7 +212,7 @@ def batches(events, limits, fps, path, sizes, hold):
 
 
 def set_visible(art, visible):
-    for collection in (art.trails, art.discs, art.ghosts):
+    for collection in (art.trails, art.discs, art.ghosts, art.measured):
         for artist in collection:
             artist.set_visible(visible)
 

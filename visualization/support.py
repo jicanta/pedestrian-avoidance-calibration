@@ -149,14 +149,14 @@ class Lane:
             self.ghosts[0].set_visible(True)
             self.ghosts[1].set_visible(True)
             self.gap.set_data([mine[0], theirs[0]], [mine[1], theirs[1]])
-            text.append(f"$\\tau^* = {common.decimal(tau, 2)}$ s, "
-                        f"$d^* = {common.decimal(predicted, 2)}$ m")
+            text.append(f"$\\tau^* = {common.math_decimal(tau, 2)}$ s, "
+                        f"$d^* = {common.math_decimal(predicted, 2)}$ m")
         else:
             self.ghosts[0].set_visible(False)
             self.ghosts[1].set_visible(False)
             self.gap.set_data([], [])
         distance = float(np.linalg.norm(states[0, :2] - states[1, :2]))
-        text.append(f"$d = {common.decimal(distance, 2)}$ m")
+        text.append(f"$d = {common.math_decimal(distance, 2)}$ m")
         self.label.set_text("   ".join(text))
 
 
@@ -173,8 +173,8 @@ def head_on(arguments):
 
     figure, panels = plt.subplots(len(runs), 1, figsize=(10.0, 2.3 * len(runs) + 0.6),
                                   sharex=True)
-    lanes = [Lane(axes, run, f"$d_s = {common.decimal(value, 2)}$ m, "
-                             f"$D = {common.decimal(0.5 + value, 2)}$ m")
+    lanes = [Lane(axes, run, f"$d_s = {common.math_decimal(value, 2)}$ m, "
+                             f"$D = {common.math_decimal(0.5 + value, 2)}$ m")
              for axes, run, value in zip(np.atleast_1d(panels), runs, values)]
     panels[-1].set_xlabel(common.AXIS_X)
     header = figure.text(0.5, 0.985, "", ha="center", va="top",
@@ -192,7 +192,7 @@ def head_on(arguments):
     def update(index):
         for lane in lanes:
             lane.update(index)
-        header.set_text(f"cabeza a cabeza, $t_a = {common.decimal(arguments.p1, 2)}$ s, "
+        header.set_text(f"cabeza a cabeza, $t_a = {common.math_decimal(arguments.p1, 2)}$ s, "
                         f"$t$ = {common.decimal(time[index], 2)} s")
 
     out_dir = common.folder("anim", arguments.figures)
@@ -276,9 +276,9 @@ def sweep(arguments):
                     markeredgecolor="#1a1a1a")
     cut.set_xlabel(label)
     cut.set_ylabel(common.METRIC_AVERAGE[arguments.metrica])
-    other = "$t_a$" if arguments.parametro == "p2" else "$d_s$"
+    other = "t_a" if arguments.parametro == "p2" else "d_s"
     unit = "s" if arguments.parametro == "p2" else "m"
-    cut.set_title(f"{other} $= {common.decimal(fixed, 2)}$ {unit}, los 19 eventos",
+    cut.set_title(f"${other} = {common.math_decimal(fixed, 2)}$ {unit}, los 19 eventos",
                   fontsize=matplotlib.rcParams["legend.fontsize"])
     figure.tight_layout()
     common.comma_ticks(figure)
@@ -291,7 +291,7 @@ def sweep(arguments):
         unit_value = "s" if arguments.parametro == "p1" else "m"
         name = "t_a" if arguments.parametro == "p1" else "d_s"
         title.set_text(f"evento {arguments.evento}, ${name} = "
-                       f"{common.decimal(values[index], 2)}$ {unit_value}")
+                       f"{common.math_decimal(values[index], 2)}$ {unit_value}")
 
     out_dir = common.folder("anim", arguments.figures)
     stem = f"apoyo_barrido_{arguments.parametro}_evento{arguments.evento:02d}"
@@ -349,7 +349,7 @@ def summary(arguments, runs, values, curve_values, wanted, experimental, label, 
         for side in (0, 1):
             plane.plot(simulated[:, side, 0], simulated[:, side, 1], color=shade,
                        linewidth=1.8, linestyle="--",
-                       label=f"${name} = {common.decimal(values[index], 2)}$ {unit}"
+                       label=f"${name} = {common.math_decimal(values[index], 2)}$ {unit}"
                        if side == 0 else None)
         cut.plot([values[index]], [curve_values[index]], marker="o", color=shade,
                  markersize=10, linestyle="none", markeredgecolor="#1a1a1a")
@@ -363,9 +363,9 @@ def summary(arguments, runs, values, curve_values, wanted, experimental, label, 
                  columnspacing=0.9, handlelength=1.5)
     plane.set_title(f"evento {arguments.evento}", loc="left",
                     fontsize=matplotlib.rcParams["legend.fontsize"])
-    other_name = "$t_a$" if arguments.parametro == "p2" else "$d_s$"
+    other_name = "t_a" if arguments.parametro == "p2" else "d_s"
     other_unit = "s" if arguments.parametro == "p2" else "m"
-    cut.set_title(f"{other_name} $= {common.decimal(fixed, 2)}$ {other_unit}, los 19 eventos",
+    cut.set_title(f"${other_name} = {common.math_decimal(fixed, 2)}$ {other_unit}, los 19 eventos",
                   fontsize=matplotlib.rcParams["legend.fontsize"])
     cut.set_xlabel(label)
     cut.set_ylabel(common.METRIC_AVERAGE[arguments.metrica])

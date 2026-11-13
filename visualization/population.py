@@ -96,9 +96,9 @@ def cuts(p1, p2, event_error, region, metric, figures, style):
         axes.axvline(best, color="#2ca02c", linestyle="--", linewidth=1.8)
         axes.set_xlabel(label)
         axes.set_ylabel(common.METRIC_AVERAGE[metric])
-    axesrow[0].set_title(f"$d_s = {common.decimal(p2[j], 3)}$ m",
+    axesrow[0].set_title(f"$d_s = {common.math_decimal(p2[j], 3)}$ m",
                          fontsize=matplotlib.rcParams["axes.labelsize"])
-    axesrow[1].set_title(f"$t_a = {common.decimal(p1[i], 2)}$ s",
+    axesrow[1].set_title(f"$t_a = {common.math_decimal(p1[i], 2)}$ s",
                          fontsize=matplotlib.rcParams["axes.labelsize"])
     figure.tight_layout()
     common.save(figure, common.folder("b", figures) /
