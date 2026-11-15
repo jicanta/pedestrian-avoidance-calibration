@@ -33,10 +33,16 @@ def frame_index(times: np.ndarray, target: float) -> int:
     return int(np.searchsorted(times, target, side="right") - 1)
 
 
-def caption(static: dict, t: float, simulated: np.ndarray, experimental: np.ndarray) -> str:
+def caption(static: dict, t: float, simulated: np.ndarray, experimental: np.ndarray,
+            full: bool = True) -> str:
+    """El rotulo de arriba. En el video va solo el evento y el tiempo; en el
+    cuadro fijo (full), ademas, la distancia simulada y la medida y si hay
+    conflicto."""
+    text = f"evento {static['evento']}   $t$ = {common.decimal(t, 2):>5} s"
+    if not full:
+        return text
     computed = float(np.hypot(*(simulated[0, :2] - simulated[1, :2])))
-    text = (f"evento {static['evento']}   $t$ = {common.decimal(t, 2):>5} s"
-            f"   $d$ simulada = {common.decimal(computed, 2)} m")
+    text += f"   $d$ simulada = {common.decimal(computed, 2)} m"
     if experimental[0, 2] > 0.5 and experimental[1, 2] > 0.5:
         measured = float(np.hypot(*(experimental[0, :2] - experimental[1, :2])))
         text += f"   medida = {common.decimal(measured, 2)} m"
@@ -56,6 +62,7 @@ class Scene:
 
     def __init__(self, axes, static, time, simulated, experimental, legend=True):
         self.static = static
+        self.full = legend
         self.time = time
         self.simulated = simulated
         self.experimental = experimental
@@ -129,7 +136,7 @@ class Scene:
                 self.targets[side].set_data([], [])
                 self.links[side].set_data([], [])
         self.text.set_text(caption(self.static, self.time[index], self.simulated[index],
-                                   self.experimental[index]))
+                                   self.experimental[index], self.full))
 
 
 def main() -> None:
