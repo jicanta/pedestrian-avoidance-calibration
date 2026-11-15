@@ -220,7 +220,7 @@ están en el README (21, 26, 35, 33, 30, 10, 16, en ese orden).
 - t_a sólo queda determinado por abajo: cae hasta 1,5 s y después es plano,
   hasta 8 s. El cruce llega entre 2,1 y 2,7 s después de empezar: con más
   anticipación el conflicto se declara desde el primer instante. d_s sí tiene
-  mínimo claro en 0,13 m; la franja verde son los d_s que empatan con el óptimo.
+  mínimo claro en 0,13 m.
 
 ## 25. Mapa, métrica 2 — `slide-25-superficie-metrica2.png` — 0:20 (C)
 

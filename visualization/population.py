@@ -73,10 +73,9 @@ def cuts(p1, p2, event_error, region, metric, figures, style):
 
     La curva va entera y las barras cada pocos puntos: con 81 y 61 valores de
     grilla, una barra por punto tapa la curva. La barra es el error estandar de
-    la media entre los M eventos; la franja verde, que va solo en el corte de
-    d_s, es el tramo que EMPATA con el optimo segun la diferencia pareada, que
-    es la incertidumbre que de verdad tiene el parametro. La linea cortada es
-    el optimo.
+    la media entre los M eventos. El optimo no lleva linea vertical ni franja
+    (lo pidio el grupo: el valor va escrito en la diapositiva); solo se le
+    agrega su punto cuando no coincide con ninguno de los dibujados.
     """
     common.use_style(style)
     mean, sem = common.population(event_error)
@@ -91,13 +90,14 @@ def cuts(p1, p2, event_error, region, metric, figures, style):
         axes.plot(values, curve, color=color, linewidth=1.8)
         axes.errorbar(values[::every], curve[::every], yerr=bars[::every], color=color,
                       marker=marker, **common.ERRORBAR)
-        # La franja de los valores que empatan va solo en el corte de d_s: en
-        # el de t_a la curva es plana desde 1,5 s y la franja tapaba medio
-        # panel sin agregar nada (la catedra pidio sacarla, 13/11).
-        if inside.any() and label == common.AXIS_P2:
-            axes.axvspan(values[inside].min(), values[inside].max(), color="#2ca02c",
-                         alpha=0.15)
-        axes.axvline(best, color="#2ca02c", linestyle="--", linewidth=1.8)
+        # Sin linea ni franja en el optimo (el valor se escribe a mano en la
+        # diapositiva). Si el optimo no cae en uno de los puntos dibujados ni
+        # pegado a uno, se agrega su punto, con su barra, para que se vea.
+        index = int(np.argmin(np.abs(values - best)))
+        nearest = min(abs(index - k) for k in range(0, len(values), every))
+        if nearest > 1:
+            axes.errorbar([values[index]], [curve[index]], yerr=[bars[index]], color=color,
+                          marker=marker, **common.ERRORBAR)
         axes.set_xlabel(label)
         axes.set_ylabel(common.METRIC_AVERAGE[metric])
     axesrow[0].set_title(f"$d_s = {common.math_decimal(p2[j], 3)}$ m",
