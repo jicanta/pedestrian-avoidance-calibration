@@ -7,8 +7,9 @@ otro se lleva 1 - alfa); alfa = 0,5 es la capa simetrica. Con t_a y d_s fijos
 en el optimo poblacional se optimiza alfa, SOLO CON LA METRICA 1 (el error a
 iguales tiempos; lo pidio la catedra):
 
-* `alfa_curva`: <E(1)>(alfa) con sus barras de error y el optimo marcado. Dice
-  si hay un lado que cede sistematicamente.
+* `alfa_curva`: <E(1)>(alfa) con sus barras de error (el optimo se informa por
+  consola y se escribe a mano en la diapositiva). Dice si hay un lado que cede
+  sistematicamente.
 * `alfa_histograma`: el histograma del alfa optimo de cada evento (uno por
   PAR de peatones, no por peaton), con la cantidad de eventos de cada barra y
   una linea vertical en el optimo global. Las barras tienen 0,125 de ancho y
@@ -215,11 +216,9 @@ def main() -> None:
     axes.plot(shares, mean, color=color, linewidth=1.8)
     axes.errorbar(shares[::every], mean[::every], yerr=sem[::every], color=color,
                   marker=marker, **common.ERRORBAR)
-    axes.axvline(shares[best], color=common.GLOBAL_COLOR, linestyle="--", linewidth=2.2,
-                 label="óptimo")
+    # Sin la linea del optimo: el valor se escribe a mano en la diapositiva.
     axes.set_xlabel(common.AXIS_ALPHA)
     axes.set_ylabel(common.METRIC_AVERAGE[metric])
-    common.legend_inside(axes)
 
     histogram, axes = plt.subplots(figsize=single)
     counts, _, bars = axes.hist(own_share, bins=BINS, color=common.EXPERIMENT_COLOR[0],
