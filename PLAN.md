@@ -161,7 +161,7 @@ repulsión (`A exp(−(d − 2r)/B)` como dirección, nunca como fuerza): isotr�
 (Helbing como dirección), lateral y predictiva (en `d*`, Karamouzas como
 target). La isotrópica queda lejos (−66 % contra −94 %: de frente no tiene
 componente lateral); el campo predictivo empata; el lateral da un error algo
-menor (0,014 contra 0,0193 m²) pero con el óptimo en el borde de la grilla,
+menor (0,014 contra 0,0191 m²) pero con el óptimo en el borde de la grilla,
 `B = 5 m`, que es empujar de costado siempre. La tabla completa está en el
 README.
 
@@ -171,15 +171,15 @@ motor):
 
 | variante | peso de urgencia | punto de mira | `<E(1)>` mín. | `<E(2)>` mín. |
 |---|---|---|---|---|
-| **la que corre** | `w = 1 − τ*/ta` | `v^d τ*` (el conflicto) | 0,065 | 0,0193 |
-| sin rampa | `w = 1` | `v^d τ*` | 0,052 | 0,016 |
-| mira al horizonte | `w = 1 − τ*/ta` | `v^d ta` | 0,112 | 0,029 |
-| ninguna de las dos | `w = 1` | `v^d ta` | 0,044 | 0,013 |
+| **la que corre** | `w = 1 − τ*/ta` | `v^d τ*` (el conflicto) | 0,063 | 0,0191 |
+| sin rampa | `w = 1` | `v^d τ*` | 0,051 | 0,016 |
+| mira al horizonte | `w = 1 − τ*/ta` | `v^d ta` | 0,111 | 0,029 |
+| ninguna de las dos | `w = 1` | `v^d ta` | 0,042 | 0,013 |
 
 Con la ventana recortada **ya no dan lo mismo**: sin la rampa el error baja un
-16–19 % (la diferencia pareada es significativa). Corre la primera porque es la
+15–19 % (la diferencia pareada es significativa). Corre la primera porque es la
 **única continua en los dos bordes del disparo** y porque es la que se discutió
-con la cátedra; cambiarla es la duda 3 de §8.
+con la cátedra (§8).
 
 ---
 
@@ -190,14 +190,15 @@ con la cátedra; cambiarla es la duda 3 de §8.
 El LEEME dice `sale izquierda V?`. En los cuadros de esa prueba la única
 trayectoria no asignada que va de izquierda a derecha (de `x = 0,75` a
 `x = 10,8 m`) es el id **1000**. Se usa ése, y queda anotado en
-`experimental/eventos.txt`.
+`experimental/eventos.txt`. La cátedra lo confirmó el 13/11: no hay otra.
 
 ### 4.2 La ventana de cada evento
 
 Dos recortes, en este orden:
 
 1. **Intersección**: el evento empieza cuando los **dos** peatones están
-   seguidos y termina cuando deja de estarlo alguno. Antes de eso falta uno de
+   seguidos y termina cuando deja de estarlo alguno (es lo que acorta el
+   evento 1, §4.3). Antes de eso falta uno de
    los dos y no hay dos agentes que simular. El recorte se hace *dentro* del
    intervalo del LEEME, porque un mismo peatón aparece en varias pruebas
    (haciendo la fila) y sus cuadros extremos en el archivo no son los de su
@@ -215,27 +216,26 @@ cada peatón más una banda en `y`, que recortaba bien pero con un criterio
 rebuscado y difícil de defender. La historia está en `FEEDBACK.md` y en `git
 log`.
 
-Con el tramo quedan 1375 instantes (el 35 % de los que declara el LEEME), `Nm`
-de 60 a 80, las 19 distancias mínimas adentro (entre el 47 % y el 56 % de la
-ventana) y los 38 peatones arrancando hacia su target (ángulo máximo 29°).
+Con el tramo quedan 1346 instantes (el 34 % de los que declara el LEEME), `Nm`
+de 60 a 80 (42 en el evento 1), las 19 distancias mínimas adentro (entre el
+47 % y el 56 % de la ventana; al 80 % en el evento 1) y los 38 peatones arrancando hacia su target (ángulo máximo 29°).
 `make ventana` mide cuánto cambia la calibración con otros cinco tramos: la
 capa baja el error entre 90 % y 96 % con cualquiera.
 
 ### 4.3 Huecos de seguimiento
 
-Un hueco **no se interpola y no cierra la ventana**: el agente se simula igual
-(hace falta para acoplarlo con el otro) pero el error no se evalúa en los
-instantes sin muestra.
+Un hueco **no se interpola y cierra la ventana**: el evento se simula mientras
+están medidos los dos peatones, hasta que el primero desaparece.
 
-Con la ventana recortada queda uno solo adentro: al peatón 36 (evento 1) se le
-pierde el seguimiento justo después del cruce, en `x = 3,19 m`, y reaparece 33
-cuadros más tarde ya en la fila (`x = 0,59 m`). La ventana del evento 1 sigue
-hasta que el otro peatón llega a `x = 7,7 m` (`Nm = 71`, con 29 instantes del
-36 sin muestra). El target final del 36 es, como el de todos, la última
-posición de su trayectoria medida (3,19; 2,22): llega ahí y se queda mientras
-el otro termina de salir. Antes la ventana se cortaba donde se pierde el seguimiento (`Nm = 42`)
-y los dos quedaban en la mitad del corredor: la cátedra lo marcó el 12/11
-(`FEEDBACK.md`). Los óptimos no cambiaron.
+Pasa en un solo evento: al peatón 36 (evento 1) se le pierde el seguimiento
+justo después del cruce, en `x = 3,19 m`, y reaparece 33 cuadros más tarde ya
+en la fila (`x = 0,59 m`). La ventana del evento 1 termina ahí (`Nm = 42`, el
+cruce al 80 % de la ventana) y cada peatón tiene como target su última
+posición medida. Es lo que indicó la cátedra el 13/11: recortar los datos de
+ese evento, sin eliminarlo. Entre el 12/11 y el 13/11 la ventana seguía hasta
+que el otro llegaba a 7,7 m (`Nm = 71`), con el agente 36 simulado sin datos y
+rebotando en su target; se volvió atrás (`FEEDBACK.md`). Los óptimos no
+cambiaron.
 
 ### 4.4 La velocidad inicial
 
@@ -263,8 +263,8 @@ ni modifique las reglas propias del modelo elegido".
 `dt = Δt_exp / n` con `n` entero, para que cada instante experimental caiga
 exactamente en un paso y no haya que interpolar para comparar. El barrido de
 `n` (`make convergencia`) da un apartamiento de `<E>` respecto del paso más
-fino de 1,4 % con `n = 1`, 0,3 % con `n = 16`, **0,10 % con `n = 64`** y
-0,007 % con `n = 128`. Se usa **`n = 64`** (`dt = 1,04 ms`): 0,10 % es cien
+fino de 1,5 % con `n = 1`, 0,3 % con `n = 16`, **0,11 % con `n = 64`** y
+0,005 % con `n = 128`. Se usa **`n = 64`** (`dt = 1,04 ms`): 0,11 % es cien
 veces menos que el error estándar de `<E(1)>` entre eventos, y el barrido fino
 entero tarda medio minuto.
 
@@ -303,18 +303,18 @@ tp-5/
   apagada.
 - `make animations` genera los videos y el cuadro fijo de cada uno, congelado
   en el último instante en conflicto antes del cruce simulado.
-- **Cuatro eventos representativos** en una sola figura de trayectorias
-  (`representative.py`): el 10 (el que más gana con la capa), el 5 (el cruce
-  medido más ajustado), el 14 (el más holgado) y el 17 (el único en que el
-  modelo elude por el lado opuesto). Del 10, además, `e(t)` y la distancia
-  entre los dos peatones.
+- **Una sola figura de trayectorias con tres paneles** (`representative.py`),
+  como pidió la cátedra el 13/11: el evento de menor error con la capa (el
+  14), el de mayor error (el 17, el único en que el modelo elude por el lado
+  opuesto) y uno sin la capa (el 10, el principal). Del 10, además, `e(t)` y
+  la distancia entre los dos peatones.
 
 ### Ítem b — calibración poblacional
 
 Proceso en dos etapas: una grilla gruesa (17 × 21) para acotar el plano y una
 fina (81 × 61) sobre `t_a ∈ [0, 4] s` y `d_s ∈ [0, 0,6] m`, que es la que se usa.
 El techo de `t_a` se verifica con un barrido aparte hasta 8 s en la `d_s` de
-cada óptimo: entre 4 y 8 s `<E>` se mueve un 2,6 % (métrica 1) y un 1,4 %
+cada óptimo: entre 4 y 8 s `<E>` se mueve un 2,5 % (métrica 1) y un 1,3 %
 (métrica 2). El de `d_s` sale de la grilla gruesa: más allá de 0,6 m `<E>` sube
 monótono. Los mapas de `<E>(t_a, d_s)` van **simples**, como los de los TP
 anteriores: el mapa en escala logarítmica, la barra de color y el óptimo.
@@ -358,7 +358,8 @@ agente** y **tres diapositivas de capa de elusión**, como pide el enunciado),
 Implementación (UML del motor y el bucle), Simulaciones (parámetros,
 observables y casos), Resultados (ítems a, b, c y d en ese orden) y
 Conclusiones. Cierre con la declaración de uso de agentes de IA y "Muchas
-gracias". **Después del cierre** van las tres diapositivas del extra (la
+gracias". **Después del cierre**, y sólo si alcanza el tiempo, van las cuatro
+diapositivas del extra (la
 optimización de `α`, el reparto de la elusión, que la cátedra pidió mostrar al
 final como un opcional) y el **apéndice de tres diapositivas con las libertades
 que se tomó el agente y que hubo que corregir** (el registro completo está en
@@ -377,48 +378,42 @@ lista de prescindibles está en el README.
 
 ## 8. Dudas para plantear a los docentes
 
-Lo que se resolvió en la consulta del 11/11 está en `FEEDBACK.md`. Releídas
-contra el enunciado el 13/11, queda **una sola duda de método** y una
-confirmación; el resto de lo que había en esta lista no eran dudas.
+**No queda ninguna abierta.** Las tres que había se cerraron en la consulta
+del 13/11 (el detalle, con el resto de lo que se pidió ese día, está en
+`FEEDBACK.md`):
 
-1. **El evento 1 (la duda).** Al peatón 36 le faltan 33 cuadros de seguimiento
-   justo después del cruce (20133 a 20165; ninguna otra pista del archivo los
-   cubre), y el enunciado supone la trayectoria completa de los dos. No se
-   arregla con el recorte en `x`. Conviene preguntarlo mostrando el GIF actual
-   de los 19 eventos, con las tres opciones medidas:
+1. **El evento 1.** Al peatón 36 le faltan 33 cuadros de seguimiento justo
+   después del cruce. Respuesta: **se recortan los datos, no se elimina el
+   evento**; se simula sólo hasta que el primero de los dos desaparece, como
+   estaba al principio (`Nm = 42`). Era la opción B de esta tabla, que quedó
+   medida:
 
    | opción | qué se ve | `<E(1)>` | `<E(2)>` |
    |---|---|---|---|
-   | **A. ventana hasta 7,7 m; el 36 sin error donde no hay muestra (lo que corre)** | el agente 36 llega a su target (3,2 m) 1,9 s antes del final y rebota ahí | 0,0637 | 0,0193 |
-   | B. cortar el evento donde se acaban los datos del 36 (`Nm = 42`) | los dos quedan en la mitad del corredor | 0,0617 | 0,0191 |
+   | A. ventana hasta 7,7 m; el 36 sin error donde no hay muestra | el agente 36 llega a su target (3,2 m) 1,9 s antes del final y rebota ahí | 0,0637 | 0,0193 |
+   | **B. cortar el evento donde se acaban los datos del 36 (`Nm = 42`; lo que corre)** | los dos quedan en la mitad del corredor | 0,0617 | 0,0191 |
    | C. dejar el evento 1 afuera (18 eventos) | — | 0,0640 | 0,0193 |
 
    Con las tres los óptimos son (2,15 s; 0,13 m) y (1,50 s; 0,14 m) y la capa
-   baja el error 93 % y 94 %: la conclusión no depende de cuál se elija. El
-   rebote del agente 36 no es una duda aparte: es consecuencia de A (no hay
-   regla de llegada; el primer rebote es de 0,2 m y después queda a 2–5 cm) y
-   no toca ningún número, porque en ese tramo el 36 no tiene muestras y está a
-   más de 1,6 m del otro.
-2. **Peatón sin identificar (confirmación).** ¿El "V?" de la prueba 2 es el id
-   1000 del archivo (§4.1)?
-3. **El 2 c) opcional (a chequear por el grupo).** El PDF del enunciado que
-   está en `docs/enunciado/` tiene los puntos a) a d) y no nombra un opcional.
-   Confirmar de dónde sale el texto que cita el `Makefile` antes de dedicarle
-   dos diapositivas.
+   baja el error 93 % y 94 %.
+2. **Peatón sin identificar.** El "V?" de la prueba 2 es el id 1000: **no hay
+   otra** (§4.1).
+3. **El 2 c) opcional.** No está en el PDF del enunciado porque la cátedra lo
+   agregó por un **anuncio** del campus. Se queda, con sus dos diapositivas.
 
-Lo que **no** se pregunta, y qué se contesta si lo preguntan ellos:
+Lo que no se preguntó, y qué se contesta si lo preguntan ellos:
 
 - **El tramo de `x`** quedó en `1,0 m ≤ x ≤ 7,7 m` (0,4 m adentro de cada
   cabecera). La ventana termina cuando el primero de los dos sale, así que en
   7 eventos el más lento queda entre 6,0 y 6,7 m: es lo que dice el enunciado
   (target = última posición de la ventana). `make ventana` muestra que el
   resultado no depende del valor exacto.
-- **La rampa de urgencia.** Sin ella (`w = 1`) el error baja un 16–19 %, a
+- **La rampa de urgencia.** Sin ella (`w = 1`) el error baja un 15–19 %, a
   costa de que la dirección deseada salte al entrar en conflicto. La capa es
   una decisión de diseño del grupo y las dos cumplen el enunciado; no se
   cambia a tres días de la entrega.
-- **La validación cruzada** da +35 % sobre el ítem b, por los eventos 16 y 17.
+- **La validación cruzada** da +36 % sobre el ítem b, por los eventos 16 y 17.
   Es el resultado del ítem d, no una duda.
 - **Fijar `t_a`** no se puede: el enunciado pide exactamente dos parámetros a
   ajustar. Que `t_a` quede determinado sólo por abajo (fijarlo en 4 s cuesta
-  +2 % de `<E(1)>` y +36 % de `<E(2)>`) es un resultado.
+  +3 % de `<E(1)>` y +38 % de `<E(2)>`) es un resultado.

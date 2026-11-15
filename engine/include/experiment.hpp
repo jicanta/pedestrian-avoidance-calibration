@@ -17,9 +17,10 @@
 // recortada despues al tramo del corredor xMin <= x <= xMax (ver
 // trimToCorridor en experiment.cpp): afuera de ese tramo los peatones estan en
 // la fila o llegando a ella, y eso no es el cruce que el enunciado describe.
-// Los huecos de seguimiento que quedan adentro de esa ventana no se rellenan:
-// la muestra queda marcada como ausente y el error no se evalua en ese
-// instante (el agente se simula igual, que es lo que lo acopla con el otro).
+// Un hueco de seguimiento de cualquiera de los dos CIERRA la ventana (el
+// evento se simula hasta que el primero desaparece), asi que adentro no queda
+// ninguno. La marca de presencia de cada muestra se conserva igual: nada se
+// rellena, y el error solo se evalua donde hay muestra.
 
 struct Sample {
   Vec2 position;

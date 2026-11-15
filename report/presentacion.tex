@@ -212,17 +212,18 @@
 \end{frame}
 
 \begin{frame}{Los datos: las 19 pruebas y el tramo que se simula}
-    \figbulw[0.5em]{slide-03-eventos-trayectorias.png}{%
-        \item Las 38 trayectorias enteras. Se ve \textbf{de dónde parten todos}:
-              las cabeceras de las dos filas, en $x \approx 0{,}6$ y
-              \SI{8.1}{\meter}.
-        \item \alert{Cada evento se recorta al tramo
-              $\SI{1}{\meter} \le x \le \SI{7.7}{\meter}$}, el mismo para los
-              19: empieza cuando el último de los dos entra y termina cuando el
-              primero sale. Afuera queda la fila.
-        \item El arco de elusión es \textbf{sistemático}, y en 14 de los 19
-              cruces cada uno pasó por su derecha.
-        \cond{trazo lleno: lo que queda adentro de la ventana de cada evento, \num{1375} instantes en total}
+    \figancha[0.86]{slide-03-eventos-trayectorias.png}{%
+        \colvin{%
+            \item Las 38 trayectorias medidas, \textbf{sólo en el tramo que se
+                  simula}: \alert{$\SI{1}{\meter} \le x \le \SI{7.7}{\meter}$},
+                  el mismo para los 19 eventos. Afuera quedan las dos filas
+                  (cabeceras en $x \approx 0{,}6$ y \SI{8.1}{\meter}).
+            \item Cada evento empieza cuando el último de los dos entra al
+                  tramo y termina cuando el primero sale.}
+        \colvin{%
+            \item El arco de elusión es \textbf{sistemático}, y en 14 de los 19
+                  cruces cada uno pasó por su derecha.
+            \cond{\num{1346} instantes en total. En el evento 1 a un peatón se le pierde el seguimiento después del cruce: se simula hasta ahí}}
     }
 \end{frame}
 
@@ -239,20 +240,20 @@
         + \underbrace{\sum_{j \ne i}\Big[k\,\xi_{ij}\,\nhat_{ij}
           + \kappa\,\xi_{ij}\,(\Delta\vv_{ji}\cdot\that_{ij})\,\that_{ij}\Big]}_{\text{contacto, sólo si } \xi_{ij} > 0}
     \]
-    con $\xi_{ij} = r_i + r_j - d_{ij}$ el solapamiento,
-    $\nhat_{ij} = (\vr_i - \vr_j)/d_{ij}$, $\that_{ij}$ su perpendicular y
-    $\Delta\vv_{ji} = \vv_j - \vv_i$.
-    \vspace{0.6em}
-
-    \begin{itemize}\setlength{\itemsep}{0.45em}
-        \item \alert{El modelo no anticipa}: mientras no hay solapamiento, el
-              agente va derecho a su target y la única señal del otro llega
+    \vspace{-0.4em}
+    \begin{center}
+        \resizebox{0.70\textwidth}{!}{\input{figuras/modelo-sfm.tikz}}
+    \end{center}
+    \vspace{-0.5em}
+    {\footnotesize
+    \begin{itemize}\setlength{\itemsep}{0.25em}
+        \item \alert{El modelo no anticipa}: mientras no hay solapamiento el
+              agente va derecho a su target, y la única señal del otro llega
               cuando ya lo está tocando.
-        \item Lo único que decide a dónde va es $\ehat_i^{\,d}$, la dirección de
-              la velocidad deseada. \textbf{La capa de elusión actúa ahí y en
-              ningún otro lado}: no agrega fuerzas ni cambia las reglas del
-              modelo.
-    \end{itemize}
+        \item Lo único que decide a dónde va es $\ehat_i^{\,d}$. \textbf{La capa
+              de elusión actúa ahí y en ningún otro lado}: no agrega fuerzas ni
+              cambia las reglas del modelo.
+    \end{itemize}}
 \end{frame}
 
 \begin{frame}{Del evento medido al evento simulado: condiciones y target}
@@ -270,12 +271,13 @@
                       instante de la ventana.
                 \item Su \alert{target final $\vT_i$ es la última posición
                       medida} dentro del tramo: queda sobre el corredor, en
-                      $y$ entre $1{,}8$ y \SI{2.2}{\meter}.
+                      $y$ entre $1{,}7$ y \SI{2.2}{\meter}.
                 \item El módulo de su velocidad deseada, $v_i^{d}$, es la
                       \textbf{rapidez media} de su trayectoria: de $1{,}15$ a
                       \SI{1.63}{\meter\per\second}.
                 \item Se simula hasta el último instante medido del evento
-                      ($N_m$ de 60 a 80, es decir de $4{,}0$ a \SI{5.3}{\second}).
+                      ($N_m$ de 60 a 80, de $4{,}0$ a \SI{5.3}{\second}; 42 en
+                      el evento 1).
             \end{itemize}
         \end{column}
     \end{columns}
@@ -404,7 +406,7 @@
         \item \alert{La isotrópica queda lejos} (\SI{-66}{\percent} contra
               \SI{-94}{\percent}): de frente no tiene componente lateral.
         \item El campo predictivo \textbf{empata}; el lateral da algo menos
-              ($0{,}014$ contra \SI{0.0193}{\meter\squared}) pero con
+              ($0{,}014$ contra \SI{0.0191}{\meter\squared}) pero con
               $B = \SI{5}{\meter}$, en el borde: un empuje de costado constante.
               Se eligió la predictiva por sus parámetros con \textbf{lectura
               directa}.
@@ -500,9 +502,10 @@
 
 \begin{frame}{Casos estudiados}
     \figbulw[0.25em]{slide-15-eventos-distancia-vs-t.png}{%
-        \item \textbf{Los 19 eventos}, cada uno sobre su ventana: los cruces
-              caen entre el \SI{47}{\percent} y el \SI{56}{\percent} de la
-              ventana, \textbf{ninguno queda recortado}.
+        \item \textbf{Los 19 eventos}, cada uno sobre su ventana: el cruce
+              cae entre el \SI{47}{\percent} y el \SI{56}{\percent} de la
+              ventana (al \SI{80}{\percent} en el evento 1, el más corto):
+              \textbf{queda adentro en los 19}.
         \item \textbf{Barrido}: $t_a$ de 0 a \SI{4}{\second} en 81 valores $\times$
               $d_s$ de 0 a \SI{0.6}{\meter} en 61 $\times$ 19 eventos:
               \num{93879} corridas, \SI{32}{\second}; el techo de $t_a$ se
@@ -525,10 +528,10 @@
               $n$ de partes. Se mide cuánto se aparta \mEuno{} y \mEdos{} del
               valor que dan con el paso más fino ($n = 512$).
         \item Con $n = 1$ el error poblacional se corre un
-              \SI{1.4}{\percent}; \alert{con $n = 64$},
-              $\dt = \SI{1.04}{\milli\second}$, un \SI{0.10}{\percent}.
+              \SI{1.5}{\percent}; \alert{con $n = 64$},
+              $\dt = \SI{1.04}{\milli\second}$, un \SI{0.11}{\percent}.
         \item Es cien veces menos que el error estándar de \mEuno{} entre
-              eventos (\SI{10}{\percent}), y el barrido entero tarda medio
+              eventos (\SI{11}{\percent}), y el barrido entero tarda medio
               minuto: no hace falta un paso más fino.
         \cond{los 19 eventos, con $t_a = \SI{2.15}{\second}$ y $d_s = \SI{0.13}{\meter}$; tolerancia marcada: \SI{0.2}{\percent}}
     }
@@ -569,18 +572,20 @@
     \begin{center}\video{https://youtu.be/PENDIENTE-01}\end{center}
 \end{frame}
 
-\begin{frame}{Trayectorias: cuatro eventos representativos}
+\begin{frame}{Trayectorias: el mejor ajuste, el peor y uno sin capa}
     \figancha[0.99]{slide-19-trayectorias-representativas.png}{%
         \colvin{%
-            \item \textbf{10}: sin capa el desvío lo produce el choque, tarde;
-                  con la capa el arco aparece donde lo hacen las personas.
-            \item \textbf{5} y \textbf{14}: las personas pasaron a $0{,}49$ y a
-                  \SI{0.92}{\meter}; el modelo, a $0{,}58$ y $0{,}57$. \alert{La
-                  distancia de paso es una sola para todos}, $\Dreq$.}
+            \item \textbf{14, el de menor error}
+                  ($\Euno_m = \SI{0.037}{\meter\squared}$): el arco simulado cae
+                  donde lo hicieron las personas, que pasaron más lejos
+                  ($0{,}92$ contra \SI{0.57}{\meter}).
+            \item \textbf{17, el de mayor error} (\SI{0.155}{\meter\squared}): el
+                  único de los 19 en que el modelo elude \alert{por el lado
+                  opuesto}.}
         \colvin{%
-            \item \textbf{17}: el único de los 19 en que el modelo elude
-                  \textbf{por el lado opuesto}.
-            \cond{$t_a = \SI{2.15}{\second}$, $d_s = \SI{0.13}{\meter}$; escala igual en los dos ejes. Azul: sale por la izquierda; rojo: por la derecha}}
+            \item \textbf{10 sin la capa} (\SI{1.91}{\meter\squared}): van
+                  derecho, chocan y el desvío lo produce el contacto, tarde.
+            \cond{con capa: $t_a = \SI{2.15}{\second}$, $d_s = \SI{0.13}{\meter}$. El evento 1 ($0{,}020$) no compite: su ventana es más corta}}
     }
 \end{frame}
 
@@ -642,8 +647,8 @@
               mínimo.
         \item \alert{Óptimo en $t_a = \SI{2.15}{\second}$,
               $d_s = \SI{0.13}{\meter}$}, con
-              $\mEuno = 0{,}064 \pm \SI{0.006}{\meter\squared}$ (RMS
-              \SI{0.25}{\meter}); sin capa, \SI{0.91}{\meter\squared}:
+              $\mEuno = 0{,}062 \pm \SI{0.007}{\meter\squared}$ (RMS
+              \SI{0.25}{\meter}); sin capa, \SI{0.87}{\meter\squared}:
               \textbf{la capa baja el error un \SI{93}{\percent}}.
         \item Abajo ($t_a < \SI{1}{\second}$) y a la izquierda
               ($d_s < \SI{0.05}{\meter}$) la capa reacciona tarde o no pide
@@ -656,25 +661,25 @@
     \figancha[0.86]{slide-24-cortes-metrica1.png}{%
         \colvin{%
             \item $t_a$ \textbf{sólo queda determinado por abajo}: \mEuno{} cae
-                  de $0{,}91$ a \SI{0.08}{\meter\squared} entre 0 y
+                  de $0{,}87$ a \SI{0.07}{\meter\squared} entre 0 y
                   \SI{1.5}{\second} y después es plano (en \SI{4}{\second} vale
-                  $0{,}066$, y hasta \SI{8}{\second} se mueve un
-                  \SI{2.6}{\percent}).
+                  $0{,}065$, y hasta \SI{8}{\second} se mueve un
+                  \SI{2.5}{\percent}).
             \item Al empezar el evento faltan entre $2{,}1$ y \SI{2.7}{\second}
                   para el cruce: con más anticipación que eso el conflicto ya se
                   declara desde el primer instante.}
         \colvin{%
             \item $d_s$ sí tiene un mínimo claro en \SI{0.13}{\meter} y sube
                   después: es el parámetro que fija por dónde se pasa.
-            \cond{barra: error estándar de la media entre los 19 eventos; franja verde: los valores que empatan con el óptimo según la diferencia pareada}}
+            \cond{barra: error estándar de la media entre los 19 eventos; línea cortada: el óptimo; franja verde: los $d_s$ que empatan con el óptimo según la diferencia pareada}}
     }
 \end{frame}
 
 \begin{frame}{Ítem b: \mEdos{} sobre la grilla de parámetros}
     \figbulw[0.45em]{slide-25-superficie-metrica2.png}{%
         \item Mismo valle: sin capa
-              $\mEdos = \SI{0.33}{\meter\squared}$ y en el óptimo
-              $0{,}0193 \pm \SI{0.0017}{\meter\squared}$ (RMS \SI{0.14}{\meter}),
+              $\mEdos = \SI{0.32}{\meter\squared}$ y en el óptimo
+              $0{,}0191 \pm \SI{0.0017}{\meter\squared}$ (RMS \SI{0.14}{\meter}),
               \alert{un \SI{94}{\percent} menos}.
         \item \alert{Óptimo en $t_a = \SI{1.50}{\second}$,
               $d_s = \SI{0.14}{\meter}$}.
@@ -690,13 +695,13 @@
             \item Los dos óptimos coinciden en $d_s$ ($0{,}13$ y
                   \SI{0.14}{\meter}) y difieren en $t_a$ ($2{,}15$ y
                   \SI{1.50}{\second}), que es el parámetro plano.
-            \item Usar el óptimo de la métrica 2 cuesta un \SI{2.3}{\percent}
-                  de \mEuno{}; al revés, un \SI{17}{\percent} de \mEdos{}.}
+            \item Usar el óptimo de la métrica 2 cuesta un \SI{1.9}{\percent}
+                  de \mEuno{}; al revés, un \SI{18}{\percent} de \mEdos{}.}
         \colvin{%
             \item Los escalones de \mEdos{} en $t_a \approx 1{,}5$ y
                   \SI{2.2}{\second} son \textbf{dos eventos} (17 y 16) en los
                   que el lado por el que elude el modelo cambia con $t_a$.
-            \cond{mismas 19 realizaciones; franja verde: los valores que empatan con el óptimo}}
+            \cond{mismas 19 realizaciones; franja verde: los $d_s$ que empatan con el óptimo}}
     }
 \end{frame}
 
@@ -710,8 +715,8 @@
                   evento, más anticipación nunca molesta. El global queda en \SI{2.15}{\second} por los dos
                   eventos en que cambia el lado.}
         \colvin{%
-            \item En $d_s$ la mediana individual es \SI{0.06}{\meter} (de $0{,}03$
-                  a $0{,}24$): cada par pasa a \textbf{su propia distancia}, y el
+            \item En $d_s$ la mediana individual es \SI{0.07}{\meter} (de $0{,}03$
+                  a $0{,}35$): cada par pasa a \textbf{su propia distancia}, y el
                   global es un compromiso.
             \cond{métrica 1, misma grilla de $81 \times 61$ pares}}
     }
@@ -721,9 +726,9 @@
     \figbulw[0.45em]{slide-28-errores-por-evento.png}{%
         \item Evento por evento, el error con los parámetros poblacionales y con
               los propios.
-        \item \alert{Individualizar baja \mEuno{} de $0{,}064$ a
-              \SI{0.050}{\meter\squared}, un \SI{22}{\percent}} --- y con la
-              métrica 2, de $0{,}0193$ a $0{,}014$, un \SI{27}{\percent}.
+        \item \alert{Individualizar baja \mEuno{} de $0{,}062$ a
+              \SI{0.048}{\meter\squared}, un \SI{22}{\percent}} --- y con la
+              métrica 2, de $0{,}0191$ a $0{,}014$, un \SI{27}{\percent}.
         \item Casi la mitad de la ganancia de la métrica 1 es \textbf{un solo
               evento}, el 17: con sus propios parámetros elude por el lado
               correcto ($0{,}155 \to \SI{0.043}{\meter\squared}$).
@@ -742,8 +747,8 @@
         \colvin{%
             \item \alert{En ningún evento los dos peatones eligen el mismo par}:
                   es la asimetría del reparto, vista en los parámetros. En
-                  $t_a$, 28 de los 38 piden \SI{3.5}{\second} o más; en $d_s$,
-                  31 quedan en \SI{0.15}{\meter} o menos.
+                  $t_a$, 29 de los 38 piden \SI{3.5}{\second} o más; en $d_s$,
+                  30 quedan en \SI{0.15}{\meter} o menos.
             \cond{métrica 1; grilla de $41 \times 31$ pares por peatón}}
     }
 \end{frame}
@@ -752,10 +757,10 @@
     \figbulw[0.45em]{slide-30-errores-por-peaton.png}{%
         \item $E_m$ de cada evento con un juego para todos, con dos por evento y
               con cuatro por evento, los tres sobre \textbf{la misma grilla}.
-        \item \alert{Con dos por evento \mEuno{} baja un \SI{22}{\percent}
-              ($0{,}065 \to \SI{0.050}{\meter\squared}$); con cuatro, un
-              \SI{10}{\percent} más} ($\to 0{,}045$; pareado
-              $0{,}005 \pm 0{,}001$). Con la métrica 2, \SI{27}{\percent} y
+        \item \alert{Con dos por evento \mEuno{} baja un \SI{23}{\percent}
+              ($0{,}063 \to \SI{0.048}{\meter\squared}$); con cuatro, un
+              \SI{11}{\percent} más} ($\to 0{,}043$; pareado
+              $0{,}005 \pm 0{,}001$). Con la métrica 2, \SI{26}{\percent} y
               \SI{31}{\percent} más.
         \item Describe pero \textbf{no predice}: para un par nuevo no hay con
               qué estimar sus cuatro parámetros. Lo que se valida en el ítem d
@@ -768,9 +773,9 @@
     \figbulw[0.4em]{slide-31-residuo-descomposicion.png}{%
         \item $\Euno_m$ abierto en la componente \textbf{a lo largo} del camino
               nominal y la \textbf{perpendicular}.
-        \item \alert{El \SI{62}{\percent} es longitudinal}: es \textbf{ritmo},
+        \item \alert{El \SI{61}{\percent} es longitudinal}: es \textbf{ritmo},
               el agente camina a $v^d$ constante y la persona acelera y frena.
-              La forma --- lo que la capa decide --- es el \SI{38}{\percent}.
+              La forma --- lo que la capa decide --- es el \SI{39}{\percent}.
         \item El evento 17 es la excepción: casi todo su error es de forma,
               porque el modelo eludió por el otro lado.
         \cond{$t_a = \SI{2.15}{\second}$, $d_s = \SI{0.13}{\meter}$; ordenados por $\Euno_m$}
@@ -811,17 +816,19 @@
 \end{frame}
 
 \begin{frame}{Ítem d: validación cruzada}
-    \figbulw[0.45em]{slide-34-validacion-error.png}{%
-        \item 500 particiones al azar: se calibra con 13 eventos y se mide sobre
-              los otros 6, que no se usaron para calibrar.
-        \item \alert{El error de validación es $0{,}086$ contra
-              \SI{0.064}{\meter\squared} del ítem b, un \SI{35}{\percent} más};
-              dejando uno afuera, un \SI{26}{\percent}. Con la métrica 2,
-              \SI{35}{\percent} y \SI{28}{\percent}.
-        \item Sigue siendo \textbf{diez veces menos que sin capa}
-              (\SI{0.91}{\meter\squared}). El segundo pico del histograma son las
-              particiones en que el 16 o el 17 quedan en validación.
-        \cond{métrica 1, 500 particiones de 13/6}
+    \figancha[0.86]{slide-34-validacion-error.png}{%
+        \colvin{%
+            \item 500 particiones al azar: se calibra con 13 eventos y se mide
+                  sobre los otros 6, que no se usaron para calibrar.
+            \item \alert{El error de validación es un \SI{36}{\percent} mayor
+                  que el del ítem b con las dos métricas}: $0{,}084$ contra
+                  \SI{0.062}{\meter\squared} y $0{,}026$ contra $0{,}0191$.
+                  Dejando uno afuera, \SI{27}{\percent} y \SI{29}{\percent}.}
+        \colvin{%
+            \item Sigue siendo \textbf{diez veces menos que sin capa} ($0{,}87$
+                  y \SI{0.32}{\meter\squared}). Los picos de la derecha son las
+                  particiones en que el 16 o el 17 quedan en validación.
+            \cond{izquierda: métrica 1; derecha: métrica 2. 500 particiones de 13/6}}
     }
 \end{frame}
 
@@ -850,8 +857,8 @@
     \begin{itemize}\setlength{\itemsep}{0.55em}
         \item Una capa de elusión de \textbf{dos parámetros} que sólo reemplaza el
               target baja el error poblacional un \SI{93}{\percent} con la métrica
-              1 ($0{,}91 \to \SI{0.064}{\meter\squared}$) y un \SI{94}{\percent} con
-              la métrica 2 ($0{,}33 \to \SI{0.0193}{\meter\squared}$), y elimina el
+              1 ($0{,}87 \to \SI{0.062}{\meter\squared}$) y un \SI{94}{\percent} con
+              la métrica 2 ($0{,}32 \to \SI{0.0191}{\meter\squared}$), y elimina el
               contacto: de 19 eventos a ninguno.
         \item Los óptimos son $(\SI{2.15}{\second},\ \SI{0.13}{\meter})$ y
               $(\SI{1.50}{\second},\ \SI{0.14}{\meter})$: las dos métricas piden la
@@ -863,10 +870,10 @@
               19 eventos}. Lo que no reproduce es que cada par pasa a su propia
               distancia ($0{,}49$ a \SI{0.92}{\meter}): por eso individualizar
               gana un \SI{22}{\percent} y un \SI{27}{\percent}.
-        \item Del error que queda, el \SI{62}{\percent} es \textbf{ritmo}: el
+        \item Del error que queda, el \SI{61}{\percent} es \textbf{ritmo}: el
               agente camina a velocidad constante.
-        \item En validación cruzada el error sube un \SI{35}{\percent}
-              ($0{,}086$ contra \SI{0.064}{\meter\squared}), por dos eventos en que
+        \item En validación cruzada el error sube un \SI{36}{\percent}
+              ($0{,}084$ contra \SI{0.062}{\meter\squared}), por dos eventos en que
               el lado depende de $t_a$; sigue siendo diez veces menor que sin capa.
     \end{itemize}
 \end{frame}
@@ -915,7 +922,7 @@
 
 \appendix
 
-\begin{frame}[noframenumbering]{Extra (1/3): \textquestiondown{}se reparte parejo la elusión?}
+\begin{frame}[noframenumbering]{Extra (1/4): \textquestiondown{}se reparte parejo la elusión?}
     \figancha[0.86]{slide-extra-1-alfa-curva.png}{%
         \colvin{%
             \item La capa calibrada es \textbf{simétrica}: los dos se corren lo
@@ -926,41 +933,62 @@
                   $\alpha_{\text{izq}} = \alpha$ y $\alpha_{\text{der}} = 1 - \alpha$.}
         \colvin{%
             \item Con $t_a$ y $d_s$ en su óptimo, \alert{el mejor $\alpha$ global
-                  es $0{,}600$ y $0{,}575$}, y gana un \SI{2}{\percent} y un
+                  es $0{,}625$ y $0{,}575$}, y gana un \SI{2}{\percent} y un
                   \SI{1}{\percent}: dentro del error pareado. Como población,
                   \textbf{la capa simétrica alcanza}.
             \cond{izquierda: métrica 1; derecha: métrica 2. $\alpha = 0{,}5$ es la capa simétrica}}
     }
 \end{frame}
 
-\begin{frame}[noframenumbering]{Extra (2/3): el reparto de cada par}
+\begin{frame}[noframenumbering]{Extra (2/4): el $\alpha$ óptimo de cada par}
     \figancha[0.86]{slide-extra-2-alfa-histograma.png}{%
         \colvin{%
-            \item El $\alpha$ que minimiza el error de \textbf{cada evento}, con
-                  el óptimo global como línea vertical.
-            \item Va de $0{,}12$ a $0{,}97$: \alert{en cada par uno de los dos
-                  cede más}, y cuál de los dos cambia de par en par.}
+            \item Se optimiza $\alpha$ \textbf{evento por evento} (uno por par)
+                  y se cuenta cuántos caen en cada intervalo; la línea es el
+                  óptimo global.
+            \item El más cercano a $0{,}5$: \textbf{eventos 3, 17 y 19}
+                  ($\alpha = 0{,}525$). El más lejano: \alert{\textbf{evento 12}
+                  ($\alpha = 0{,}975$)}.}
         \colvin{%
-            \item Con el $\alpha$ propio de cada par, \mEdos{} baja de $0{,}0193$
-                  a \SI{0.016}{\meter\squared}, un \SI{19}{\percent}
-                  (\SI{7}{\percent} con la métrica 1).
-            \cond{$t_a$ y $d_s$ fijos en el óptimo de cada métrica}}
+            \item La asimetría media de un par es
+                  \alert{$\langle|\alpha - 0{,}5|\rangle = 0{,}19$}; la del
+                  $\alpha$ poblacional, $|0{,}625 - 0{,}5| = 0{,}125$: al
+                  promediar, los pares que ceden para lados opuestos se
+                  compensan.
+            \cond{$t_a$ y $d_s$ fijos en el óptimo de cada métrica. Métrica 2: evento 5 ($0{,}525$), evento 12 ($0{,}95$), $0{,}21$ contra $0{,}075$}}
     }
 \end{frame}
 
-\begin{frame}[noframenumbering]{Extra (3/3): el $\alpha$ calibrado es el que se mide}
+\begin{frame}[noframenumbering]{Extra (3/4): el $\alpha$ calibrado es el que se mide}
     \figancha[0.80]{slide-extra-3-alfa-medido.png}{%
         \colvin{%
             \item $\alpha$ también se puede \textbf{medir sin simular}: la
                   fracción del desvío lateral en el cruce que hizo el que sale
-                  de la izquierda. Media $0{,}59$, de $0{,}17$ a $0{,}99$.
-            \item \alert{El calibrado y el medido coinciden}: $r = 0{,}65$ con la
+                  de la izquierda. Media $0{,}57$, de $0{,}17$ a $0{,}99$.
+            \item \alert{El calibrado y el medido coinciden}: $r = 0{,}72$ con la
                   métrica 1 y $r = 0{,}88$ con la 2.}
         \colvin{%
             \item No es un parámetro que absorbe residuo: es una propiedad de
                   cada par. Pero \textbf{describe y no predice}: para un par
                   nuevo la mejor estimación es $\approx 0{,}5$.
             \cond{un punto por evento; la diagonal es calibrado = medido}}
+    }
+\end{frame}
+
+
+\begin{frame}[noframenumbering]{Extra (4/4): el par más simétrico y el menos simétrico}
+    \figancha[0.92]{slide-extra-4-alfa-extremos.png}{%
+        \colvin{%
+            \item \textbf{Evento 19}, $\alpha = 0{,}525$: con su $\alpha$ y con
+                  la capa simétrica la simulación es la misma
+                  ($E^{(1)}_m = 0{,}046$ con las dos).
+            \item \textbf{Evento 12}, $\alpha = 0{,}975$: \alert{todo el desvío
+                  lo hace el que sale de la izquierda}; el otro sigue derecho.}
+        \colvin{%
+            \item La capa simétrica reparte el desvío por la mitad: le falta
+                  arco a uno y le sobra al otro. Con el $\alpha$ del par,
+                  $E^{(1)}_m$ baja de $0{,}075$ a \SI{0.050}{\meter\squared}.
+            \cond{$\alpha$ óptimo de cada evento con la métrica 1; $t_a = \SI{2.15}{\second}$, $d_s = \SI{0.13}{\meter}$}}
     }
 \end{frame}
 
@@ -999,9 +1027,9 @@
               $\to$ Tres capas de campos implementadas y comparadas.
         \item \rotulo{Agregó una regla de frenado al llegar al target} que el
               enunciado no pide y que no cambia ningún número. $\to$ Fuera.
-        \item \rotulo{Cortó la ventana del evento 1 donde se pierde el
-              seguimiento de un peatón.} $\to$ Termina cuando alguno sale del
-              tramo.
+        \item \rotulo{En el evento 1, al que se le pierde el seguimiento de un
+              peatón, siguió simulando sin sus datos} y lo dejó rebotando en su
+              target. $\to$ Se simula hasta que el primero desaparece.
     \end{itemize}
 \end{frame}
 
@@ -1018,9 +1046,10 @@
         \item \rotulo{Mostró los óptimos individuales como una nube de puntos
               con etiquetas} que se pisaban. $\to$ Un \textbf{histograma} por
               parámetro con el óptimo global como línea vertical.
-        \item \rotulo{Mostró las trayectorias de un evento por diapositiva.}
-              $\to$ Cuatro eventos representativos en una sola figura, cada uno
-              elegido por un motivo.
+        \item \rotulo{Mostró las trayectorias de un evento por diapositiva}, y
+              las 38 medidas enteras, con la fila. $\to$ El de menor error, el
+              de mayor y uno sin capa en una figura; las medidas, sólo en el
+              tramo simulado.
         \item \rotulo{Rotuló de más el esquema de la detección} ($\vr$ y $\vv$
               de cada posición). $\to$ Esquema limpio y una animación que lo arma
               paso a paso.

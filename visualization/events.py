@@ -6,8 +6,8 @@ muestra que el cruce esta siempre adentro de la ventana con la que se simula.
 Por consola sale la tabla de eventos (ventana, muestras, rapidez media y
 distancia minima) y la comparacion de la ventana recortada contra la del LEEME.
 
-La figura de las trayectorias las dibuja ENTERAS (todos los cuadros del LEEME)
-con el tramo del corredor marcado: es la figura de la que sale el recorte.
+La figura de las trayectorias dibuja SOLO el trayecto seleccionado: la ventana
+de cada evento, adentro del tramo del corredor.
 """
 
 from __future__ import annotations
@@ -31,26 +31,21 @@ def read_table(path):
     return rows
 
 
-def trajectories(events: list[dict], tracks: dict, table: dict, x_range, figures, style: str):
-    """Las trayectorias medidas de todos los eventos en el plano, cada una
-    sobre TODOS los cuadros que el LEEME declara para su prueba: se ven las
-    dos filas y de donde parten todos. Las dos verticales marcan el tramo del
-    corredor al que se recorta la ventana de cada evento, y la parte de cada
-    trayectoria que queda adentro de su ventana va con trazo lleno."""
+def trajectories(events: list[dict], tracks: dict, x_range, figures, style: str):
+    """Las trayectorias medidas de todos los eventos en el plano, SOLO sobre
+    la ventana con la que se simula cada uno: el tramo del corredor entre las
+    dos verticales. Lo que queda afuera (la fila de cada lado, el codo con el
+    que cada peaton entra y sale de ella) no se dibuja: asi lo pidio la
+    catedra el 13/11, mostrar solo el trayecto seleccionado."""
     common.use_style(style)
-    figure, axes = plt.subplots()
+    figure, axes = plt.subplots(figsize=(8.6, 3.6) if style == "diapositiva" else (8.0, 3.4))
     for index, event in enumerate(events):
-        _, _, first, last = table[event["m"]]
         inside = range(event["cuadro_inicial"], event["cuadro_inicial"] + event["Nm"])
         for side, name in common.PEDESTRIAN_LABEL.items():
             track = tracks[int(event["izquierda" if side == 0 else "derecha"]["id"])]
-            whole = np.array([track[frame] for frame in range(first, last + 1)
-                              if frame in track])
             used = np.array([track[frame] for frame in inside if frame in track])
-            axes.plot(whole[:, 0], whole[:, 1], color=common.EXPERIMENT_COLOR[side],
-                      linewidth=0.8, alpha=0.25)
             axes.plot(used[:, 0], used[:, 1], color=common.EXPERIMENT_COLOR[side],
-                      linewidth=1.1, alpha=0.7,
+                      linewidth=1.2, alpha=0.75,
                       label=f"sale por la {name}" if index == 0 else None)
     for k, edge in enumerate(x_range):
         axes.axvline(edge, color="#1a1a1a", linestyle="--", linewidth=1.6,
@@ -58,8 +53,14 @@ def trajectories(events: list[dict], tracks: dict, table: dict, x_range, figures
     axes.set_xlabel(common.AXIS_X)
     axes.set_ylabel(common.AXIS_Y)
     axes.set_aspect("equal")
-    axes.set_ylim(-0.4, 6.4)
-    axes.legend(loc="upper right", fontsize=plt.rcParams["legend.fontsize"])
+    axes.set_xlim(x_range[0] - 0.5, x_range[1] + 0.5)
+    axes.set_ylim(0.9, 3.9)
+    axes.set_yticks([1, 2, 3])
+    axes.set_ylim(0.9, 3.1)
+    handles, names = axes.get_legend_handles_labels()
+    figure.legend(handles, names, loc="upper center", ncol=3, frameon=False,
+                  fontsize=plt.rcParams["legend.fontsize"], bbox_to_anchor=(0.5, 1.0))
+    figure.tight_layout(rect=(0, 0, 1, 0.9))
     common.save(figure, common.folder("datos", figures) / f"eventos_trayectorias_{style}.png")
     plt.close(figure)
 
@@ -110,7 +111,7 @@ def main() -> None:
     tracks, framerate = common.read_raw_tracks()
 
     table = read_table(arguments.tabla)
-    trajectories(events, tracks, table, (arguments.xmin, arguments.xmax), arguments.figures,
+    trajectories(events, tracks, (arguments.xmin, arguments.xmax), arguments.figures,
                  arguments.estilo)
     minima = distance(events, tracks, framerate, arguments.figures, arguments.estilo)
     fractions = []

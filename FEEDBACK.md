@@ -146,7 +146,7 @@ rápido no importa, pero es en lo que más tiempo hay que gastar.
 | 8 | Para la optimización por peatón: **histograma de los parámetros con una línea vertical en el óptimo global**. | Así quedaron las dos: los óptimos por evento (`slide-27`) y los óptimos por peatón del opcional (`slide-29`), un panel por parámetro. El extra de `α` usa el mismo formato. |
 
 Lo que aparece con el recorte nuevo y hay que llevar el viernes está en
-`PLAN.md` §8: el valor del tramo, el evento 1 (resuelto el 12/11, abajo), la rampa de
+`PLAN.md` §8: el valor del tramo, el evento 1 (cerrado el 13/11, abajo), la rampa de
 urgencia (sin ella el error baja un 16–19 %) y la validación cruzada (+35 %,
 por dos eventos en los que el lado depende de `t_a`).
 
@@ -161,3 +161,25 @@ del peatón 36 se vuelve a plantear, con opciones, en `PLAN.md` §8.
 | Qué dijo | Cómo quedó |
 |---|---|
 | **El evento 1 está mal**: los dos peatones quedan en la mitad del corredor y ninguno llega al final. Se arregla con el recorte entre 1 y 7,7 m; la ventana tiene que ser siempre ese tramo. | El final de la ventana estaba mal: se cortaba en el último cuadro con muestra de **los dos** peatones adentro del tramo, y al peatón 36 se le pierde el seguimiento en `x = 3,19 m` (reaparece 33 cuadros después, ya en la fila). Ahora un cuadro sin muestra no cierra la ventana: termina cuando a alguno de los dos **se lo ve** salir del tramo, o sea cuando el peatón 3 llega a 7,7 m (`Nm` pasa de 42 a 71). En esos 29 instantes el agente 36 se simula pero su error no se evalúa; su target final es, como dice el enunciado, la última posición de su trayectoria medida (3,19; 2,22), así que llega ahí y se queda mientras el otro termina de salir (`trimToCorridor` en `engine/src/experiment.cpp`). Los otros 18 eventos no cambian. Se recalculó todo: los óptimos quedaron iguales, `<E(1)>` pasó de 0,062 a 0,064 m² y `<E(2)>` de 0,0191 a 0,0193 m². |
+
+**Esto se revirtió el 13/11** (abajo): la cátedra pidió volver a simular el
+evento 1 sólo hasta que el primero de los dos desaparece.
+
+---
+
+## Consulta del 13/11/2026
+
+Se llevaron las dudas de `PLAN.md` §8 y las figuras. Lo que se contestó y lo
+que se pidió cambiar:
+
+| # | Qué dijeron | Cómo quedó |
+|---|---|---|
+| 1 | **El opcional de 4 parámetros está en un anuncio** (por eso no figura en el PDF del enunciado). | Se queda, con sus dos diapositivas (29 y 30). El `Makefile`, el README y `PLAN.md` §8 dicen de dónde sale. |
+| 2 | **El id 1000** de la prueba 2: no hay otra. | Confirmado; sin cambios (`experimental/eventos.txt`). |
+| 3 | En los cortes de `<E(1)>`, en el de **`t_a` hay que sacar la franja verde**. | `population.py` dibuja la franja de los valores que empatan sólo en el corte de `d_s`; en el de `t_a` queda la línea del óptimo (`slide-24` y `slide-26`). |
+| 4 | **Todo lo que sea "L" lo pueden borrar; recortar lo que importa.** La imagen que muestra qué parte del trayecto se seleccionó tiene que mostrar **sólo el trayecto seleccionado**. | `events.py` dibuja cada trayectoria sólo sobre la ventana de su evento, entre las dos verticales del tramo (`slide-03`). La fila y el codo con que cada peatón entra y sale de ella ya no aparecen. |
+| 5 | **El evento 1**, en el que el rojo se para: se pueden **recortar los datos, no eliminarlo**. Hacerlo como estaba al principio: se simula sólo hasta que el primero de los dos desaparece. | Un cuadro sin muestra de alguno de los dos vuelve a cerrar la ventana (`trimToCorridor`): el evento 1 queda con `Nm = 42`. Se recalculó todo: mismos óptimos, `<E(1)>` de 0,0637 a 0,0617 m² y `<E(2)>` de 0,0193 a 0,0191 m²; la validación cruzada pasa de +35 % a +36 %. |
+| 6 | Mostrar **la trayectoria con mayor error, la de menor error y una sin la capa** de elusión (el mejor y el peor ajuste de los 19). | `representative.py` arma esos tres paneles (`slide-19`): el 14 (0,037 m²), el 17 (0,155 m²) y el 10 sin capa (1,91 m²). Los dos primeros los elige por `E(1)_m`. El evento 1 tiene un error menor (0,020) pero no compite: su ventana es más corta y por eso acumula menos error (`EXCLUIR_MEJOR` en el `Makefile`). **A confirmar por el grupo** si prefieren mostrar el 1. |
+| 7 | **Armar los dibujos de los modelos**, por ejemplo el momento en que colisionan. | Esquema nuevo `report/figuras/modelo-sfm.tikz` (`slide-04`): la fuerza de conducción (velocidad actual, velocidad deseada hacia el target y la fuerza que lleva una a la otra) y el contacto en el momento del choque (solapamiento `ξ`, versores normal y tangencial, la fuerza normal sobre cada disco). Va en la diapositiva del modelo, debajo de la ecuación. |
+| 8 | **Simetría: sólo se muestra si llegamos.** Mostrar **la más simétrica y la menos simétrica**. Para la optimización de `α`: que optimice **evento a evento** (no por peatón: uno por cada par), que muestre el **histograma de cuántos caen en cada bin**, que diga **cuál es el evento con `α` más cercano a 0,5 y cuál el de `α` más grande** (el más cercano a 0 o a 1) y, con esa misma medida, **la media de ese módulo**, para comparar con el `α` poblacional. | El extra sigue después de "Muchas gracias" y el guion dice que es sólo si alcanza el tiempo. `asymmetry.py` optimiza `α` por evento con `t_a` y `d_s` fijos. **Extra 2/4** (`slide-extra-2`): el histograma con la cantidad de eventos escrita sobre cada barra (barras de 0,125 centradas en 0, 0,125, …, 1: ningún valor de la grilla cae en un borde) y `<\|α − 0,5\|>` en el panel. Más cercano a 0,5: eventos 3, 17 y 19 (`α` = 0,525); más lejano: evento 12 (0,975). Media de `\|α − 0,5\|`: **0,19** (0,21 con la métrica 2) contra 0,125 (0,075) del `α` poblacional. **Extra 4/4** (`slide-extra-4`): las trayectorias del evento 19 y del 12, medidas, simuladas con la capa simétrica y simuladas con el `α` del par (en el 12, `E(1)_m` baja de 0,075 a 0,050 m²). |
+| 9 | En la validación cruzada, **¿por qué está el error 1 y no el 2?** (pregunta del grupo al revisar) | Las dos existían; a `slides-images/` sólo se copiaba la de la métrica 1. Ahora `slide-34` tiene **las dos métricas lado a lado** (`both_errors_figure` en `crossval.py`) y la diapositiva da las cifras de las dos (+36 % con ambas); la de parámetros con la métrica 2 queda en `slide-35c`. De paso se corrigió el eje: es un promedio sobre los eventos de la partición, `<E>`, y decía `E_m`. |

@@ -1,0 +1,55 @@
+% El modelo, SFM sin fuerza social, dibujado: las dos fuerzas que actuan sobre
+% un agente. (a) La conduccion lleva la velocidad a la deseada, que apunta al
+% target, en un tiempo tau. (b) El contacto aparece solo en el momento en que
+% los dos discos colisionan (se solapan, xi > 0): una fuerza normal que los
+% separa y una friccion tangencial.
+\begin{tikzpicture}[scale=1.0, >={Stealth[length=2.4mm]}, font=\footnotesize]
+  % ---------------- (a) conduccion ----------------
+  \coordinate (ri) at (0,0);
+  \coordinate (T)  at (4.3,-0.62);
+  \draw[target, dashed] (ri) -- (T);
+  \draw[izquierda, thick, fill=izquierda!15] (ri) circle (0.6);
+  \node[izquierda] at (-0.22,0.22) {$i$};
+  \fill[target] (T) circle (0.10);
+  \node[target, anchor=south, inner sep=4pt] at (T) {$\vT_i$};
+  % velocidad actual y velocidad deseada
+  \draw[izquierda, very thick, ->] (ri) -- (1.45,0.85);
+  \node[izquierda, anchor=south east, inner sep=1pt] at (1.2,0.8) {$\vv_i$};
+  \draw[target, very thick, ->] (ri) -- (2.08,-0.30);
+  \node[target, anchor=north, inner sep=4pt] at (1.5,-0.25) {$v_i^{d}\,\ehat_i^{\,d}$};
+  % fuerza de conduccion
+  \draw[acento, very thick, ->] (1.45,0.85) -- (2.08,-0.30);
+  \node[acento, anchor=west, inner sep=4pt] at (1.80,0.32)
+        {$\dfrac{m}{\tau}\left(v_i^{d}\,\ehat_i^{\,d} - \vv_i\right)$};
+  \node[anchor=north, align=center] at (2.0,-1.95)
+        {\textbf{Conducción}: lleva $\vv_i$ a la velocidad deseada,\\ que apunta al target, en un tiempo $\tau$};
+
+  % ---------------- (b) contacto ----------------
+  \begin{scope}[shift={(9.6,-0.2)}]
+    \coordinate (ci) at (0,0);
+    \coordinate (cj) at (1.35,0.45);
+    \draw[izquierda, thick, fill=izquierda!15, fill opacity=0.8] (ci) circle (0.9);
+    \draw[derecha,   thick, fill=derecha!15,   fill opacity=0.8] (cj) circle (0.9);
+    \node[izquierda] at (-0.15,0.5) {$i$};
+    \node[derecha]   at (1.75,0.95) {$j$};
+    % distancia entre centros y solapamiento
+    \draw[gris, dashed] (ci) -- (cj);
+    \fill[gris] (ci) circle (0.04);
+    \fill[gris] (cj) circle (0.04);
+    \draw[black, line width=2.2pt] (0.496,0.166) -- (0.854,0.284);
+    \draw[black, thin] (0.675,0.225) -- (1.5,-0.95);
+    \node[anchor=north west, inner sep=2pt] at (1.2,-0.95) {$\xi_{ij} = r_i + r_j - d_{ij}$};
+    % versores
+    \draw[azul, very thick, ->] (ci) -- (-0.60,-0.20);
+    \node[azul, anchor=south, inner sep=3pt] at (-0.42,-0.12) {$\nhat_{ij}$};
+    \draw[azul, very thick, ->] (ci) -- (0.20,-0.60);
+    \node[azul, anchor=west, inner sep=3pt] at (0.16,-0.50) {$\that_{ij}$};
+    % fuerza normal sobre cada uno
+    \draw[acento, very thick, ->] (-0.854,-0.284) -- ++(-1.14,-0.38);
+    \node[acento, anchor=north, inner sep=5pt] at (-1.45,-0.62) {$k\,\xi_{ij}\,\nhat_{ij}$};
+    \draw[acento, very thick, ->] ($(cj)+(0.854,0.284)$) -- ++(1.14,0.38);
+    \node[anchor=north, align=center] at (0.7,-1.75)
+          {\textbf{Contacto}: sólo cuando colisionan, $\xi_{ij} > 0$. Una normal\\
+           que los separa y una fricción tangencial, $\kappa\,\xi_{ij}\,(\Delta\vv_{ji}\cdot\that_{ij})\,\that_{ij}$};
+  \end{scope}
+\end{tikzpicture}

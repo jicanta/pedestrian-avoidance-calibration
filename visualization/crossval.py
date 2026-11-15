@@ -9,7 +9,8 @@ columnas: no hay que volver a simular nada.
 
 Tres figuras por metrica:
 
-* `error`: la distribucion del error de validacion sobre las particiones,
+* `error`: la distribucion del error de validacion sobre las particiones
+  (tambien las dos metricas lado a lado, que es la de la diapositiva),
   contra el de entrenamiento y contra el <E> del item b (que usa los M
   eventos para calibrar Y para medir).
 * `parametros`: el par calibrado en cada particion, en el plano (p1, p2).
@@ -56,10 +57,11 @@ def leave_one_out(event_error, p1, p2):
     return np.array(rows)
 
 
-def error_figure(rows, reference, metric, figures, style):
-    common.use_style(style)
+def error_panel(axes, rows, reference, metric):
+    """Un panel: la distribucion del error de validacion sobre las
+    particiones contra el de entrenamiento y el <E> del item b. El eje es un
+    promedio sobre los eventos del subconjunto, o sea un <E>, no un E_m."""
     color, _ = common.METRIC_STYLE[metric]
-    figure, axes = plt.subplots()
     axes.hist(rows[:, 3], bins=24, color=color, alpha=0.75, label="validación")
     axes.hist(rows[:, 2], bins=24, color="#6e7680", histtype="step", linewidth=1.8,
               label="entrenamiento")
@@ -67,10 +69,30 @@ def error_figure(rows, reference, metric, figures, style):
                  label="ítem b")
     axes.axvline(rows[:, 3].mean(), color=color, linestyle=":", linewidth=2.0,
                  label="media de validación")
-    axes.set_xlabel(common.METRIC_EVENT[metric])
+    axes.set_xlabel(common.METRIC_AVERAGE[metric])
     axes.set_ylabel("particiones")
     common.legend_inside(axes)
+
+
+def error_figure(rows, reference, metric, figures, style):
+    common.use_style(style)
+    figure, axes = plt.subplots()
+    error_panel(axes, rows, reference, metric)
     common.save(figure, common.folder("d", figures) / f"error_metrica{metric}_{style}.png")
+    plt.close(figure)
+
+
+def both_errors_figure(results, figures, style):
+    """Las DOS metricas lado a lado: es la figura de la diapositiva del item
+    d, que tiene que mostrar las dos y no solo la 1."""
+    common.use_style(style)
+    figure, panels = plt.subplots(1, 2, figsize=(10.0, 4.0) if style == "informe"
+                                  else (11.0, 4.2))
+    for axes, metric in zip(panels, (1, 2)):
+        rows, reference = results[metric]
+        error_panel(axes, rows, reference, metric)
+    figure.tight_layout()
+    common.save(figure, common.folder("d", figures) / f"error_{style}.png")
     plt.close(figure)
 
 
@@ -135,6 +157,7 @@ def main() -> None:
 
     p1, p2, labels, error1, error2 = common.read_sweep(arguments.barrido)
     count = len(labels)
+    results = {}
     for metric, event_error in ((1, error1), (2, error2)):
         mean, _ = common.population(event_error)
         i, j = np.unravel_index(np.argmin(mean), mean.shape)
@@ -142,6 +165,7 @@ def main() -> None:
         generator = np.random.default_rng(arguments.semilla)
         rows = crossvalidate(event_error, p1, p2, arguments.entrenamiento,
                              arguments.particiones, generator)
+        results[metric] = (rows, reference)
         error_figure(rows, reference, metric, arguments.figures, arguments.estilo)
         parameter_figure(rows, (p1[i], p2[j]), metric, p1, p2, arguments.figures,
                          arguments.estilo)
@@ -173,6 +197,7 @@ def main() -> None:
         print(f"  dejando uno afuera ({count} particiones de {count - 1}/1): "
               f"validacion {loo[:, 3].mean():.4f} m2 "
               f"({100 * (loo[:, 3].mean() / reference - 1):+.1f} %)")
+    both_errors_figure(results, arguments.figures, arguments.estilo)
 
 
 if __name__ == "__main__":

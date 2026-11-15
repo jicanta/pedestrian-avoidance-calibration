@@ -1,20 +1,21 @@
-"""Item a: las trayectorias de unos pocos eventos representativos, juntas.
+"""Item a: el evento que mejor ajusta, el que peor ajusta y uno sin la capa.
 
-Una sola figura con un panel por evento (cuatro por omision), todos con los
-mismos ejes y escala igual en x e y: en cada uno, las dos trayectorias medidas
-(trazo lleno) y las dos simuladas con la capa calibrada (trazo cortado), y de
-fondo la simulacion con la capa apagada (punteada gris). Cada panel lleva el
-numero del evento y por que se lo eligio.
+Una sola figura con tres paneles, todos con los mismos ejes y escala igual en
+x e y (es lo que pidio la catedra el 13/11: "la trayectoria con mayor error,
+la con menor error y una sin la capa de elusion"):
 
-Los cuatro que se muestran cuentan cuatro cosas distintas:
+* el evento de MENOR error con la capa calibrada;
+* el evento de MAYOR error con la capa calibrada;
+* un evento simulado SIN la capa (el principal, el de las animaciones).
 
-* el que mas gana con la capa;
-* el cruce mas ajustado que se midio (menor distancia minima);
-* el cruce mas holgado (mayor distancia minima): el modelo pasa mas cerca que
-  las personas, porque la distancia de paso es la misma para todos;
-* el unico en el que el modelo elude por el lado opuesto.
+En cada panel van las dos trayectorias medidas (trazo lleno) y las dos
+simuladas (trazo cortado). El mejor y el peor no se eligen a mano: salen de
+E_m de la metrica pedida, recalculada aca desde las corridas con cuadros. Con
+--excluir 1 el evento 1 no compite por el menor error: su ventana termina
+poco despues del cruce (se pierde el seguimiento de un peaton) y por eso
+acumula menos error que los demas, no porque ajuste mejor.
 
-    python3 visualization/representative.py --eventos 10 5 14 17
+    python3 visualization/representative.py --sin-capa-evento 10
 """
 
 from __future__ import annotations
@@ -28,17 +29,19 @@ import numpy as np
 
 import common
 
-REASON = {
-    0: "el que más gana con la capa",
-    1: "el cruce medido más ajustado",
-    2: "el cruce medido más holgado",
-    3: "elude por el lado opuesto",
-}
-
 
 def minimum(track) -> float:
     return float(np.hypot(track[:, 0, 0] - track[:, 1, 0],
                           track[:, 0, 1] - track[:, 1, 1]).min())
+
+
+def event_error(run: Path, metric: int) -> float:
+    """E_m de una corrida: el promedio sobre los 2 peatones del promedio
+    temporal del observable primario."""
+    _, _, simulated, experimental = common.load_run(run)
+    return float(np.mean([np.nanmean(common.metric_errors(experimental[:, side],
+                                                          simulated[:, side])[metric - 1])
+                          for side in (0, 1)]))
 
 
 def main() -> None:
@@ -46,51 +49,73 @@ def main() -> None:
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--runs", type=Path, default=common.RUNS / "optimo-metrica1")
     parser.add_argument("--sin-capa", type=Path, default=common.RUNS / "sin-capa")
-    parser.add_argument("--eventos", type=int, nargs="+", default=[10, 5, 14, 17])
+    parser.add_argument("--sin-capa-evento", type=int, default=10,
+                        help="el evento que se muestra simulado sin la capa")
+    parser.add_argument("--metrica", type=int, choices=(1, 2), default=1)
+    parser.add_argument("--excluir", type=int, nargs="*", default=[],
+                        help="eventos que no compiten por el menor error (el 1, cuya "
+                             "ventana es mas corta que las demas: acumula menos error)")
     common.add_common_arguments(parser)
     arguments = parser.parse_args()
     common.use_style(arguments.estilo)
 
-    count = len(arguments.eventos)
-    rows = (count + 1) // 2
-    figure, grid = plt.subplots(rows, 2, sharex=True, sharey=True,
-                                figsize=(11.0, 2.0 * rows + 0.7))
-    panels = np.atleast_2d(grid).ravel()
+    folders = sorted(arguments.runs.glob("m*"), key=lambda path: int(path.name[1:]))
+    errors = {int(path.name[1:]): event_error(path, arguments.metrica) for path in folders}
+    best = min((label for label in errors if label not in arguments.excluir),
+               key=errors.get)
+    worst = max(errors, key=errors.get)
+    plain = arguments.sin_capa_evento
+    plain_error = event_error(arguments.sin_capa / f"m{plain}", arguments.metrica)
+    symbol = f"$E^{{({arguments.metrica})}}_m$"
+    print("E_m por evento, de menor a mayor: " + "  ".join(
+        f"{label}:{value:.3f}" for label, value in sorted(errors.items(),
+                                                          key=lambda item: item[1])))
+
+    panels_data = (
+        (best, arguments.runs, "con la capa, el de menor error", errors[best]),
+        (worst, arguments.runs, "con la capa, el de mayor error", errors[worst]),
+        (plain, arguments.sin_capa, "sin la capa de elusión", plain_error),
+    )
+    figure, grid = plt.subplots(2, 2, sharex=True, sharey=True, figsize=(11.0, 4.7))
+    panels = grid.ravel()
     small = matplotlib.rcParams["legend.fontsize"]
-    for index, (axes, label) in enumerate(zip(panels, arguments.eventos)):
-        static, _, simulated, experimental = common.load_run(arguments.runs / f"m{label}")
-        _, _, plain, _ = common.load_run(arguments.sin_capa / f"m{label}")
+    for axes, (label, runs, reason, error) in zip(panels, panels_data):
+        static, _, simulated, experimental = common.load_run(runs / f"m{label}")
         for side in (0, 1):
-            axes.plot(plain[:, side, 0], plain[:, side, 1], color="#9aa3ad", linewidth=1.4,
-                      linestyle=":", label="simulada sin capa" if side == 0 else None)
             axes.plot(experimental[:, side, 0], experimental[:, side, 1],
-                      color=common.EXPERIMENT_COLOR[side], linewidth=2.2,
-                      label="medida" if side == 0 else None)
+                      color=common.EXPERIMENT_COLOR[side], linewidth=2.2)
             axes.plot(simulated[:, side, 0], simulated[:, side, 1],
-                      color=common.EXPERIMENT_COLOR[side], linewidth=1.8, linestyle="--",
-                      label="simulada con la capa" if side == 0 else None)
+                      color=common.EXPERIMENT_COLOR[side], linewidth=1.8, linestyle="--")
         axes.set_aspect("equal")
         axes.set_ylim(1.05, 3.25)
         axes.set_yticks([1.5, 2.0, 2.5])
-        axes.text(0.015, 0.95, f"evento {label}: {REASON.get(index, '')}",
-                  transform=axes.transAxes, va="top", fontsize=small, color="#1a1a1a")
-        print(f"evento {label}: Nm = {static['instantes']}, distancia minima medida "
-              f"{minimum(experimental[:, :, :2]):.2f} m, simulada "
-              f"{minimum(simulated[:, :, :2]):.2f} m, sin capa {minimum(plain[:, :, :2]):.2f} m")
-    for axes in panels[count:]:
-        axes.set_visible(False)
-    for axes in panels[-2:]:
-        axes.set_xlabel(common.AXIS_X)
-    for axes in panels[::2]:
-        axes.set_ylabel(common.AXIS_Y)
-    handles, names = panels[0].get_legend_handles_labels()
-    order = [1, 2, 0]
-    legend = figure.legend([handles[k] for k in order], [names[k] for k in order],
-                           loc="upper center", ncol=3, fontsize=small, frameon=False,
-                           bbox_to_anchor=(0.5, 1.0))
-    for line in legend.get_lines():
-        line.set_color("#1a1a1a")
-    figure.tight_layout(rect=(0, 0, 1, 0.93), h_pad=0.2)
+        axes.text(0.015, 0.95, f"evento {label}: {reason}", transform=axes.transAxes,
+                  va="top", fontsize=small, color="#1a1a1a")
+        axes.text(0.985, 0.06, f"{symbol} $= {common.math_decimal(error, 3)}$ m$^2$",
+                  transform=axes.transAxes, va="bottom", ha="right", fontsize=small,
+                  color="#1a1a1a")
+        print(f"evento {label} ({reason}): Nm = {static['instantes']}, E_m = {error:.4f} m2, "
+              f"distancia minima medida {minimum(experimental[:, :, :2]):.2f} m, simulada "
+              f"{minimum(simulated[:, :, :2]):.2f} m")
+
+    # El cuarto lugar de la grilla es la leyenda.
+    legend_axes = panels[3]
+    legend_axes.axis("off")
+    handles = [
+        plt.Line2D([], [], color="#1a1a1a", linewidth=2.2, label="medida"),
+        plt.Line2D([], [], color="#1a1a1a", linewidth=1.8, linestyle="--", label="simulada"),
+        plt.Line2D([], [], color=common.EXPERIMENT_COLOR[0], linewidth=2.2,
+                   label="sale por la izquierda"),
+        plt.Line2D([], [], color=common.EXPERIMENT_COLOR[1], linewidth=2.2,
+                   label="sale por la derecha"),
+    ]
+    legend_axes.legend(handles=handles, loc="center", fontsize=small, frameon=False)
+    panels[1].tick_params(labelbottom=True)
+    panels[1].set_xlabel(common.AXIS_X)
+    panels[2].set_xlabel(common.AXIS_X)
+    panels[0].set_ylabel(common.AXIS_Y)
+    panels[2].set_ylabel(common.AXIS_Y)
+    figure.tight_layout(h_pad=0.4)
     common.save(figure, common.folder("a", arguments.figures) /
                 f"trayectorias_representativas_{arguments.estilo}.png")
     plt.close(figure)

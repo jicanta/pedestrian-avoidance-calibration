@@ -11,7 +11,7 @@ su vez es el promedio sobre sus 2 peatones. Para cada metrica por separado:
 
 La barra de error de <E> es el error estandar de la media entre eventos,
 sigma/sqrt(M). Para decidir que valores EMPATAN con el optimo (la franja verde
-de los cortes) esa barra no sirve:
+del corte de d_s) esa barra no sirve:
 todos los pares se evaluan sobre los MISMOS M eventos, asi que lo que hay que
 mirar es la diferencia pareada evento por evento. La region compatible es el
 conjunto de pares cuya diferencia media contra el optimo, E_m(p) - E_m(p*), no
@@ -73,9 +73,10 @@ def cuts(p1, p2, event_error, region, metric, figures, style):
 
     La curva va entera y las barras cada pocos puntos: con 81 y 61 valores de
     grilla, una barra por punto tapa la curva. La barra es el error estandar de
-    la media entre los M eventos; la franja verde es el tramo del corte que
-    EMPATA con el optimo segun la diferencia pareada, que es la incertidumbre
-    que de verdad tiene el parametro.
+    la media entre los M eventos; la franja verde, que va solo en el corte de
+    d_s, es el tramo que EMPATA con el optimo segun la diferencia pareada, que
+    es la incertidumbre que de verdad tiene el parametro. La linea cortada es
+    el optimo.
     """
     common.use_style(style)
     mean, sem = common.population(event_error)
@@ -90,7 +91,10 @@ def cuts(p1, p2, event_error, region, metric, figures, style):
         axes.plot(values, curve, color=color, linewidth=1.8)
         axes.errorbar(values[::every], curve[::every], yerr=bars[::every], color=color,
                       marker=marker, **common.ERRORBAR)
-        if inside.any():
+        # La franja de los valores que empatan va solo en el corte de d_s: en
+        # el de t_a la curva es plana desde 1,5 s y la franja tapaba medio
+        # panel sin agregar nada (la catedra pidio sacarla, 13/11).
+        if inside.any() and label == common.AXIS_P2:
             axes.axvspan(values[inside].min(), values[inside].max(), color="#2ca02c",
                          alpha=0.15)
         axes.axvline(best, color="#2ca02c", linestyle="--", linewidth=1.8)

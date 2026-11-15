@@ -41,19 +41,21 @@ de frente. El desvío lo produce la fuerza de contacto, tarde.
 pruebas (0,49 m, menos que la distancia de contacto 2r = 0,5 m), con la capa
 calibrada: los agentes pasan a 0,58 m.
 
-### 04 — Evento 14: el cruce más holgado (PENDIENTE-04)
+### 04 — Evento 14: el de menor error (PENDIENTE-04)
 
-**Título:** SdS TP5 G10 — Elusión 1 contra 1: evento 14, el cruce más holgado
+**Título:** SdS TP5 G10 — Elusión 1 contra 1: evento 14, el de menor error
 
-**Descripción:** Evento 14, el de mayor distancia mínima medida (0,92 m). Los
+**Descripción:** Evento 14, el que mejor ajusta con la capa calibrada
+(E(1) = 0,037 m²). Es también el de mayor distancia mínima medida (0,92 m); los
 agentes pasan a 0,57 m: la distancia de paso del modelo es una sola para todos
 los pares.
 
-### 05 — Evento 17: por el lado opuesto (PENDIENTE-05)
+### 05 — Evento 17: el de mayor error (PENDIENTE-05)
 
-**Título:** SdS TP5 G10 — Elusión 1 contra 1: evento 17, elusión por el lado opuesto
+**Título:** SdS TP5 G10 — Elusión 1 contra 1: evento 17, el de mayor error
 
-**Descripción:** Evento 17, el único de los 19 en que la capa calibrada elude
+**Descripción:** Evento 17, el de mayor error con la capa calibrada
+(E(1) = 0,155 m²): es el único de los 19 en que la capa calibrada elude
 por el lado contrario al que usaron las personas.
 
 ### 06 — Apoyo: la capa de elusión cabeza a cabeza (PENDIENTE-06)

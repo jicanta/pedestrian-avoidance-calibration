@@ -16,8 +16,9 @@ anotan **en el momento**, porque el detalle se pierde rápido. Las entradas 15 a
 17 salen de la primera revisión con la cátedra (el recorte de la ventana y la
 asimetría del par), las 18 a 24, de la consulta del 11/11/2026
 (`FEEDBACK.md`), después de la cual **todos los números cambiaron** (las cifras
-que citan las entradas 1 a 14 son las de la ventana de entonces), y la 25, de
-la devolución del 12/11 sobre el evento 1.
+que citan las entradas 1 a 14 son las de la ventana de entonces), la 25, de
+la devolución del 12/11 sobre el evento 1, y las 26 a 29, de la consulta del
+13/11.
 
 ---
 
@@ -223,6 +224,47 @@ lo sacó porque el enunciado dice "la última posición de su trayectoria
 experimental".) Los óptimos
 no cambiaron; `<E(1)>` pasó de 0,062 a 0,064 m².
 *(devolución del 12/11; `engine/src/experiment.cpp`, `trimToCorridor`)*
+
+**26. En el evento 1 siguió simulando a un peatón sin sus datos.**
+Es la contracara de la 25. Para que los dos llegaran al final del corredor
+dejó que la ventana siguiera 29 instantes después de que al peatón 36 se le
+pierde el seguimiento: el agente llegaba a su target (su última posición
+medida, en la mitad del corredor) y quedaba rebotando ahí, sin nada contra qué
+compararlo. La cátedra indicó en la consulta del 13/11 que el evento se
+recorta, sin eliminarlo: **se simula sólo hasta que el primero de los dos
+desaparece** (`Nm = 42`), que es como estaba antes de la entrada 25. Los
+óptimos no cambiaron; `<E(1)>` volvió de 0,064 a 0,062 m².
+*(consulta del 13/11; `engine/src/experiment.cpp`, `trimToCorridor`)*
+
+**27. Mostró las 38 trayectorias medidas enteras, con la fila.**
+La figura que justifica el tramo simulado dibujaba cada trayectoria sobre todos
+los cuadros del LEEME, con la parte usada en trazo más fuerte: lo que más se
+veía eran las filas y el codo con que cada peatón entra y sale de ellas. La
+cátedra pidió mostrar **sólo el trayecto seleccionado**. También sacó, en los
+cortes por el óptimo, la franja verde del panel de `t_a`, que tapaba medio
+panel sobre una curva plana.
+*(consulta del 13/11; `visualization/events.py`, `visualization/population.py`)*
+
+**28. Eligió los eventos "representativos" con criterios propios.**
+Los cuatro paneles de trayectorias eran el evento que más gana con la capa, el
+cruce más ajustado, el más holgado y el del lado opuesto. La cátedra pidió
+algo más directo: **el de menor error, el de mayor error y uno sin la capa**.
+Ahora los dos primeros los elige el script por `E(1)_m`. (Decisión que queda
+dicha: el evento 1 tiene un error menor pero no compite, porque su ventana es
+más corta.)
+*(consulta del 13/11; `visualization/representative.py`)*
+
+**29. Eligió el par más y el menos simétrico con el `α` medido, no con el optimizado.**
+La cátedra pidió, para la optimización de `α`, optimizar evento a evento (uno
+por par), mostrar el histograma de cuántos caen en cada intervalo y decir cuál
+es el evento con `α` más cercano a 0,5 y cuál el más lejano. El agente había
+elegido los dos extremos con el `α` *medido* en las trayectorias (eventos 9 y
+18), que no es el que se optimiza, y el histograma tenía valores de la grilla
+de `α` justo en los bordes de las barras. Ahora los extremos salen del `α`
+óptimo (eventos 19 y 12), las barras no tienen valores en los bordes y llevan
+su cantidad escrita, y se informa la media de `|α − 0,5|` (0,19) contra la del
+`α` poblacional (0,125).
+*(consulta del 13/11; `visualization/asymmetry.py`)*
 
 ## Proceso de entrega
 

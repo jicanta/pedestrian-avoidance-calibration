@@ -32,21 +32,22 @@ están en el README (21, 26, 35, 33, 30, 10, 16, en ese orden).
 
 ## 3. Los datos y el tramo que se simula — `slide-03-eventos-trayectorias.png` — 0:30
 
-- Las 38 trayectorias enteras. Se ve de dónde parten todos: las cabeceras de
-  las dos filas, en x ≈ 0,6 y 8,1 m.
-- Cada evento se recorta al tramo de 1 a 7,7 m, el mismo para los 19: empieza
-  cuando el último de los dos entra y termina cuando el primero sale. Afuera
-  queda la fila.
+- Las 38 trayectorias medidas, sólo en el tramo que se simula: de 1 a 7,7 m,
+  el mismo para los 19. Afuera quedan las dos filas, con las cabeceras en
+  x ≈ 0,6 y 8,1 m.
+- Cada evento empieza cuando el último de los dos entra al tramo y termina
+  cuando el primero sale.
 - En 14 de los 19 cruces cada uno pasó por su derecha.
 - *Si preguntan por qué 7,7 y no 8:* la cabecera de la fila derecha está en
   8,1 m; con 8 la ventana terminaba con el peatón frenando contra la fila. Con
   seis tramos distintos la capa baja el error entre 90 y 96 %.
 
-## 4. Modelo: SFM sin fuerza social — 0:30
+## 4. Modelo: SFM sin fuerza social — `slide-04-modelo-sfm.png` — 0:30
 
-- Newton con dos términos: conducción hacia el target (relaja v a la deseada
-  en τ = 0,5 s) y contacto granular (normal y fricción), que sólo existe con
-  solapamiento. Sin el término social: es el enunciado.
+- Newton con dos términos, los dos del dibujo. Conducción: lleva la velocidad
+  a la deseada, que apunta al target, en τ = 0,5 s. Contacto: sólo en el
+  momento en que colisionan (solapamiento ξ > 0), una normal que los separa y
+  una fricción tangencial. Sin el término social: es el enunciado.
 - Así el modelo **no anticipa**: va derecho al target y la única señal del otro
   es tocarlo. Lo único que decide a dónde va es ê^d, y ahí actúa la capa, y en
   ningún otro lado.
@@ -62,10 +63,9 @@ están en el README (21, 26, 35, 33, 30, 10, 16, en ese orden).
   su trayectoria, entre 1,15 y 1,63 m/s.
 - Se simula hasta el último instante medido: entre 4,0 y 5,3 s por evento.
 - *Si preguntan por el evento 1:* al peatón 36 se le pierde el seguimiento
-  después del cruce (x = 3,2 m) y reaparece ya en la fila. La ventana no se
-  corta ahí: sigue hasta que el otro llega a 7,7 m; en esos 29 instantes el 36
-  se simula pero su error no se evalúa. Su target es su última posición
-  medida, como en todos: llega ahí y se queda mientras el otro termina.
+  después del cruce (x = 3,2 m) y reaparece ya en la fila. El evento se simula
+  hasta ahí, hasta que el primero de los dos desaparece (42 instantes en vez
+  de 60 a 80); no se elimina. Lo indicó la cátedra el 13/11.
 
 ## 6. Capa (1/3): detección — `slide-06-elusion-deteccion.png` + GIF 09 — 1:10
 
@@ -99,7 +99,7 @@ están en el README (21, 26, 35, 33, 30, 10, 16, en ese orden).
 - Es la geometría de Karamouzas (Teórica 7) resuelta como "goal temporario"
   y no como fuerza. Diferencia: se predice con las velocidades actuales de los
   dos, así la elusión sale recíproca.
-- *Si preguntan por qué la rampa w:* sin ella (w = 1) el error baja 16–19 %,
+- *Si preguntan por qué la rampa w:* sin ella (w = 1) el error baja 15–19 %,
   pero la dirección deseada salta al entrar en conflicto; con la rampa la capa
   es continua en los dos bordes del disparo. Las dos bajan el error más de un
   90 % respecto del modelo sin capa.
@@ -116,7 +116,7 @@ están en el README (21, 26, 35, 33, 30, 10, 16, en ese orden).
   repulsión A·exp(−(d−2r)/B): isotrópica, lateral y predictiva.
 - La isotrópica queda lejos (−66 % contra −94 %): de frente la repulsión no
   tiene componente lateral. El campo predictivo empata.
-- El lateral da un error algo menor (0,014 contra 0,0193 m²), pero con B en el
+- El lateral da un error algo menor (0,014 contra 0,0191 m²), pero con B en el
   borde de la grilla, 5 m: es empujar de costado siempre.
 - *Si preguntan por qué no se usó el lateral:* no tiene horizonte ni distancia
   de paso; funciona acá porque hay un solo cruce de frente. La predictiva tiene
@@ -161,7 +161,7 @@ están en el README (21, 26, 35, 33, 30, 10, 16, en ese orden).
 ## 15. Casos estudiados — `slide-15-eventos-distancia-vs-t.png` — 0:20
 
 - Los 19 eventos sobre su ventana: el cruce cae entre el 47 y el 56 % de la
-  ventana, ninguno queda recortado.
+  ventana (al 80 % en el evento 1, el más corto): queda adentro en los 19.
 - Barrido de 81 × 61 pares × 19 eventos, 32 s. Individual por evento y por
   peatón. Validación cruzada con 500 particiones de 13/6.
 
@@ -169,7 +169,7 @@ están en el README (21, 26, 35, 33, 30, 10, 16, en ese orden).
 
 ## 16. Paso de integración — `slide-16-convergencia-dt.png` — 0:15
 
-- Con n = 64, 1 ms, ⟨E⟩ se aparta 0,10 % del paso más fino: cien veces menos
+- Con n = 64, 1 ms, ⟨E⟩ se aparta 0,11 % del paso más fino: cien veces menos
   que el error estándar entre eventos.
 
 ## 17. Evento 10 sin capa — `slide-17-animacion-evento10-sin-capa.png` — 0:15 (GIF 02)
@@ -183,13 +183,17 @@ están en el README (21, 26, 35, 33, 30, 10, 16, en ese orden).
   mismo lado que las personas. E(1) baja de 1,91 a 0,068 y E(2) de 0,99 a
   0,019 m². Con la capa no hay contacto en ninguno de los 19.
 
-## 19. Cuatro eventos representativos — `slide-19-trayectorias-representativas.png` — 0:35
+## 19. El mejor ajuste, el peor y uno sin capa — `slide-19-trayectorias-representativas.png` — 0:35
 
-- El 10: sin capa el desvío lo hace el choque, tarde; con capa, el arco está
-  donde lo hacen las personas.
-- El 5 y el 14: las personas pasaron a 0,49 y a 0,92 m; el modelo, a 0,58 y
-  0,57. La distancia de paso es una sola para todos.
-- El 17: el único en que el modelo elude por el lado opuesto.
+- El 14, el de menor error (0,037 m²): el arco simulado cae donde lo hicieron
+  las personas, aunque ellas pasaron más lejos (0,92 contra 0,57 m). La
+  distancia de paso del modelo es una sola para todos.
+- El 17, el de mayor error (0,155 m²): el único en que el modelo elude por el
+  lado opuesto.
+- El 10 sin capa (1,91 m²): van derecho, chocan y el desvío lo hace el
+  contacto, tarde.
+- *Si preguntan por el evento 1:* tiene un error menor (0,020 m²) pero su
+  ventana es más corta, y por eso acumula menos; no se lo cuenta como el mejor.
 
 ## 20. Evento 10: observable primario — `slide-20-evento10-observable.png` — 0:15
 
@@ -208,7 +212,7 @@ están en el README (21, 26, 35, 33, 30, 10, 16, en ese orden).
 
 ## 23. Mapa, métrica 1 — `slide-23-superficie-metrica1.png` — 0:25
 
-- Óptimo en (2,15 s, 0,13 m): 0,064 m² contra 0,91 sin capa, **−93 %**. Abajo
+- Óptimo en (2,15 s, 0,13 m): 0,062 m² contra 0,87 sin capa, **−93 %**. Abajo
   y a la izquierda la capa reacciona tarde o no pide separación.
 
 ## 24. Cortes, métrica 1 — `slide-24-cortes-metrica1.png` — 0:25
@@ -216,11 +220,11 @@ están en el README (21, 26, 35, 33, 30, 10, 16, en ese orden).
 - t_a sólo queda determinado por abajo: cae hasta 1,5 s y después es plano,
   hasta 8 s. El cruce llega entre 2,1 y 2,7 s después de empezar: con más
   anticipación el conflicto se declara desde el primer instante. d_s sí tiene
-  mínimo claro en 0,13 m.
+  mínimo claro en 0,13 m; la franja verde son los d_s que empatan con el óptimo.
 
 ## 25. Mapa, métrica 2 — `slide-25-superficie-metrica2.png` — 0:20 (C)
 
-- Mismo valle: 0,33 → 0,0193 m², **−94 %**. Óptimo en (1,50 s, 0,14 m). Las dos
+- Mismo valle: 0,32 → 0,0191 m², **−94 %**. Óptimo en (1,50 s, 0,14 m). Las dos
   métricas piden la misma distancia de paso, 0,63 y 0,64 m.
 
 ## 26. Cortes, métrica 2 — `slide-26-cortes-metrica2.png` — 0:15
@@ -232,11 +236,11 @@ están en el README (21, 26, 35, 33, 30, 10, 16, en ese orden).
 
 - Histograma de cada parámetro, con el global como línea vertical. En t_a, 17
   de 19 piden más de 3,75 s: más anticipación nunca molesta. En d_s cada par
-  tiene el suyo, de 0,03 a 0,24 m.
+  tiene el suyo, de 0,03 a 0,35 m.
 
 ## 28. Cuánto se gana — `slide-28-errores-por-evento.png` — 0:20
 
-- Individualizar baja ⟨E(1)⟩ de 0,064 a 0,050 (−22 %) y ⟨E(2)⟩ de 0,0193 a
+- Individualizar baja ⟨E(1)⟩ de 0,062 a 0,048 (−22 %) y ⟨E(2)⟩ de 0,0191 a
   0,014 (−27 %). Casi la mitad de la ganancia de la métrica 1 es el evento 17.
 
 ## 29. Opcional: parámetros por peatón — `slide-29-optimos-por-peaton.png` — 0:25
@@ -249,14 +253,14 @@ están en el README (21, 26, 35, 33, 30, 10, 16, en ese orden).
 
 ## 30. Opcional: cuánto se gana — `slide-30-errores-por-peaton.png` — 0:15
 
-- Sobre la misma grilla: con dos por evento ⟨E(1)⟩ baja 22 %, con cuatro un
-  10 % más (27 % y 31 % más con la métrica 2). Describe pero no predice: para
+- Sobre la misma grilla: con dos por evento ⟨E(1)⟩ baja 23 %, con cuatro un
+  11 % más (26 % y 31 % más con la métrica 2). Describe pero no predice: para
   un par nuevo no hay con qué estimar sus cuatro parámetros.
 
 ## 31. Ritmo y forma — `slide-31-residuo-descomposicion.png` — 0:15
 
-- El 62 % del error es longitudinal: ritmo. La forma, lo que la capa decide,
-  es el 38 %.
+- El 61 % del error es longitudinal: ritmo. La forma, lo que la capa decide,
+  es el 39 %.
 
 ## 32. El lado y la distancia — `slide-32-residuo-lado.png` — 0:25
 
@@ -271,9 +275,10 @@ están en el README (21, 26, 35, 33, 30, 10, 16, en ese orden).
 
 ## 34. Validación cruzada — `slide-34-validacion-error.png` — 0:25
 
-- 500 particiones de 13/6: el error de validación es 0,086 contra 0,064 del
-  ítem b, un 35 % más. Sigue siendo diez veces menos que sin capa.
-- El segundo pico son las particiones en que el 16 o el 17 quedan en
+- 500 particiones de 13/6: el error de validación es 0,084 contra 0,062 del
+  ítem b, un 36 % más con las dos métricas (la figura
+  tiene las dos, lado a lado). Sigue siendo diez veces menos que sin capa.
+- Los picos de la derecha son las particiones en que el 16 o el 17 quedan en
   validación: sin ellos en validación la diferencia es del 7 %.
 
 ## 35. Qué par elige cada partición — `slide-35-validacion-parametros.png` — 0:10
@@ -286,8 +291,8 @@ están en el README (21, 26, 35, 33, 30, 10, 16, en ese orden).
 
 - Leer las seis, cada una con su cifra: −93 % y −94 %, y sin contacto; óptimos
   con la misma distancia de paso; t_a sólo por abajo; mismo lado en 18 de 19, y
-  cada par a su propia distancia; el 62 % del residuo es ritmo; validación
-  +35 % por dos eventos.
+  cada par a su propia distancia; el 61 % del residuo es ritmo; validación
+  +36 % por dos eventos.
 
 ## 37. Uso de agentes de IA — 0:10
 
@@ -299,24 +304,37 @@ están en el README (21, 26, 35, 33, 30, 10, 16, en ese orden).
 
 ## Extra, después del cierre: el reparto de la elusión (α)
 
-La cátedra pidió mostrarlo al final, como un opcional. Un minuto y medio si
-hay tiempo.
+La cátedra pidió mostrarlo al final, como un opcional, y el 13/11 aclaró que
+**sólo se muestra si alcanza el tiempo**. Dos minutos.
 
 ### Extra 1 — `slide-extra-1-alfa-curva.png`
 
 - La capa calibrada es simétrica: los dos se corren lo mismo. Se le agrega α,
   la fracción de la separación que falta que se lleva el que sale de la
   izquierda; 0,5 es la capa simétrica.
-- Con t_a y d_s en su óptimo, el mejor α global es 0,600 y 0,575, y gana 2 % y
+- Con t_a y d_s en su óptimo, el mejor α global es 0,625 y 0,575, y gana 2 % y
   1 %: dentro del error. Como población, la capa simétrica alcanza.
 
 ### Extra 2 — `slide-extra-2-alfa-histograma.png`
 
-- Evento por evento α va de 0,12 a 0,97: en cada par uno cede más, y cuál
-  cambia de par en par. Con el α propio de cada par ⟨E(2)⟩ baja un 19 %.
+- Acá α se optimiza evento por evento, uno por par, y se cuenta cuántos caen
+  en cada intervalo. El más cercano a 0,5 son los eventos 3, 17 y 19 (0,525);
+  el más lejano, el 12 (0,975): ahí casi toda la elusión la hace uno solo.
+- La asimetría media de un par, ⟨|α − 0,5|⟩, es 0,19; la del α poblacional es
+  0,125. Es menor porque al promediar se compensan los pares que ceden para
+  lados opuestos (15 de 19 ceden más del lado izquierdo). Con el α propio de
+  cada par ⟨E(2)⟩ baja un 19 %.
 
 ### Extra 3 — `slide-extra-3-alfa-medido.png`
 
 - α también se puede medir sin simular, del desvío lateral de cada uno en el
-  cruce. El calibrado y el medido coinciden: r = 0,65 y 0,88. Es una propiedad
+  cruce. El calibrado y el medido coinciden: r = 0,72 y 0,88. Es una propiedad
   de cada par, no un parámetro que absorbe residuo; pero describe y no predice.
+
+### Extra 4 — `slide-extra-4-alfa-extremos.png`
+
+- El par más simétrico y el menos simétrico según el α óptimo. En el evento
+  19, α = 0,525: simular con su α o con la capa simétrica da lo mismo.
+- En el 12, α = 0,975: todo el desvío lo hace el que sale de la izquierda y el
+  otro sigue derecho. La capa simétrica le da medio arco a cada uno; con el α
+  del par el error del evento baja de 0,075 a 0,050 m².

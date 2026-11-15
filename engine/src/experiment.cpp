@@ -93,12 +93,13 @@ int lastFrameIn(const Track& track, int from, int to) {
 // en que a ninguno de los dos se lo ve afuera de [xMin, xMax]. Empieza cuando
 // el ultimo de los dos entra al tramo y termina cuando el primero lo deja.
 //
-// Un cuadro en que a alguno le falta la muestra (hueco de seguimiento) no
-// cierra la ventana: queda adentro, y ahi el error de ese peaton no se evalua
-// (ver experiment.hpp). Es el caso del evento 1: al peaton 36 se le pierde el
-// seguimiento en x = 3,2 m, despues del cruce, y la ventana sigue hasta que el
-// otro llega a xMax. Cortarla donde se pierde el seguimiento dejaba a los dos
-// en la mitad del corredor (la catedra lo marco el 12/11).
+// Un cuadro en que a alguno de los dos le falta la muestra (hueco de
+// seguimiento) CIERRA la ventana: el evento se simula mientras estan medidos
+// los dos, hasta que el primero desaparece. Es el caso del evento 1: al peaton
+// 36 se le pierde el seguimiento en x = 3,2 m, justo despues del cruce, y el
+// evento termina ahi (Nm = 42). Asi lo indico la catedra el 13/11: recortar
+// los datos de ese evento, sin eliminarlo. Adentro de la ventana no queda
+// entonces ningun instante sin muestra.
 void trimToCorridor(const Track& left, const Track& right, double xMin, double xMax,
                     int& first, int& last) {
   const auto outside = [&](const Track& track, int frame) {
@@ -136,31 +137,15 @@ void trimToCorridor(const Track& left, const Track& right, double xMin, double x
     throw std::invalid_argument("los dos peatones no coinciden dentro del tramo de x pedido");
   }
 
-  // Hacia atras y hacia adelante desde el cruce, hasta el ultimo cuadro antes
-  // de que a alguno de los dos se lo VEA afuera del tramo. Un cuadro sin
-  // muestra no corta la ventana.
+  // Hacia atras y hacia adelante desde el cruce, mientras los dos esten
+  // medidos y adentro del tramo.
   int insideFirst = crossing;
-  for (int frame = crossing - 1; frame >= first; --frame) {
-    if (outside(left, frame) || outside(right, frame)) {
-      break;
-    }
-    insideFirst = frame;
+  while (insideFirst > first && bothInside(insideFirst - 1)) {
+    --insideFirst;
   }
   int insideLast = crossing;
-  for (int frame = crossing + 1; frame <= last; ++frame) {
-    if (outside(left, frame) || outside(right, frame)) {
-      break;
-    }
-    insideLast = frame;
-  }
-  // La ventana empieza con los dos medidos (de ahi salen r(0) y v(0)) y no
-  // termina en un cuadro sin ninguna muestra.
-  while (insideFirst < crossing && !bothInside(insideFirst)) {
-    ++insideFirst;
-  }
-  while (insideLast > crossing && !present(left, insideLast) &&
-         !present(right, insideLast)) {
-    --insideLast;
+  while (insideLast < last && bothInside(insideLast + 1)) {
+    ++insideLast;
   }
   if (insideLast - insideFirst < 2) {
     throw std::invalid_argument("los dos peatones no coinciden dentro del tramo de x pedido");
@@ -207,9 +192,6 @@ std::vector<Row> readTable(const std::string& path) {
 // El target final es la ULTIMA POSICION MEDIDA de la ventana, como dice el
 // enunciado ("su target final es la ultima posicion de su trayectoria
 // experimental"): el agente termina donde termina la trayectoria medida.
-// Vale tambien cuando al peaton se le pierde el seguimiento antes del final
-// de la ventana (el 36 del evento 1): su target es su ultima muestra, llega
-// ahi y se queda mientras el otro termina de salir.
 Pedestrian build(int id, const Track& track, int first, int last, double sampling) {
   Pedestrian pedestrian;
   pedestrian.id = id;

@@ -8,11 +8,22 @@ en el optimo poblacional de cada metrica se optimiza alfa:
 
 * `alfa_curva`: <E>(alfa) con sus barras de error y el optimo marcado. Dice
   si hay un lado que cede sistematicamente.
-* `alfa_histograma`: el histograma del alfa optimo de cada evento, con una
-  linea vertical en el optimo global.
+* `alfa_histograma`: el histograma del alfa optimo de cada evento (uno por
+  PAR de peatones, no por peaton), con la cantidad de eventos de cada barra y
+  una linea vertical en el optimo global. Las barras tienen 0,125 de ancho y
+  estan centradas en 0, 0,125, ..., 1: la del medio son los pares simetricos y
+  ningun valor de la grilla de alfa cae en un borde.
 * `alfa_medido`: el alfa optimo de cada evento contra el alfa MEDIDO en las
   trayectorias (la fraccion del desvio lateral en el cruce que hizo el de la
   izquierda), que no usa la simulacion para nada.
+* `alfa_extremos`: las trayectorias del evento MAS simetrico (alfa optimo mas
+  cerca de 0,5) y del MENOS simetrico (el mas cerca de 0 o de 1): medidas,
+  simuladas con la capa simetrica y simuladas con el alfa del par.
+
+Ademas del optimo de cada par informa la ASIMETRIA |alfa - 0,5| (0 es el
+reparto parejo; 0,5, que uno solo hace toda la elusion): que evento la tiene
+mas chica, cual mas grande y su media sobre los 19, que se compara con la del
+alfa poblacional. Lo pidio la catedra el 13/11.
 
     python3 visualization/asymmetry.py
 """
@@ -20,6 +31,8 @@ en el optimo poblacional de cada metrica se optimiza alfa:
 from __future__ import annotations
 
 import argparse
+import re
+import subprocess
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -27,6 +40,30 @@ import numpy as np
 from matplotlib.ticker import MaxNLocator
 
 import common
+
+ENGINE = common.ROOT / "engine" / "build" / "elusion"
+# Barras de 0,125 centradas en 0, 0,125, ..., 1 (ver el encabezado).
+BINS = np.linspace(-0.0625, 1.0625, 10)
+
+
+def fixed_anticipation(path: Path) -> float:
+    """El t_a con que se hizo el barrido (d_s, alfa), del encabezado."""
+    with open(path) as stream:
+        for line in stream:
+            found = re.match(r"# t_a fijo en ([0-9.]+) s", line)
+            if found:
+                return float(found.group(1))
+            if not line.startswith("#"):
+                break
+    raise ValueError(f"{path} no dice con que t_a se hizo el barrido")
+
+
+def run_with_share(output: Path, event: int, p1: float, p2: float, share: float) -> Path:
+    """Corre un evento con el reparto alfa fijo y devuelve la carpeta."""
+    command = [str(ENGINE), "run", "--pruebas", str(event), "--p1", f"{p1:.6g}",
+               "--p2", f"{p2:.6g}", "--alfa", f"{share:.6g}", "--dir", str(output / f"m{event}")]
+    subprocess.run(command, check=True, capture_output=True, cwd=common.ROOT)
+    return output / f"m{event}"
 
 
 def measured_share(run: Path) -> float:
@@ -45,6 +82,80 @@ def measured_share(run: Path) -> float:
         offset = experimental[k, side, :2] - start
         deviations.append(abs(offset[0] * direction[1] - offset[1] * direction[0]))
     return deviations[0] / (deviations[0] + deviations[1])
+
+
+def extremes(folders, labels, share, other_share, measured, p1, p2, runs, out, style):
+    """Las trayectorias del par mas simetrico (alfa optimo mas cerca de 0,5) y
+    del menos simetrico (el mas lejos) con la metrica 1: las medidas (trazo
+    lleno), la simulacion con la capa simetrica (trazo cortado) y la
+    simulacion con el alfa optimo de ese par (punteada). Si varios eventos
+    empatan en el alfa de la grilla, desempata el alfa de la otra metrica."""
+    asymmetry = np.abs(share - 0.5)
+    order = np.lexsort((np.abs(other_share - 0.5), asymmetry))
+    chosen = ((int(order[0]), "el más simétrico"), (int(order[-1]), "el menos simétrico"))
+    figure, panels = plt.subplots(1, 2, sharex=True, sharey=True, figsize=(11.0, 2.75))
+    small = plt.rcParams["legend.fontsize"]
+    for axes, (index, reason) in zip(panels, chosen):
+        label = int(labels[index])
+        _, _, symmetric, experimental = common.load_run(folders[index])
+        _, _, own, _ = common.load_run(run_with_share(runs, label, p1, p2, share[index]))
+        errors = [np.mean([np.nanmean(common.metric_errors(experimental[:, side],
+                                                           simulated[:, side])[0])
+                           for side in (0, 1)]) for simulated in (symmetric, own)]
+        for side in (0, 1):
+            color = common.EXPERIMENT_COLOR[side]
+            axes.plot(experimental[:, side, 0], experimental[:, side, 1], color=color,
+                      linewidth=2.4)
+            axes.plot(symmetric[:, side, 0], symmetric[:, side, 1], color=color,
+                      linewidth=1.6, linestyle="--")
+            axes.plot(own[:, side, 0], own[:, side, 1], color="#1a1a1a",
+                      linewidth=1.6, linestyle=":")
+        axes.set_aspect("equal")
+        axes.set_ylim(1.05, 3.25)
+        axes.set_yticks([1.5, 2.0, 2.5])
+        axes.set_xlabel(common.AXIS_X)
+        axes.text(0.015, 0.95, f"evento {label}, {reason}: $\\alpha = "
+                  f"{common.math_decimal(share[index], 3)}$", transform=axes.transAxes,
+                  va="top", fontsize=small, color="#1a1a1a")
+        print(f"  evento {label} ({reason}): alfa optimo {share[index]:.3f} (medido "
+              f"{measured[index]:.2f}); E1 = {errors[0]:.4f} con la capa simetrica y "
+              f"{errors[1]:.4f} con su alfa")
+    panels[0].set_ylabel(common.AXIS_Y)
+    handles = [
+        plt.Line2D([], [], color="#1a1a1a", linewidth=2.4, label="medida"),
+        plt.Line2D([], [], color="#1a1a1a", linewidth=1.6, linestyle="--",
+                   label="simulada, $\\alpha = 0{,}5$"),
+        plt.Line2D([], [], color="#1a1a1a", linewidth=1.6, linestyle=":",
+                   label="simulada, $\\alpha$ del par"),
+    ]
+    figure.legend(handles=handles, loc="upper center", ncol=3, fontsize=small, frameon=False,
+                  bbox_to_anchor=(0.5, 1.0))
+    figure.tight_layout(rect=(0, 0, 1, 0.93))
+    common.save(figure, out / f"alfa_extremos_{style}.png")
+    plt.close(figure)
+
+
+def describe_asymmetry(labels, share, global_share):
+    """La asimetria |alfa - 0,5| de cada par: el evento que la tiene mas chica
+    (con los que empatan), el que la tiene mas grande y la media, contra la
+    del alfa poblacional."""
+    asymmetry = np.abs(share - 0.5)
+    names = lambda mask: ", ".join(str(int(label)) for label in labels[mask])
+    nearest = np.isclose(asymmetry, asymmetry.min())
+    farthest = np.isclose(asymmetry, asymmetry.max())
+    mean = asymmetry.mean()
+    sem = asymmetry.std(ddof=1) / np.sqrt(len(asymmetry))
+    print(f"  alfa mas cercano a 0,5: evento(s) {names(nearest)}, alfa = "
+          f"{share[nearest][0]:.3f} (|alfa - 0,5| = {asymmetry.min():.3f})")
+    print(f"  alfa mas lejano de 0,5: evento(s) {names(farthest)}, alfa = "
+          f"{share[farthest][0]:.3f} (|alfa - 0,5| = {asymmetry.max():.3f})")
+    print(f"  media de |alfa - 0,5| sobre los {len(share)} pares: {mean:.3f} +- {sem:.3f} "
+          f"(mediana {np.median(asymmetry):.3f}); equivale a alfa = {0.5 + mean:.3f} o "
+          f"{0.5 - mean:.3f}. Poblacional: |{global_share:.3f} - 0,5| = "
+          f"{abs(global_share - 0.5):.3f}")
+    print(f"  ceden mas a la izquierda (alfa > 0,5): {int((share > 0.5).sum())} de "
+          f"{len(share)}; a la derecha: {int((share < 0.5).sum())}")
+    return mean
 
 
 def analyse(path: Path, metric: int):
@@ -80,6 +191,7 @@ def main() -> None:
     curve, curve_axes = plt.subplots(1, 2, figsize=wide)
     histogram, histogram_axes = plt.subplots(1, 2, figsize=wide)
     scatter, scatter_axes = plt.subplots(1, 2, figsize=wide)
+    asymmetry_mean, own_shares = {}, {}
     for column, metric in enumerate((1, 2)):
         margin, shares, labels, cut, half, full, margins = results[metric]
         color, marker = common.METRIC_STYLE[metric]
@@ -102,15 +214,27 @@ def main() -> None:
         common.legend_inside(axes)
 
         axes = histogram_axes[column]
-        axes.hist(own_share, bins=np.linspace(0.0, 1.0, 11), color=common.EXPERIMENT_COLOR[0],
-                  alpha=0.85, edgecolor="white", linewidth=0.8)
+        counts, _, bars = axes.hist(own_share, bins=BINS, color=common.EXPERIMENT_COLOR[0],
+                                    alpha=0.85, edgecolor="white", linewidth=0.8)
+        assert int(counts.sum()) == len(own_share)
+        axes.bar_label(bars, labels=[str(int(count)) if count else "" for count in counts],
+                       padding=3, fontsize=plt.rcParams["legend.fontsize"], zorder=5,
+                       bbox={"facecolor": "white", "edgecolor": "none", "pad": 1.0})
         axes.axvline(shares[best], color=common.GLOBAL_COLOR, linestyle="--", linewidth=2.4,
                      label="óptimo global")
         axes.set_xlabel(common.AXIS_ALPHA + f" óptimo de cada evento, métrica {metric}")
         axes.set_ylabel(common.AXIS_COUNT)
-        axes.set_xlim(0.0, 1.0)
+        axes.set_xlim(BINS[0], BINS[-1])
+        axes.set_xticks(np.linspace(0.0, 1.0, 5))
+        axes.set_ylim(0, counts.max() + 2.2)
         axes.yaxis.set_major_locator(MaxNLocator(integer=True))
         axes.legend(loc="upper left", fontsize=plt.rcParams["legend.fontsize"])
+        asymmetry_mean[metric] = float(np.abs(own_share - 0.5).mean())
+        axes.text(0.97, 0.95, "$\\langle|\\alpha - 0{,}5|\\rangle = "
+                  f"{common.math_decimal(asymmetry_mean[metric], 2)}$",
+                  transform=axes.transAxes, ha="right", va="top",
+                  fontsize=plt.rcParams["legend.fontsize"], color="#1a1a1a")
+        own_shares[metric] = own_share
 
         axes = scatter_axes[column]
         correlation = float(np.corrcoef(measured, own_share)[0, 1])
@@ -144,11 +268,18 @@ def main() -> None:
         print(f"  alfa por evento: media {own_share.mean():.2f}, mediana "
               f"{np.median(own_share):.2f}, desvio {own_share.std(ddof=1):.2f}, de "
               f"{own_share.min():.2f} a {own_share.max():.2f}")
+        describe_asymmetry(labels, own_share, shares[best])
         print(f"  correlacion con el alfa medido: r = {correlation:.2f}")
         print(f"  con d_s tambien libre: optimo ({margins[a]:.3f} m, alfa {shares[b]:.3f}), "
               f"<E> = {plane[a, b]:.4f}")
         print("  alfa por evento: " + " ".join(
             f"{int(label)}:{value:.2f}" for label, value in zip(labels, own_share)))
+
+    margin, _, labels = results[1][:3]
+    print("\nel par mas simetrico y el menos simetrico (alfa optimo, metrica 1)")
+    extremes(folders, labels, own_shares[1], own_shares[2], measured,
+             fixed_anticipation(arguments.barridos / "metrica1" / "errores.txt"), margin,
+             arguments.barridos / "corridas", out, style)
 
     for figure, name in ((curve, "alfa_curva"), (histogram, "alfa_histograma"),
                          (scatter, "alfa_medido")):

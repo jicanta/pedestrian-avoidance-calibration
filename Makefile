@@ -14,10 +14,10 @@
 #   make poblacional-figuras   item b: superficie <E>(p1,p2) y cortes, por metrica
 #   make individual-figuras    item c: histogramas de los optimos individuales y error por evento
 #   make pares-figuras         item c opcional: histogramas de los optimos por peaton
-#   make asimetria-figuras     EXTRA: <E>(alfa), histograma de alfa por evento, alfa medido
+#   make asimetria-figuras     EXTRA: <E>(alfa), histograma de alfa por evento, |alfa - 0,5|, alfa medido
 #   make residuo-figuras       de donde viene el error que queda: ritmo/forma y lado
 #   make validacion-figuras    item d: validacion cruzada
-#   make trayectorias-figuras  item a: los 4 eventos representativos, observable primario y d(t)
+#   make trayectorias-figuras  item a: el evento de menor error, el de mayor y uno sin capa; e(t) y d(t)
 #   make check          validacion de las corridas (metricas recalculadas, contactos)
 #   make animations     videos de los eventos elegidos y el cuadro fijo de cada uno
 #   make apoyo          animaciones de apoyo: la capa paso a paso, cabeza a cabeza y que hace cada parametro
@@ -84,12 +84,18 @@ P1_M2    ?= 1.5
 P2_M2    ?= 0.14
 
 # --- eventos con animacion y figuras propias -------------------------------
-# Cuatro eventos representativos, cada uno por un motivo: 10, el que mas gana
-# con la capa (y el principal: de el son la animacion sin capa, e(t) y d(t));
-# 5, el cruce medido mas ajustado; 14, el mas holgado; 17, el unico en el que
-# el modelo elude por el lado opuesto.
+# Los eventos con video propio: 10, el principal (el que mas gana con la capa:
+# de el son la animacion sin capa, e(t) y d(t)); 14, el de MENOR error con la
+# capa calibrada; 17, el de MAYOR error (el unico en el que el modelo elude por
+# el lado opuesto); y 5, el cruce medido mas ajustado. La figura de
+# trayectorias muestra el de menor error, el de mayor error y el principal sin
+# la capa (lo pidio la catedra el 13/11); los elige representative.py por E_m.
 EVENTO      ?= 10
 EVENTOS_FIG ?= 10 5 14 17
+# El evento 1 no compite por el "menor error": su ventana termina poco despues
+# del cruce (al peaton 36 se le pierde el seguimiento) y por eso acumula menos
+# error que los demas, no porque ajuste mejor.
+EXCLUIR_MEJOR ?= 1
 # El cuadro fijo de cada animacion se toma en el instante de minima
 # aproximacion simulada, que es donde se ve la elusion.
 FPS         ?= 15
@@ -201,6 +207,8 @@ asimetria-figuras:
 # Item 2 c) OPCIONAL: los parametros por peaton (cuatro por evento)
 # --------------------------------------------------------------------------
 
+# Lo agrego la catedra por un ANUNCIO del campus (no esta en el PDF del
+# enunciado; confirmado en la consulta del 13/11):
 # "Optimizar parametros por cada peaton (en lugar de 1 juego de parametros por
 # cada par de peatones). Notar que el caso opcional requiere hallar 4
 # parametros en lugar de solo 2." Como los dos agentes estan acoplados, el
@@ -316,13 +324,14 @@ validacion-figuras:
 	$(PY) visualization/crossval.py
 	$(PY) visualization/crossval.py --figures $(SLIDES) --estilo diapositiva
 
-# Item a: las trayectorias de los cuatro eventos representativos en una sola
-# figura y, del evento principal, el observable primario contra el tiempo y la
-# distancia entre los dos peatones.
+# Item a: en una sola figura, las trayectorias del evento de menor error, del
+# de mayor error y del principal sin la capa; y, del evento principal, el
+# observable primario contra el tiempo y la distancia entre los dos peatones.
 trayectorias-figuras:
-	$(PY) visualization/representative.py --eventos $(EVENTOS_FIG)
-	$(PY) visualization/representative.py --eventos $(EVENTOS_FIG) \
-	    --figures $(SLIDES) --estilo diapositiva
+	$(PY) visualization/representative.py --sin-capa-evento $(EVENTO) \
+	    --excluir $(EXCLUIR_MEJOR)
+	$(PY) visualization/representative.py --sin-capa-evento $(EVENTO) \
+	    --excluir $(EXCLUIR_MEJOR) --figures $(SLIDES) --estilo diapositiva
 	@for m in $(EVENTOS_FIG); do \
 	  $(PY) visualization/trajectory.py --run $(RUNS)/optimo-metrica1/m$$m \
 	      --sin-capa $(RUNS)/sin-capa/m$$m ; \
@@ -389,8 +398,8 @@ youtube:
 	cp "$(AN)/evento10.mp4" "youtube/01 - SdS TP5 G10 - Evento 10 con capa de elusion.mp4"
 	cp "$(AN)/evento10-sin-capa.mp4" "youtube/02 - SdS TP5 G10 - Evento 10 sin capa de elusion.mp4"
 	cp "$(AN)/evento05.mp4" "youtube/03 - SdS TP5 G10 - Evento 5 el cruce mas ajustado.mp4"
-	cp "$(AN)/evento14.mp4" "youtube/04 - SdS TP5 G10 - Evento 14 el cruce mas holgado.mp4"
-	cp "$(AN)/evento17.mp4" "youtube/05 - SdS TP5 G10 - Evento 17 lado opuesto.mp4"
+	cp "$(AN)/evento14.mp4" "youtube/04 - SdS TP5 G10 - Evento 14 el de menor error.mp4"
+	cp "$(AN)/evento17.mp4" "youtube/05 - SdS TP5 G10 - Evento 17 el de mayor error.mp4"
 	cp "$(AN)/apoyo_cabeza_a_cabeza.mp4" "youtube/06 - SdS TP5 G10 - Apoyo - La capa de elusion cabeza a cabeza.mp4"
 	cp "$(AN)/apoyo_barrido_p2_evento10.mp4" "youtube/07 - SdS TP5 G10 - Apoyo - Que hace d_s.mp4"
 	cp "$(AN)/apoyo_barrido_p1_evento10.mp4" "youtube/08 - SdS TP5 G10 - Apoyo - Que hace t_a.mp4"
@@ -473,19 +482,21 @@ slides-images:
 	cp $(SL)/c_calibracion_individual/residuo_descomposicion_diapositiva.png  $(FIGS)/slide-31-residuo-descomposicion.png
 	cp $(SL)/c_calibracion_individual/residuo_lado_diapositiva.png            $(FIGS)/slide-32-residuo-lado.png
 	cp $(SL)/animaciones/evento17_cuadro_cruce.png                            $(FIGS)/slide-33-animacion-evento17.png
-	cp $(SL)/d_validacion_cruzada/error_metrica1_diapositiva.png              $(FIGS)/slide-34-validacion-error.png
+	cp $(SL)/d_validacion_cruzada/error_diapositiva.png                       $(FIGS)/slide-34-validacion-error.png
 	cp $(SL)/d_validacion_cruzada/parametros_metrica1_diapositiva.png         $(FIGS)/slide-35-validacion-parametros.png
 	cp $(SL)/d_validacion_cruzada/tamano_metrica1_diapositiva.png             $(FIGS)/slide-35b-validacion-tamano.png
+	cp $(SL)/d_validacion_cruzada/parametros_metrica2_diapositiva.png         $(FIGS)/slide-35c-validacion-parametros-metrica2.png
 	cp $(SL)/e_extra_reparto/alfa_curva_diapositiva.png                       $(FIGS)/slide-extra-1-alfa-curva.png
 	cp $(SL)/e_extra_reparto/alfa_histograma_diapositiva.png                  $(FIGS)/slide-extra-2-alfa-histograma.png
 	cp $(SL)/e_extra_reparto/alfa_medido_diapositiva.png                      $(FIGS)/slide-extra-3-alfa-medido.png
+	cp $(SL)/e_extra_reparto/alfa_extremos_diapositiva.png                    $(FIGS)/slide-extra-4-alfa-extremos.png
 	$(MAKE) slides-images-tikz
 	@echo "$$(ls $(FIGS) | wc -l) imágenes en $(FIGS)/"
 
 # Los fragmentos de las diapositivas escritos en LaTeX (report/figuras/*.tikz,
 # los mismos que \input presentacion.tex) renderizados sueltos a PNG con la
 # misma tipografia y los mismos colores, numerados por diapositiva.
-TIKZ_FIGS := 02-experimento 05-parametros-evento 06-elusion-deteccion 07-elusion-target \
+TIKZ_FIGS := 02-experimento 04-modelo-sfm 05-parametros-evento 06-elusion-deteccion 07-elusion-target \
              11-motor-uml 12-bucle 13-parametros-tabla
 slides-images-tikz:
 	mkdir -p $(DOCS)/figuras $(FIGS)
