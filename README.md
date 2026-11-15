@@ -201,6 +201,7 @@ make apoyo                 # animaciones de apoyo: la capa paso a paso, cabeza a
 make youtube               # copia los videos con nombres legibles en youtube/
 make gifs                  # los videos como GIF en gif/, más los 19 eventos sueltos (gif/todos/) y las tandas
 make gifs-alfa             # extra: los GIF del par más simétrico y del menos simétrico (gif/alfa/)
+make gifs-lado             # los eventos 16 y 17 a cada lado del t_a en que pasan a eludir por el lado opuesto (gif/lado/)
 make pares-noche           # ítem c opcional sobre la grilla fina (81 × 61 por agente): ~11 h con 8 hilos, se reanuda solo
 make figuras               # todas las figuras de análisis, en los dos estilos
 make slides-images         # las imágenes de la presentación, numeradas por diapositiva

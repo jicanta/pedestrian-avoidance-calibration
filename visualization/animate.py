@@ -154,6 +154,8 @@ def main() -> None:
     parser.add_argument("--name", type=str, default="")
     parser.add_argument("--alfa", action="store_true",
                         help="escribe en una esquina el reparto alfa de la corrida (EXTRA)")
+    parser.add_argument("--parametros", action="store_true",
+                        help="escribe en una esquina el t_a y el d_s de la corrida")
     common.add_common_arguments(parser)
     arguments = parser.parse_args()
     common.use_style(arguments.estilo)
@@ -165,6 +167,11 @@ def main() -> None:
     figure, axes = plt.subplots(figsize=(10.0, 3.8))
     still = arguments.cruce or arguments.cuadro >= 0
     scene = Scene(axes, static, time, simulated, experimental, legend=still)
+    if arguments.parametros:
+        axes.text(0.99, 0.04, f"$t_a$ = {common.decimal(float(static['p1']), 2)} s   "
+                  f"$d_s$ = {common.decimal(float(static['p2']), 2)} m",
+                  transform=axes.transAxes, ha="right", va="bottom",
+                  fontsize=plt.rcParams["legend.fontsize"], color="#1a1a1a")
     if arguments.alfa:
         axes.text(0.99, 0.04, share_caption(static), transform=axes.transAxes, ha="right",
                   va="bottom", fontsize=plt.rcParams["legend.fontsize"], color="#1a1a1a")

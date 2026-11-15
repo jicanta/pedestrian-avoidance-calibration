@@ -25,6 +25,7 @@
 #   make gifs           los videos como GIF en gif/ (para embeber en la presentacion en vivo),
 #                       mas los 19 eventos sueltos (gif/todos/) y las tandas de cinco
 #   make gifs-alfa      EXTRA: los GIF del par mas simetrico y del menos simetrico (gif/alfa/)
+#   make gifs-lado      los eventos 16 y 17 a cada lado del t_a en que cambian de lado (gif/lado/)
 #   make figuras-diapositivas  todas las figuras con tipografia de presentacion
 #   make slides-images  las imagenes de la presentacion numeradas por diapositiva
 #   make slides-images-tikz    solo los esquemas TikZ de las diapositivas, renderizados a PNG
@@ -128,7 +129,7 @@ ASIM     := $(DATA)/asimetria
 .PHONY: all todo build eventos eventos-figuras convergencia convergencia-figuras \
         ventana asimetria asimetria-figuras pares pares-noche pares-figuras barrido corridas poblacional-figuras individual-figuras residuo-figuras \
         validacion-figuras trayectorias-figuras alternativas alternativas-figuras \
-        check animations apoyo youtube gifs gifs-todos gifs-alfa \
+        check animations apoyo youtube gifs gifs-todos gifs-alfa gifs-lado \
         figuras figuras-diapositivas slides-images slides-images-tikz documentos \
         entrega clean-figures
 
@@ -414,7 +415,7 @@ youtube:
 AGIF   = ffmpeg -loglevel error -y -i
 PALETA = split[a][b];[a]palettegen[p];[b][p]paletteuse
 
-gifs: gifs-todos gifs-alfa
+gifs: gifs-todos gifs-alfa gifs-lado
 	mkdir -p gif && rm -f gif/*.gif
 	@for f in youtube/*.mp4; do \
 	  name=$$(basename "$$f" .mp4); \
@@ -445,6 +446,26 @@ gifs-alfa:
 	      "gif/alfa/evento-$$n-$$rol-alfa-$$alfa.gif"; \
 	done
 	@ls gif/alfa
+
+# Los dos eventos que cambian de lado con t_a (los escalones horizontales del
+# mapa de <E>): el 17 al pasar de 1,50 a 1,55 s y el 16 al pasar de 2,15 a
+# 2,20 s. De cada uno, el GIF a cada lado del escalon (gif/lado/): con el t_a
+# menor elude por el mismo lado que las personas y con el mayor, por el opuesto.
+LADO  := $(DATA)/apoyo/lado
+LADOS ?= 17:1.50:0.14:mismo-lado 17:1.55:0.14:lado-opuesto \
+         16:2.15:0.13:mismo-lado 16:2.20:0.13:lado-opuesto
+gifs-lado: build
+	mkdir -p gif/lado && rm -f gif/lado/*.gif
+	@for caso in $(LADOS); do \
+	  set -- $$(echo $$caso | tr ':' ' '); \
+	  $(ELUSION) run $(COMUN) --pruebas $$1 --p1 $$2 --p2 $$3 --subdivisiones $(SUBDIV) \
+	      --dir $(LADO)/m$$1-$$2 >/dev/null; \
+	  $(PY) visualization/animate.py --run $(LADO)/m$$1-$$2 --fps $(FPS) --parametros \
+	      --name lado-evento$$1-$$2 --figures $(SLIDES) --estilo diapositiva >/dev/null; \
+	  $(AGIF) "$(AN)/lado-evento$$1-$$2.mp4" -nostdin -vf "fps=12,scale=900:-1:flags=lanczos,$(PALETA)" \
+	      "gif/lado/evento-$$1-ta-$$2-$$4.gif"; \
+	done
+	@ls gif/lado
 
 # Un GIF por evento, los 19, con el optimo de la metrica 1 (gif/todos/).
 gifs-todos:
