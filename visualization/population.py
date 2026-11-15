@@ -71,8 +71,8 @@ def surface(p1, p2, mean, metric, figures, style):
 def cuts(p1, p2, event_error, region, metric, figures, style):
     """Los dos cortes que pasan por el optimo, con sus barras de error.
 
-    La curva va entera y las barras cada pocos puntos: con 81 y 61 valores de
-    grilla, una barra por punto tapa la curva. La barra es el error estandar de
+    Van solo los puntos, sin linea que los una, y no todos: con 81 y 61 valores
+    de grilla, un punto por valor satura el panel. La barra es el error estandar de
     la media entre los M eventos. El optimo no lleva linea vertical ni franja:
     se marca con un punto blanco, igual que en el mapa, y figura en la leyenda.
     """
@@ -85,10 +85,14 @@ def cuts(p1, p2, event_error, region, metric, figures, style):
     for axes, values, curve, bars, label, best, inside in (
             (axesrow[0], p1, mean[:, j], sem[:, j], common.AXIS_P1, p1[i], region[:, j]),
             (axesrow[1], p2, mean[i, :], sem[i, :], common.AXIS_P2, p2[j], region[i, :])):
-        every = max(1, len(values) // 14)
-        axes.plot(values, curve, color=color, linewidth=1.8)
+        # Solo puntos, sin linea que los una: cada punto es un valor simulado
+        # de la grilla (uno de cada cuatro en t_a, uno de cada dos en d_s). El
+        # salto es el menor que deja a lo sumo unos 32 puntos y llega justo
+        # al ultimo valor de la grilla.
+        every = next(k for k in range(1, len(values))
+                     if k >= len(values) / 32 and (len(values) - 1) % k == 0)
         axes.errorbar(values[::every], curve[::every], yerr=bars[::every], color=color,
-                      marker=marker, **common.ERRORBAR)
+                      marker=marker, markersize=5, **common.ERRORBAR)
         # Sin linea ni franja: el optimo va como en el mapa, un punto blanco
         # con borde, y con su entrada en la leyenda.
         index = int(np.argmin(np.abs(values - best)))

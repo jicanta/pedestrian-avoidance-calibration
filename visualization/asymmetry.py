@@ -212,10 +212,9 @@ def main() -> None:
     gain = cut[half, :] - own_error
 
     curve, axes = plt.subplots(figsize=single)
-    every = max(1, len(shares) // 14)
-    axes.plot(shares, mean, color=color, linewidth=1.8)
-    axes.errorbar(shares[::every], mean[::every], yerr=sem[::every], color=color,
-                  marker=marker, **common.ERRORBAR)
+    # Solo puntos, sin linea que los una: los 41 valores de alfa simulados.
+    axes.errorbar(shares, mean, yerr=sem, color=color, marker=marker, markersize=5,
+                  **common.ERRORBAR)
     # Sin la linea del optimo: el valor se escribe a mano en la diapositiva.
     axes.set_xlabel(common.AXIS_ALPHA)
     axes.set_ylabel(common.METRIC_AVERAGE[metric])

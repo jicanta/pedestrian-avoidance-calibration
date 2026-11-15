@@ -472,7 +472,9 @@ Los dos óptimos coinciden en `d_s` y difieren en `t_a`. Usar el óptimo de la
 métrica 2 cuesta un 1,9 % de `<E(1)>`; al revés, un 18 % de `<E(2)>`.
 
 La figura de los cortes no lleva línea vertical ni franja en el óptimo (el
-valor se escribe en la diapositiva): son la curva, sus barras de error y el
+valor se escribe en la diapositiva): son puntos sueltos, sin línea que los una (uno de cada cuatro valores de la
+grilla en `t_a` y uno de cada dos en `d_s`; en la curva de `α`, los 41), sus
+barras de error y el
 óptimo marcado con un punto blanco, igual que en el mapa, con su entrada en la
 leyenda. Los `d_s` que empatan con el óptimo según la
 diferencia pareada se informan por consola.
