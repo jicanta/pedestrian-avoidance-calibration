@@ -9,7 +9,7 @@ en la presentación en vivo se usan los GIF de `gif/`.
 Los `.mp4` se generan con `make animations` y `make apoyo` y se copian acá con
 `make youtube`; no se versionan.
 
-Convenciones de dibujo, iguales en los videos de eventos: disco lleno = agente simulado, disco
+Convenciones de dibujo (los videos y los GIF no llevan leyenda; el cuadro fijo del PDF sí), iguales en los videos de eventos: disco lleno = agente simulado, disco
 punteado = posición medida en el mismo instante, cruz verde = target temporal
 mientras la capa declara conflicto (y el disco lleva borde negro). Un cuadro
 por instante medido, a 15 cuadros por segundo: corren en tiempo real.

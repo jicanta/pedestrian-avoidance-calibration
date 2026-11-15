@@ -54,7 +54,7 @@ class Scene:
     """Todo lo que se redibuja cuadro a cuadro, para que el video y el cuadro
     fijo salgan exactamente iguales."""
 
-    def __init__(self, axes, static, time, simulated, experimental):
+    def __init__(self, axes, static, time, simulated, experimental, legend=True):
         self.static = static
         self.time = time
         self.simulated = simulated
@@ -101,8 +101,11 @@ class Scene:
                   label="medida")
         axes.plot([], [], linestyle="none", marker="x", color=common.TARGET_COLOR,
                   markersize=9, markeredgewidth=2.0, label="target temporal")
-        axes.legend(loc="lower center", ncol=3,
-                    fontsize=plt.rcParams["legend.fontsize"] - 1)
+        # La leyenda va solo en el cuadro fijo (el del PDF): en el video tapa
+        # la parte de abajo de la escena y la convencion se explica al mostrarlo.
+        if legend:
+            axes.legend(loc="lower center", ncol=3,
+                        fontsize=plt.rcParams["legend.fontsize"] - 1)
         # Dos puntos menos que el resto: con "conflicto" el rotulo es mas
         # ancho que los ejes y el video lo cortaba.
         self.text = axes.text(0.0, 1.02, "", transform=axes.transAxes,
@@ -153,7 +156,8 @@ def main() -> None:
     out_dir = common.folder("anim", arguments.figures)
 
     figure, axes = plt.subplots(figsize=(10.0, 3.8))
-    scene = Scene(axes, static, time, simulated, experimental)
+    still = arguments.cruce or arguments.cuadro >= 0
+    scene = Scene(axes, static, time, simulated, experimental, legend=still)
     if arguments.alfa:
         axes.text(0.99, 0.04, share_caption(static), transform=axes.transAxes, ha="right",
                   va="bottom", fontsize=plt.rcParams["legend.fontsize"], color="#1a1a1a")
