@@ -4,9 +4,10 @@ La capa que se calibra en los items b, c y d es simetrica: los dos peatones
 del par se corren lo mismo. Aca la capa lleva un numero mas, alfa, la fraccion
 de la separacion que falta que se lleva el peaton que sale de la IZQUIERDA (el
 otro se lleva 1 - alfa); alfa = 0,5 es la capa simetrica. Con t_a y d_s fijos
-en el optimo poblacional de cada metrica se optimiza alfa:
+en el optimo poblacional se optimiza alfa, SOLO CON LA METRICA 1 (el error a
+iguales tiempos; lo pidio la catedra):
 
-* `alfa_curva`: <E>(alfa) con sus barras de error y el optimo marcado. Dice
+* `alfa_curva`: <E(1)>(alfa) con sus barras de error y el optimo marcado. Dice
   si hay un lado que cede sistematicamente.
 * `alfa_histograma`: el histograma del alfa optimo de cada evento (uno por
   PAR de peatones, no por peaton), con la cantidad de eventos de cada barra y
@@ -24,6 +25,10 @@ Ademas del optimo de cada par informa la ASIMETRIA |alfa - 0,5| (0 es el
 reparto parejo; 0,5, que uno solo hace toda la elusion): que evento la tiene
 mas chica, cual mas grande y su media sobre los 19, que se compara con la del
 alfa poblacional. Lo pidio la catedra el 13/11.
+
+Las corridas de los dos eventos extremos con su alfa quedan en
+data/asimetria/corridas/, con extremos.txt (evento, alfa, rol), que es lo que
+lee `make gifs-alfa` para armar sus GIF.
 
     python3 visualization/asymmetry.py
 """
@@ -84,15 +89,21 @@ def measured_share(run: Path) -> float:
     return deviations[0] / (deviations[0] + deviations[1])
 
 
-def extremes(folders, labels, share, other_share, measured, p1, p2, runs, out, style):
+def extremes(folders, labels, share, gain, measured, p1, p2, runs, out, style):
     """Las trayectorias del par mas simetrico (alfa optimo mas cerca de 0,5) y
-    del menos simetrico (el mas lejos) con la metrica 1: las medidas (trazo
-    lleno), la simulacion con la capa simetrica (trazo cortado) y la
-    simulacion con el alfa optimo de ese par (punteada). Si varios eventos
-    empatan en el alfa de la grilla, desempata el alfa de la otra metrica."""
+    del menos simetrico (el mas lejos): las medidas (trazo lleno), la
+    simulacion con la capa simetrica (trazo cortado) y la simulacion con el
+    alfa optimo de ese par (punteada). Si varios eventos empatan en el alfa de
+    la grilla, el mas simetrico es el que MENOS gana con su alfa respecto de
+    la capa simetrica (y el menos simetrico, el que mas)."""
     asymmetry = np.abs(share - 0.5)
-    order = np.lexsort((np.abs(other_share - 0.5), asymmetry))
+    order = np.lexsort((gain, asymmetry))
     chosen = ((int(order[0]), "el más simétrico"), (int(order[-1]), "el menos simétrico"))
+    runs.mkdir(parents=True, exist_ok=True)
+    (runs / "extremos.txt").write_text(
+        "# evento alfa rol\n" + "".join(
+            f"{int(labels[index])} {share[index]:.6g} {role}\n"
+            for (index, _), role in zip(chosen, ("mas-simetrico", "menos-simetrico"))))
     figure, panels = plt.subplots(1, 2, sharex=True, sharey=True, figsize=(11.0, 2.75))
     small = plt.rcParams["legend.fontsize"]
     for axes, (index, reason) in zip(panels, chosen):
@@ -177,108 +188,100 @@ def main() -> None:
     arguments = parser.parse_args()
     style = arguments.estilo
     common.use_style(style)
-    wide = (10.0, 4.0) if style == "informe" else (11.0, 4.2)
+    single = (6.2, 4.3) if style == "informe" else (6.6, 4.5)
     out = common.folder("extra", arguments.figures)
 
-    results = {metric: analyse(arguments.barridos / f"metrica{metric}" / "errores.txt", metric)
-               for metric in (1, 2)}
+    metric = 1
+    sweep = arguments.barridos / f"metrica{metric}" / "errores.txt"
+    margin, shares, labels, cut, half, full, margins = analyse(sweep, metric)
     folders = sorted(Path(arguments.runs).glob("m*"), key=lambda path: int(path.name[1:]))
     measured = np.array([measured_share(path) for path in folders])
     print(f"alfa medido en las trayectorias: media {measured.mean():.2f}, mediana "
           f"{np.median(measured):.2f}, desvio {measured.std(ddof=1):.2f}, de "
           f"{measured.min():.2f} a {measured.max():.2f}")
 
-    curve, curve_axes = plt.subplots(1, 2, figsize=wide)
-    histogram, histogram_axes = plt.subplots(1, 2, figsize=wide)
-    scatter, scatter_axes = plt.subplots(1, 2, figsize=wide)
-    asymmetry_mean, own_shares = {}, {}
-    for column, metric in enumerate((1, 2)):
-        margin, shares, labels, cut, half, full, margins = results[metric]
-        color, marker = common.METRIC_STYLE[metric]
-        mean = cut.mean(axis=1)
-        sem = cut.std(axis=1, ddof=1) / np.sqrt(cut.shape[1])
-        best = int(np.argmin(mean))
-        own = np.argmin(cut, axis=0)
-        own_share = shares[own]
-        own_error = cut[own, np.arange(cut.shape[1])]
+    color, marker = common.METRIC_STYLE[metric]
+    small = plt.rcParams["legend.fontsize"]
+    mean = cut.mean(axis=1)
+    sem = cut.std(axis=1, ddof=1) / np.sqrt(cut.shape[1])
+    best = int(np.argmin(mean))
+    own = np.argmin(cut, axis=0)
+    own_share = shares[own]
+    own_error = cut[own, np.arange(cut.shape[1])]
+    gain = cut[half, :] - own_error
 
-        axes = curve_axes[column]
-        every = max(1, len(shares) // 14)
-        axes.plot(shares, mean, color=color, linewidth=1.8)
-        axes.errorbar(shares[::every], mean[::every], yerr=sem[::every], color=color,
-                      marker=marker, **common.ERRORBAR)
-        axes.axvline(shares[best], color=common.GLOBAL_COLOR, linestyle="--", linewidth=2.2,
-                     label="óptimo")
-        axes.set_xlabel(common.AXIS_ALPHA)
-        axes.set_ylabel(common.METRIC_AVERAGE[metric])
-        common.legend_inside(axes)
+    curve, axes = plt.subplots(figsize=single)
+    every = max(1, len(shares) // 14)
+    axes.plot(shares, mean, color=color, linewidth=1.8)
+    axes.errorbar(shares[::every], mean[::every], yerr=sem[::every], color=color,
+                  marker=marker, **common.ERRORBAR)
+    axes.axvline(shares[best], color=common.GLOBAL_COLOR, linestyle="--", linewidth=2.2,
+                 label="óptimo")
+    axes.set_xlabel(common.AXIS_ALPHA)
+    axes.set_ylabel(common.METRIC_AVERAGE[metric])
+    common.legend_inside(axes)
 
-        axes = histogram_axes[column]
-        counts, _, bars = axes.hist(own_share, bins=BINS, color=common.EXPERIMENT_COLOR[0],
-                                    alpha=0.85, edgecolor="white", linewidth=0.8)
-        assert int(counts.sum()) == len(own_share)
-        axes.bar_label(bars, labels=[str(int(count)) if count else "" for count in counts],
-                       padding=3, fontsize=plt.rcParams["legend.fontsize"], zorder=5,
-                       bbox={"facecolor": "white", "edgecolor": "none", "pad": 1.0})
-        axes.axvline(shares[best], color=common.GLOBAL_COLOR, linestyle="--", linewidth=2.4,
-                     label="óptimo global")
-        axes.set_xlabel(common.AXIS_ALPHA + f" óptimo de cada evento, métrica {metric}")
-        axes.set_ylabel(common.AXIS_COUNT)
-        axes.set_xlim(BINS[0], BINS[-1])
-        axes.set_xticks(np.linspace(0.0, 1.0, 5))
-        axes.set_ylim(0, counts.max() + 2.2)
-        axes.yaxis.set_major_locator(MaxNLocator(integer=True))
-        axes.legend(loc="upper left", fontsize=plt.rcParams["legend.fontsize"])
-        asymmetry_mean[metric] = float(np.abs(own_share - 0.5).mean())
-        axes.text(0.97, 0.95, "$\\langle|\\alpha - 0{,}5|\\rangle = "
-                  f"{common.math_decimal(asymmetry_mean[metric], 2)}$",
-                  transform=axes.transAxes, ha="right", va="top",
-                  fontsize=plt.rcParams["legend.fontsize"], color="#1a1a1a")
-        own_shares[metric] = own_share
+    histogram, axes = plt.subplots(figsize=single)
+    counts, _, bars = axes.hist(own_share, bins=BINS, color=common.EXPERIMENT_COLOR[0],
+                                alpha=0.85, edgecolor="white", linewidth=0.8)
+    assert int(counts.sum()) == len(own_share)
+    axes.bar_label(bars, labels=[str(int(count)) if count else "" for count in counts],
+                   padding=3, fontsize=small, zorder=5,
+                   bbox={"facecolor": "white", "edgecolor": "none", "pad": 1.0})
+    axes.axvline(shares[best], color=common.GLOBAL_COLOR, linestyle="--", linewidth=2.4,
+                 label="óptimo global")
+    axes.set_xlabel(common.AXIS_ALPHA + " óptimo de cada evento")
+    axes.set_ylabel(common.AXIS_COUNT)
+    axes.set_xlim(BINS[0], BINS[-1])
+    axes.set_xticks(np.linspace(0.0, 1.0, 5))
+    axes.set_ylim(0, counts.max() + 2.2)
+    axes.yaxis.set_major_locator(MaxNLocator(integer=True))
+    axes.legend(loc="upper left", fontsize=small)
+    axes.text(0.97, 0.95, "$\\langle|\\alpha - 0{,}5|\\rangle = "
+              f"{common.math_decimal(float(np.abs(own_share - 0.5).mean()), 2)}$",
+              transform=axes.transAxes, ha="right", va="top", fontsize=small,
+              color="#1a1a1a")
 
-        axes = scatter_axes[column]
-        correlation = float(np.corrcoef(measured, own_share)[0, 1])
-        axes.plot([0, 1], [0, 1], color="#6e7680", linestyle=":", linewidth=1.4)
-        axes.plot(measured, own_share, linestyle="none", marker=marker, color=color,
-                  markersize=8, alpha=0.85, label="un evento")
-        axes.set_xlabel(common.AXIS_ALPHA + " medido en las trayectorias")
-        axes.set_ylabel(common.AXIS_ALPHA + f" calibrado, métrica {metric}")
-        axes.set_xlim(-0.03, 1.03)
-        axes.set_ylim(-0.03, 1.03)
-        axes.set_aspect("equal")
-        axes.legend(loc="upper left", fontsize=plt.rcParams["legend.fontsize"])
+    scatter, axes = plt.subplots(figsize=(single[1] + 0.6, single[1]))
+    correlation = float(np.corrcoef(measured, own_share)[0, 1])
+    axes.plot([0, 1], [0, 1], color="#6e7680", linestyle=":", linewidth=1.4)
+    axes.plot(measured, own_share, linestyle="none", marker=marker, color=color,
+              markersize=8, alpha=0.85, label="un evento")
+    axes.set_xlabel(common.AXIS_ALPHA + " medido en las trayectorias")
+    axes.set_ylabel(common.AXIS_ALPHA + " calibrado")
+    axes.set_xlim(-0.03, 1.03)
+    axes.set_ylim(-0.03, 1.03)
+    axes.set_aspect("equal")
+    axes.legend(loc="upper left", fontsize=small)
 
-        gain = cut[half, :] - own_error
-        gain_sem = gain.std(ddof=1) / np.sqrt(len(gain))
-        global_gain = cut[half, :] - cut[best, :]
-        # Con d_s libre ademas de alfa: el optimo del plano (d_s, alfa).
-        plane = full.mean(axis=2)
-        a, b = np.unravel_index(np.argmin(plane), plane.shape)
-        print(f"\n{common.METRIC_LABEL[metric]}, d_s = {margin:.3f} m")
-        print(f"  simetrica (alfa = 0,5): <E> = {mean[half]:.4f} +- {sem[half]:.4f}")
-        print(f"  alfa global optimo {shares[best]:.3f}: <E> = {mean[best]:.4f}; ganancia "
-              f"pareada {global_gain.mean():.4f} +- "
-              f"{global_gain.std(ddof=1) / np.sqrt(len(gain)):.4f} "
-              f"({100 * (1 - mean[best] / mean[half]):.0f} %)")
-        print(f"  alfa propio de cada evento: <E> = {own_error.mean():.4f} +- "
-              f"{own_error.std(ddof=1) / np.sqrt(len(gain)):.4f}; ganancia pareada "
-              f"{gain.mean():.4f} +- {gain_sem:.4f} "
-              f"({100 * (1 - own_error.mean() / mean[half]):.0f} %, "
-              f"{gain.mean() / gain_sem:.1f} desvios)")
-        print(f"  alfa por evento: media {own_share.mean():.2f}, mediana "
-              f"{np.median(own_share):.2f}, desvio {own_share.std(ddof=1):.2f}, de "
-              f"{own_share.min():.2f} a {own_share.max():.2f}")
-        describe_asymmetry(labels, own_share, shares[best])
-        print(f"  correlacion con el alfa medido: r = {correlation:.2f}")
-        print(f"  con d_s tambien libre: optimo ({margins[a]:.3f} m, alfa {shares[b]:.3f}), "
-              f"<E> = {plane[a, b]:.4f}")
-        print("  alfa por evento: " + " ".join(
-            f"{int(label)}:{value:.2f}" for label, value in zip(labels, own_share)))
+    gain_sem = gain.std(ddof=1) / np.sqrt(len(gain))
+    global_gain = cut[half, :] - cut[best, :]
+    # Con d_s libre ademas de alfa: el optimo del plano (d_s, alfa).
+    plane = full.mean(axis=2)
+    a, b = np.unravel_index(np.argmin(plane), plane.shape)
+    print(f"\n{common.METRIC_LABEL[metric]}, d_s = {margin:.3f} m")
+    print(f"  simetrica (alfa = 0,5): <E> = {mean[half]:.4f} +- {sem[half]:.4f}")
+    print(f"  alfa global optimo {shares[best]:.3f}: <E> = {mean[best]:.4f}; ganancia "
+          f"pareada {global_gain.mean():.4f} +- "
+          f"{global_gain.std(ddof=1) / np.sqrt(len(gain)):.4f} "
+          f"({100 * (1 - mean[best] / mean[half]):.0f} %)")
+    print(f"  alfa propio de cada evento: <E> = {own_error.mean():.4f} +- "
+          f"{own_error.std(ddof=1) / np.sqrt(len(gain)):.4f}; ganancia pareada "
+          f"{gain.mean():.4f} +- {gain_sem:.4f} "
+          f"({100 * (1 - own_error.mean() / mean[half]):.0f} %, "
+          f"{gain.mean() / gain_sem:.1f} desvios)")
+    print(f"  alfa por evento: media {own_share.mean():.2f}, mediana "
+          f"{np.median(own_share):.2f}, desvio {own_share.std(ddof=1):.2f}, de "
+          f"{own_share.min():.3f} a {own_share.max():.3f}")
+    describe_asymmetry(labels, own_share, shares[best])
+    print(f"  correlacion con el alfa medido: r = {correlation:.2f}")
+    print(f"  con d_s tambien libre: optimo ({margins[a]:.3f} m, alfa {shares[b]:.3f}), "
+          f"<E> = {plane[a, b]:.4f}")
+    print("  alfa por evento: " + " ".join(
+        f"{int(label)}:{value:.3f}" for label, value in zip(labels, own_share)))
 
-    margin, _, labels = results[1][:3]
-    print("\nel par mas simetrico y el menos simetrico (alfa optimo, metrica 1)")
-    extremes(folders, labels, own_shares[1], own_shares[2], measured,
-             fixed_anticipation(arguments.barridos / "metrica1" / "errores.txt"), margin,
+    print("\nel par mas simetrico y el menos simetrico (alfa optimo)")
+    extremes(folders, labels, own_share, gain, measured, fixed_anticipation(sweep), margin,
              arguments.barridos / "corridas", out, style)
 
     for figure, name in ((curve, "alfa_curva"), (histogram, "alfa_histograma"),

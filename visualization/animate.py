@@ -45,6 +45,11 @@ def caption(static: dict, t: float, simulated: np.ndarray, experimental: np.ndar
     return text
 
 
+def share_caption(static: dict) -> str:
+    """El reparto con que se corrio (EXTRA; 0,5 es la capa simetrica)."""
+    return f"$\\alpha$ = {common.decimal(float(static.get('alfa', 0.5)))}"
+
+
 class Scene:
     """Todo lo que se redibuja cuadro a cuadro, para que el video y el cuadro
     fijo salgan exactamente iguales."""
@@ -137,6 +142,8 @@ def main() -> None:
                              "minima aproximacion SIMULADA (o en ella, si no hubo conflicto): "
                              "es el momento en el que se ve la elusion y su target temporal")
     parser.add_argument("--name", type=str, default="")
+    parser.add_argument("--alfa", action="store_true",
+                        help="escribe en una esquina el reparto alfa de la corrida (EXTRA)")
     common.add_common_arguments(parser)
     arguments = parser.parse_args()
     common.use_style(arguments.estilo)
@@ -147,6 +154,9 @@ def main() -> None:
 
     figure, axes = plt.subplots(figsize=(10.0, 3.8))
     scene = Scene(axes, static, time, simulated, experimental)
+    if arguments.alfa:
+        axes.text(0.99, 0.04, share_caption(static), transform=axes.transAxes, ha="right",
+                  va="bottom", fontsize=plt.rcParams["legend.fontsize"], color="#1a1a1a")
     common.comma_ticks(figure)
 
     if arguments.cruce or arguments.cuadro >= 0:

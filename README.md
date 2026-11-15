@@ -194,12 +194,13 @@ make pares-figuras         # ítem c opcional: histogramas de los óptimos por p
 make residuo-figuras       # de dónde viene el error que queda: ritmo/forma y lado
 make validacion-figuras    # ítem d: validación cruzada
 make trayectorias-figuras  # ítem a: el evento de menor error, el de mayor y uno sin capa; observable primario y d(t)
-make asimetria             # extra: t_a fijo y barrido del par (d_s, α)
-make asimetria-figuras     # extra: <E>(α), histograma del α óptimo de cada par, |α − 0,5|, α calibrado contra medido y el par más y el menos simétrico
+make asimetria             # extra: t_a fijo y barrido del par (d_s, α), con la métrica 1
+make asimetria-figuras     # extra: <E(1)>(α), histograma del α óptimo de cada par, |α − 0,5|, α calibrado contra medido y el par más y el menos simétrico
 make animations            # videos de los cuatro eventos con video propio, su cuadro fijo y los 19 eventos a la vez
 make apoyo                 # animaciones de apoyo: la capa paso a paso, cabeza a cabeza y qué hace cada parámetro
 make youtube               # copia los videos con nombres legibles en youtube/
 make gifs                  # los videos como GIF en gif/, más los 19 eventos sueltos (gif/todos/) y las tandas
+make gifs-alfa             # extra: los GIF del par más simétrico y del menos simétrico (gif/alfa/)
 make pares-noche           # ítem c opcional sobre la grilla fina (81 × 61 por agente): ~11 h con 8 hilos, se reanuda solo
 make figuras               # todas las figuras de análisis, en los dos estilos
 make slides-images         # las imágenes de la presentación, numeradas por diapositiva
@@ -657,53 +658,56 @@ el peatón que sale de la **izquierda** (el otro se lleva `1 − α`):
 T_i* = q_i + w(τ*) · 2 α_i · (D − d*) ŝ,    α_izq = α,  α_der = 1 − α
 ```
 
-El factor 2 hace que `α = 0,5` sea exactamente la capa simétrica. Con `t_a` y
-`d_s` en el óptimo de cada métrica (`make asimetria`, `asymmetry.py`):
+El factor 2 hace que `α = 0,5` sea exactamente la capa simétrica. `α` se
+optimiza **sólo con la métrica 1** (el error a iguales tiempos; lo pidió la
+cátedra), con `t_a = 2,15 s` y `d_s = 0,13 m` fijos en el óptimo poblacional
+(`make asimetria`, `asymmetry.py`):
 
-| | métrica 1 | métrica 2 |
-|---|---|---|
-| simétrica (`α = 0,5`) | 0,0617 ± 0,0067 | 0,0191 ± 0,0017 |
-| `α` global óptimo | **0,625** · 0,0603 (gana 2 %, pareado 0,0014 ± 0,0011) | **0,575** · 0,0188 (gana 1 %, pareado 0,0003 ± 0,0005) |
-| `α` propio de cada evento | 0,0572 (gana 7 %, pareado 0,0045 ± 0,0014) | 0,0155 (gana **19 %**, pareado 0,0036 ± 0,0009) |
-| `α` por evento | media 0,62 · de 0,23 a 0,97 | media 0,58 · de 0,12 a 0,95 |
-| evento con `α` más cercano a 0,5 | 3, 17 y 19 (`α` = 0,525) | 5 (`α` = 0,525) |
-| evento con `α` más lejano de 0,5 | 12 (`α` = 0,975) | 12 (`α` = 0,95) |
-| asimetría media `<\|α − 0,5\|>` de los 19 pares | **0,187 ± 0,028** | **0,208 ± 0,029** |
-| asimetría del `α` global, `\|α − 0,5\|` | 0,125 | 0,075 |
-| correlación con el `α` medido | r = 0,72 | **r = 0,88** |
+| | métrica 1 |
+|---|---|
+| simétrica (`α = 0,5`) | 0,0617 ± 0,0067 |
+| `α` global óptimo | **0,625** · 0,0603 (gana 2 %, pareado 0,0014 ± 0,0011) |
+| `α` propio de cada evento | 0,0572 (gana 7 %, pareado 0,0045 ± 0,0014) |
+| `α` por evento | media 0,62 · de 0,225 a 0,975 |
+| evento con `α` más cercano a 0,5 | 3, 17 y 19 (`α` = 0,525) |
+| evento con `α` más lejano de 0,5 | 12 (`α` = 0,975) |
+| asimetría media `<\|α − 0,5\|>` de los 19 pares | **0,187 ± 0,028** |
+| asimetría del `α` global, `\|α − 0,5\|` | 0,125 |
+| correlación con el `α` medido | r = 0,72 |
 
 - **Como población, la capa simétrica alcanza**: el mejor `α` global está un
-  poco por encima de 0,5 pero gana 1–2 %, dentro del error pareado. Dejar
+  poco por encima de 0,5 pero gana 2 %, dentro del error pareado. Dejar
   también `d_s` libre no cambia el óptimo.
 - **Par por par el reparto no es parejo.** `α` se optimiza evento por evento
-  (uno por par de peatones, con `t_a` y `d_s` fijos) y va de 0,12 a 0,97; el
+  (uno por par de peatones, no por peatón) y va de 0,225 a 0,975; el
   histograma (`slide-extra-2`) dice cuántos eventos caen en cada intervalo de
   0,125 (las barras están centradas en 0, 0,125, …, 1, así que ningún valor de
   la grilla de `α` cae en un borde y la del medio son los pares simétricos).
   La **asimetría** de un par es `|α − 0,5|`: 0 si se reparte parejo, 0,5 si uno
   solo hace toda la elusión. El par más simétrico tiene `α` = 0,525 (eventos
-  3, 17 y 19 con la métrica 1) y el menos simétrico es el **evento 12**
-  (`α` = 0,975). La media de `|α − 0,5|` sobre los 19 pares es **0,19**
-  (0,21 con la métrica 2), contra 0,125 (0,075) del `α` global: el poblacional
-  subestima cuánto se aparta de la simetría un par típico, porque al promediar
-  se compensan los que ceden para lados opuestos (15 de 19 tienen `α` > 0,5
-  con la métrica 1; 13 con la 2).
+  3, 17 y 19) y el menos simétrico es el **evento 12** (`α` = 0,975). La media
+  de `|α − 0,5|` sobre los 19 pares es **0,19**, contra 0,125 del `α` global:
+  el poblacional subestima cuánto se aparta de la simetría un par típico,
+  porque al promediar se compensan los que ceden para lados opuestos (15 de 19
+  tienen `α` > 0,5).
 - **El `α` calibrado es el que se mide.** `α` también se puede medir sin
   simular: la fracción del desvío lateral en el cruce (respecto de la propia
   recta de arranque a target) que hizo el que sale de la izquierda. Medido da
-  media 0,57, de 0,17 a 0,99, y correlaciona con el calibrado con r = 0,72
-  (métrica 1) y 0,88 (métrica 2). No es un parámetro que absorbe residuo.
+  media 0,57, de 0,17 a 0,99, y correlaciona con el calibrado con r = 0,72.
+  No es un parámetro que absorbe residuo.
 - **Describe pero no predice**: es un número por par, y para un par nuevo la
   mejor estimación es ≈ 0,5.
 - **El par más simétrico y el menos simétrico** (`slide-extra-4`, pedido por la
-  cátedra el 13/11), elegidos por el `α` óptimo con la métrica 1 (el empate
-  entre el 3, el 17 y el 19 lo desempata el `α` de la métrica 2): en el evento
-  19 (`α` = 0,525) simular con su `α` o con la capa simétrica da lo mismo
-  (`E(1)_m` = 0,046 m² con las dos); en el 12 (`α` = 0,975) todo el desvío lo
-  hace el que sale de la izquierda, la capa simétrica le da medio arco a cada
-  uno y con el `α` del par `E(1)_m` baja de 0,075 a 0,050 m². Las dos corridas
-  con `α` las lanza `asymmetry.py` (`elusion run --alfa`, en
-  `data/asimetria/corridas/`).
+  cátedra el 13/11), elegidos por el `α` óptimo. De los tres que empatan en
+  0,525 se muestra el **evento 3**, que es el que menos gana con su `α`
+  (`E(1)_m` = 0,059 m² con su `α` y con la capa simétrica); en el 12
+  (`α` = 0,975) todo el desvío lo hace el que sale de la izquierda, la capa
+  simétrica le da medio arco a cada uno y con el `α` del par `E(1)_m` baja de
+  0,075 a 0,050 m². Las dos corridas con `α` las lanza `asymmetry.py`
+  (`elusion run --alfa`, en `data/asimetria/corridas/`, con `extremos.txt`).
+- **Los GIF de esos dos pares** (`make gifs-alfa`, en `gif/alfa/`): cada evento
+  con la capa simétrica (`α` = 0,5) y con el `α` del par, cuatro en total, con
+  el `α` de la corrida escrito en una esquina.
 
 La cátedra aclaró el 13/11 que el extra **sólo se muestra si alcanza el
 tiempo**.

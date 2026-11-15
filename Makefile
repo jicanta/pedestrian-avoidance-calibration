@@ -10,7 +10,7 @@
 #   make corridas       las corridas con cuadros: los dos optimos y la capa apagada
 #   make pares          item c opcional: los 4 parametros por evento (2 por peaton)
 #   make pares-noche    lo mismo sobre la grilla fina (81 x 61 por agente): horas, se puede reanudar
-#   make asimetria      EXTRA: t_a fijo y barrido del par (d_s, alfa)
+#   make asimetria      EXTRA: t_a fijo y barrido del par (d_s, alfa), con la metrica 1
 #   make poblacional-figuras   item b: superficie <E>(p1,p2) y cortes, por metrica
 #   make individual-figuras    item c: histogramas de los optimos individuales y error por evento
 #   make pares-figuras         item c opcional: histogramas de los optimos por peaton
@@ -24,6 +24,7 @@
 #   make youtube        copia los videos con nombres legibles en youtube/
 #   make gifs           los videos como GIF en gif/ (para embeber en la presentacion en vivo),
 #                       mas los 19 eventos sueltos (gif/todos/) y las tandas de cinco
+#   make gifs-alfa      EXTRA: los GIF del par mas simetrico y del menos simetrico (gif/alfa/)
 #   make figuras-diapositivas  todas las figuras con tipografia de presentacion
 #   make slides-images  las imagenes de la presentacion numeradas por diapositiva
 #   make slides-images-tikz    solo los esquemas TikZ de las diapositivas, renderizados a PNG
@@ -119,7 +120,7 @@ COMUN    := --datos $(DATOS) --eventos $(EVENTOS) --xmin $(X_MIN) --xmax $(X_MAX
 # alfa reparte la separacion que falta entre los dos peatones del par: el de la
 # izquierda se lleva alfa y el de la derecha 1 - alfa, y con 0,5 la capa es la
 # simetrica de dos parametros que se calibra en los items b, c y d. Se deja
-# t_a en el optimo de cada metrica y se barre el par (d_s, alfa).
+# t_a en el optimo de la metrica 1 y se barre el par (d_s, alfa).
 P2_ASIM  ?= 0:0.6:61
 ALFAS    ?= 0:1:41
 ASIM     := $(DATA)/asimetria
@@ -127,7 +128,7 @@ ASIM     := $(DATA)/asimetria
 .PHONY: all todo build eventos eventos-figuras convergencia convergencia-figuras \
         ventana asimetria asimetria-figuras pares pares-noche pares-figuras barrido corridas poblacional-figuras individual-figuras residuo-figuras \
         validacion-figuras trayectorias-figuras alternativas alternativas-figuras \
-        check animations apoyo youtube gifs gifs-todos \
+        check animations apoyo youtube gifs gifs-todos gifs-alfa \
         figuras figuras-diapositivas slides-images slides-images-tikz documentos \
         entrega clean-figures
 
@@ -190,14 +191,13 @@ ventana: build
 # --------------------------------------------------------------------------
 
 # EXTRA, fuera de lo que pide el enunciado (lo propuso la catedra): t_a fijo en
-# el optimo de cada metrica y barrido del par (d_s, alfa). El optimo
+# el optimo de la metrica 1 y barrido del par (d_s, alfa); alfa se optimiza
+# solo con la metrica 1 (el error a iguales tiempos), como pidio la catedra. El optimo
 # poblacional de alfa dice si hay un lado que cede sistematicamente y el de
 # cada evento, cuanto se gana describiendo el reparto par por par.
 asimetria: build
 	$(ELUSION) asymmetry $(COMUN) --p1 $(P1_M1) --p2 $(P2_ASIM) \
 	    --alfas $(ALFAS) --subdivisiones $(SUBDIV) --dir $(ASIM)/metrica1
-	$(ELUSION) asymmetry $(COMUN) --p1 $(P1_M2) --p2 $(P2_ASIM) \
-	    --alfas $(ALFAS) --subdivisiones $(SUBDIV) --dir $(ASIM)/metrica2
 
 asimetria-figuras:
 	$(PY) visualization/asymmetry.py
@@ -414,7 +414,7 @@ youtube:
 AGIF   = ffmpeg -loglevel error -y -i
 PALETA = split[a][b];[a]palettegen[p];[b][p]paletteuse
 
-gifs: gifs-todos
+gifs: gifs-todos gifs-alfa
 	mkdir -p gif && rm -f gif/*.gif
 	@for f in youtube/*.mp4; do \
 	  name=$$(basename "$$f" .mp4); \
@@ -425,6 +425,26 @@ gifs: gifs-todos
 	    --name los19 --figures $(SLIDES) --estilo diapositiva
 	$(AGIF) "$(AN)/los19_tandas.mp4" -vf "fps=12,scale=900:-1:flags=lanczos,$(PALETA)" \
 	    "gif/11 - SdS TP5 G10 - Los 19 eventos en tandas de cinco.gif"
+
+# EXTRA: los GIF del par MAS simetrico y del MENOS simetrico segun el alfa
+# optimo de cada evento (gif/alfa/). De cada uno, dos: con la capa simetrica
+# (alfa = 0,5, la calibrada) y con el alfa de ese par. Los dos eventos y su
+# alfa los elige asymmetry.py (make asimetria-figuras), que deja las corridas
+# con alfa y extremos.txt en data/asimetria/corridas/.
+gifs-alfa:
+	mkdir -p gif/alfa && rm -f gif/alfa/*.gif
+	@grep -v '^#' $(ASIM)/corridas/extremos.txt | while read m alfa rol; do \
+	  n=$$(printf %02d $$m); \
+	  $(PY) visualization/animate.py --run $(RUNS)/optimo-metrica1/m$$m --fps $(FPS) --alfa \
+	      --name alfa-evento$$n-simetrica --figures $(SLIDES) --estilo diapositiva >/dev/null; \
+	  $(PY) visualization/animate.py --run $(ASIM)/corridas/m$$m --fps $(FPS) --alfa \
+	      --name alfa-evento$$n-propio --figures $(SLIDES) --estilo diapositiva >/dev/null; \
+	  $(AGIF) "$(AN)/alfa-evento$$n-simetrica.mp4" -nostdin -vf "fps=12,scale=900:-1:flags=lanczos,$(PALETA)" \
+	      "gif/alfa/evento-$$n-$$rol-alfa-0.5.gif"; \
+	  $(AGIF) "$(AN)/alfa-evento$$n-propio.mp4" -nostdin -vf "fps=12,scale=900:-1:flags=lanczos,$(PALETA)" \
+	      "gif/alfa/evento-$$n-$$rol-alfa-$$alfa.gif"; \
+	done
+	@ls gif/alfa
 
 # Un GIF por evento, los 19, con el optimo de la metrica 1 (gif/todos/).
 gifs-todos:

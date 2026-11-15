@@ -105,8 +105,9 @@ propia recta, en el instante del cruce— la fracción que se lleva el de la
 izquierda tiene media 0,59 pero va de **0,17 a 0,99**: en cada par uno de los
 dos cede más. Se le agregó a la capa el reparto `α` (`--alfa`). El `α` global
 óptimo queda cerca de 0,5 (la capa simétrica alcanza como modelo de población),
-pero par por par baja `<E(2)>` un **19 %**, y el `α` calibrado correlaciona con
-el medido con **r = 0,88**. Por pedido de la cátedra se muestra **al final,
+pero par por par baja `<E(1)>` un **7 %**, y el `α` calibrado correlaciona con
+el medido con **r = 0,72** (con la métrica 1, que es con la que la cátedra
+pidió optimizar `α`). Por pedido de la cátedra se muestra **al final,
 como extra**, sin reemplazar la calibración de `(t_a, d_s)`.
 *(`engine/include/avoidance.hpp`, `visualization/asymmetry.py`)*
 
@@ -261,7 +262,7 @@ es el evento con `α` más cercano a 0,5 y cuál el más lejano. El agente habí
 elegido los dos extremos con el `α` *medido* en las trayectorias (eventos 9 y
 18), que no es el que se optimiza, y el histograma tenía valores de la grilla
 de `α` justo en los bordes de las barras. Ahora los extremos salen del `α`
-óptimo (eventos 19 y 12), las barras no tienen valores en los bordes y llevan
+óptimo (eventos 3 y 12), se optimiza sólo con la métrica 1, las barras no tienen valores en los bordes y llevan
 su cantidad escrita, y se informa la media de `|α − 0,5|` (0,19) contra la del
 `α` poblacional (0,125).
 *(consulta del 13/11; `visualization/asymmetry.py`)*

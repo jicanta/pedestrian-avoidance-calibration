@@ -923,65 +923,52 @@
 \appendix
 
 \begin{frame}[noframenumbering]{Extra (1/4): \textquestiondown{}se reparte parejo la elusión?}
-    \figancha[0.86]{slide-extra-1-alfa-curva.png}{%
-        \colvin{%
-            \item La capa calibrada es \textbf{simétrica}: los dos se corren lo
-                  mismo. Se le agrega un número, $\alpha$, la fracción de la
-                  separación que falta que se lleva \textbf{el que sale de la
-                  izquierda}:
-                  $\vT_i^{*} = \vq_i + w\,2\alpha_i\,(\Dreq - \ddca)\,\shat$, con
-                  $\alpha_{\text{izq}} = \alpha$ y $\alpha_{\text{der}} = 1 - \alpha$.}
-        \colvin{%
-            \item Con $t_a$ y $d_s$ en su óptimo, \alert{el mejor $\alpha$ global
-                  es $0{,}625$ y $0{,}575$}, y gana un \SI{2}{\percent} y un
-                  \SI{1}{\percent}: dentro del error pareado. Como población,
-                  \textbf{la capa simétrica alcanza}.
-            \cond{izquierda: métrica 1; derecha: métrica 2. $\alpha = 0{,}5$ es la capa simétrica}}
-    }
+    \figbulw[0.5em]{slide-extra-1-alfa-curva.png}{%
+        \item La capa calibrada es \textbf{simétrica}: los dos se corren lo
+              mismo. Se le agrega $\alpha$, la fracción de la separación que
+              falta que se lleva \textbf{el que sale de la izquierda}:
+              $\vT_i^{*} = \vq_i + w\,2\alpha_i\,(\Dreq - \ddca)\,\shat$, con
+              $\alpha_{\text{izq}} = \alpha$ y $\alpha_{\text{der}} = 1 - \alpha$.
+        \item Con $t_a$ y $d_s$ en su óptimo, \alert{el mejor $\alpha$ global
+              es $0{,}625$} y gana un \SI{2}{\percent}: dentro del error
+              pareado. Como población, \textbf{la capa simétrica alcanza}.
+        \cond{$\alpha$ se optimiza con la métrica 1; $t_a = \SI{2.15}{\second}$, $d_s = \SI{0.13}{\meter}$; $\alpha = 0{,}5$ es la capa simétrica}}
 \end{frame}
 
 \begin{frame}[noframenumbering]{Extra (2/4): el $\alpha$ óptimo de cada par}
-    \figancha[0.86]{slide-extra-2-alfa-histograma.png}{%
-        \colvin{%
-            \item Se optimiza $\alpha$ \textbf{evento por evento} (uno por par)
-                  y se cuenta cuántos caen en cada intervalo; la línea es el
-                  óptimo global.
-            \item El más cercano a $0{,}5$: \textbf{eventos 3, 17 y 19}
-                  ($\alpha = 0{,}525$). El más lejano: \alert{\textbf{evento 12}
-                  ($\alpha = 0{,}975$)}.}
-        \colvin{%
-            \item La asimetría media de un par es
-                  \alert{$\langle|\alpha - 0{,}5|\rangle = 0{,}19$}; la del
-                  $\alpha$ poblacional, $|0{,}625 - 0{,}5| = 0{,}125$: al
-                  promediar, los pares que ceden para lados opuestos se
-                  compensan.
-            \cond{$t_a$ y $d_s$ fijos en el óptimo de cada métrica. Métrica 2: evento 5 ($0{,}525$), evento 12 ($0{,}95$), $0{,}21$ contra $0{,}075$}}
-    }
+    \figbulw[0.5em]{slide-extra-2-alfa-histograma.png}{%
+        \item $\alpha$ óptimo \textbf{evento por evento} (uno por par) y
+              cuántos caen en cada intervalo.
+        \item El más cercano a $0{,}5$: \textbf{eventos 3, 17 y 19}
+              ($\alpha = 0{,}525$). El más lejano: \alert{\textbf{evento 12}
+              ($\alpha = 0{,}975$)}.
+        \item La asimetría media de un par es
+              \alert{$\langle|\alpha - 0{,}5|\rangle = 0{,}19$}; la del
+              $\alpha$ poblacional, $|0{,}625 - 0{,}5| = 0{,}125$: al
+              promediar, los pares que ceden para lados opuestos se compensan.
+        \item Con el $\alpha$ de cada par, \mEuno{} baja un \SI{7}{\percent}.
+        \cond{métrica 1; $t_a = \SI{2.15}{\second}$, $d_s = \SI{0.13}{\meter}$}}
 \end{frame}
 
 \begin{frame}[noframenumbering]{Extra (3/4): el $\alpha$ calibrado es el que se mide}
-    \figancha[0.80]{slide-extra-3-alfa-medido.png}{%
-        \colvin{%
-            \item $\alpha$ también se puede \textbf{medir sin simular}: la
-                  fracción del desvío lateral en el cruce que hizo el que sale
-                  de la izquierda. Media $0{,}57$, de $0{,}17$ a $0{,}99$.
-            \item \alert{El calibrado y el medido coinciden}: $r = 0{,}72$ con la
-                  métrica 1 y $r = 0{,}88$ con la 2.}
-        \colvin{%
-            \item No es un parámetro que absorbe residuo: es una propiedad de
-                  cada par. Pero \textbf{describe y no predice}: para un par
-                  nuevo la mejor estimación es $\approx 0{,}5$.
-            \cond{un punto por evento; la diagonal es calibrado = medido}}
-    }
+    \figbulw[0.5em]{slide-extra-3-alfa-medido.png}{%
+        \item $\alpha$ también se puede \textbf{medir sin simular}: la
+              fracción del desvío lateral en el cruce que hizo el que sale de
+              la izquierda. Media $0{,}57$, de $0{,}17$ a $0{,}99$.
+        \item \alert{El calibrado y el medido van juntos}: $r = 0{,}72$.
+        \item No es un parámetro que absorbe residuo: es una propiedad de cada
+              par. Pero \textbf{describe y no predice}: para un par nuevo la
+              mejor estimación es $\approx 0{,}5$.
+        \cond{un punto por evento; la diagonal es calibrado = medido; métrica 1}}
 \end{frame}
 
 
 \begin{frame}[noframenumbering]{Extra (4/4): el par más simétrico y el menos simétrico}
     \figancha[0.92]{slide-extra-4-alfa-extremos.png}{%
         \colvin{%
-            \item \textbf{Evento 19}, $\alpha = 0{,}525$: con su $\alpha$ y con
+            \item \textbf{Evento 3}, $\alpha = 0{,}525$: con su $\alpha$ y con
                   la capa simétrica la simulación es la misma
-                  ($E^{(1)}_m = 0{,}046$ con las dos).
+                  ($E^{(1)}_m = 0{,}059$ con las dos).
             \item \textbf{Evento 12}, $\alpha = 0{,}975$: \alert{todo el desvío
                   lo hace el que sale de la izquierda}; el otro sigue derecho.}
         \colvin{%

@@ -311,9 +311,9 @@ La cátedra pidió mostrarlo al final, como un opcional, y el 13/11 aclaró que
 
 - La capa calibrada es simétrica: los dos se corren lo mismo. Se le agrega α,
   la fracción de la separación que falta que se lleva el que sale de la
-  izquierda; 0,5 es la capa simétrica.
-- Con t_a y d_s en su óptimo, el mejor α global es 0,625 y 0,575, y gana 2 % y
-  1 %: dentro del error. Como población, la capa simétrica alcanza.
+  izquierda; 0,5 es la capa simétrica. α se optimiza con la métrica 1.
+- Con t_a y d_s en su óptimo, el mejor α global es 0,625 y gana 2 %: dentro
+  del error. Como población, la capa simétrica alcanza.
 
 ### Extra 2 — `slide-extra-2-alfa-histograma.png`
 
@@ -323,18 +323,20 @@ La cátedra pidió mostrarlo al final, como un opcional, y el 13/11 aclaró que
 - La asimetría media de un par, ⟨|α − 0,5|⟩, es 0,19; la del α poblacional es
   0,125. Es menor porque al promediar se compensan los pares que ceden para
   lados opuestos (15 de 19 ceden más del lado izquierdo). Con el α propio de
-  cada par ⟨E(2)⟩ baja un 19 %.
+  cada par ⟨E(1)⟩ baja un 7 %.
 
 ### Extra 3 — `slide-extra-3-alfa-medido.png`
 
 - α también se puede medir sin simular, del desvío lateral de cada uno en el
-  cruce. El calibrado y el medido coinciden: r = 0,72 y 0,88. Es una propiedad
-  de cada par, no un parámetro que absorbe residuo; pero describe y no predice.
+  cruce. El calibrado y el medido van juntos: r = 0,72. Es una propiedad de
+  cada par, no un parámetro que absorbe residuo; pero describe y no predice.
 
 ### Extra 4 — `slide-extra-4-alfa-extremos.png`
 
 - El par más simétrico y el menos simétrico según el α óptimo. En el evento
-  19, α = 0,525: simular con su α o con la capa simétrica da lo mismo.
+  3, α = 0,525: simular con su α o con la capa simétrica da lo mismo.
 - En el 12, α = 0,975: todo el desvío lo hace el que sale de la izquierda y el
   otro sigue derecho. La capa simétrica le da medio arco a cada uno; con el α
   del par el error del evento baja de 0,075 a 0,050 m².
+- Si se quiere mostrar en movimiento: los cuatro GIF de `gif/alfa/` (cada uno
+  de los dos eventos con α = 0,5 y con su α).
