@@ -1,60 +1,29 @@
 % UML del motor de simulacion (solo el motor: nada de post-procesamiento ni de
-% figuras). Experiment arma los eventos desde los datos de la catedra,
-% Avoidance decide el target temporal, Model da las fuerzas del SFM sin fuerza
-% social y Simulation integra con Beeman y mide las dos metricas.
+% figuras), con el mismo dibujo que en los TP3 y TP4: cajas grises, flechas
+% rectas y sin rotulos. Experiment arma los eventos desde los datos de la
+% catedra, Simulation integra cada evento con Beeman y mide las dos metricas,
+% Avoidance decide el target temporal y Model da las fuerzas del SFM sin
+% fuerza social.
 \begin{tikzpicture}[
-    font=\footnotesize,
-    clase/.style={rectangle split, rectangle split parts=2, draw=azul,
-                  fill=white, rounded corners=1.5pt, align=left,
-                  text width=#1, inner sep=3pt},
-    rel/.style={->, >=Stealth, draw=gris, thick},
-    nota/.style={font=\scriptsize\itshape, color=gris}]
-
-  \node[clase=3.5cm] (exp) at (0,0) {
-    \textbf{Experiment}
-    \nodepart{two}
-    \texttt{framerate}, \texttt{sampling}\\
-    \texttt{events: Event[]}\\[0.15em]
-    \texttt{readExperiment()}};
-
-  \node[clase=3.4cm, right=1.1cm of exp] (evt) {
-    \textbf{Event}
-    \nodepart{two}
-    \texttt{label}, \texttt{instants}\\
-    \texttt{left}, \texttt{right}\\
-    \texttt{minimumDistance}};
-
-  \node[clase=3.9cm, right=1.1cm of evt] (ped) {
-    \textbf{Pedestrian}
-    \nodepart{two}
-    \texttt{experimental: Sample[]}\\
-    \texttt{start}, \texttt{initialVelocity}\\
-    \texttt{target}, \texttt{desiredSpeed}};
-
-  \node[clase=3.5cm, below=1.0cm of exp] (sim) {
-    \textbf{Simulation}
-    \nodepart{two}
-    \texttt{simulate()} -- Beeman\\
-    \texttt{measure()} -- $\Euno$, $\Edos$};
-
-  \node[clase=3.4cm, right=1.1cm of sim] (avo) {
-    \textbf{Avoidance}
-    \nodepart{two}
-    \texttt{anticipation} $= t_a$\\
-    \texttt{margin} $= d_s$\\[0.15em]
-    \texttt{temporaryTarget()}};
-
-  \node[clase=3.9cm, right=1.1cm of avo] (mod) {
-    \textbf{Model}
-    \nodepart{two}
-    \texttt{mass}, \texttt{radius}, \texttt{relaxation}\\
-    \texttt{normal}, \texttt{tangential}\\[0.15em]
-    \texttt{drivingForce()}, \texttt{contactForce()}};
-
-  \draw[rel] (exp) -- node[nota, above] {1..M} (evt);
-  \draw[rel] (evt) -- node[nota, above] {2} (ped);
-  \draw[rel] (sim) -- node[nota, above] {usa} (avo);
-  \draw[rel, dashed] (avo) -- node[nota, above] {sólo $\ehat_i^{\,d}$} (mod);
-  \draw[rel] (exp) -- (sim);
-  \draw[rel] (evt) -- (avo);
-\end{tikzpicture}
+    clase/.style={rectangle split, rectangle split parts=2, draw=azul!60,
+                  fill=grisclaro, rounded corners=1pt, align=left,
+                  font=\scriptsize, text width=3.6cm, inner sep=3pt},
+    flecha/.style={-{Latex[length=4pt]}, azul!70}]
+    \node[clase] (evt) {\textbf{Event}
+        \nodepart{second} \texttt{label, instants}\\ \texttt{left, right}\\ \texttt{minimumDistance}};
+    \node[clase, left=0.8cm of evt] (exp) {\textbf{Experiment}
+        \nodepart{second} \texttt{framerate, sampling}\\ \texttt{events}\\ \texttt{readExperiment()}};
+    \node[clase, right=0.8cm of evt] (ped) {\textbf{Pedestrian}
+        \nodepart{second} \texttt{experimental}\\ \texttt{start, initialVelocity}\\ \texttt{target, desiredSpeed}};
+    \node[clase, below=0.7cm of evt] (sim) {\textbf{Simulation}
+        \nodepart{second} \texttt{simulate()}\\ \texttt{measure()}};
+    \node[clase, below=0.7cm of exp] (avo) {\textbf{Avoidance}
+        \nodepart{second} \texttt{anticipation, margin}\\ \texttt{temporaryTarget()}};
+    \node[clase, below=0.7cm of ped] (mod) {\textbf{Model}
+        \nodepart{second} \texttt{mass, radius, relaxation}\\ \texttt{drivingForce()}\\ \texttt{contactForce()}};
+    \draw[flecha] (exp) -- (evt);
+    \draw[flecha] (evt) -- (ped);
+    \draw[flecha] (sim) -- (evt);
+    \draw[flecha] (sim) -- (avo);
+    \draw[flecha] (sim) -- (mod);
+\end{tikzpicture}%
