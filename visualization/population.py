@@ -73,9 +73,8 @@ def cuts(p1, p2, event_error, region, metric, figures, style):
 
     La curva va entera y las barras cada pocos puntos: con 81 y 61 valores de
     grilla, una barra por punto tapa la curva. La barra es el error estandar de
-    la media entre los M eventos. El optimo no lleva linea vertical ni franja
-    (lo pidio el grupo: el valor va escrito en la diapositiva); solo se le
-    agrega su punto cuando no coincide con ninguno de los dibujados.
+    la media entre los M eventos. El optimo no lleva linea vertical ni franja:
+    se marca con un punto blanco, igual que en el mapa, y figura en la leyenda.
     """
     common.use_style(style)
     mean, sem = common.population(event_error)
@@ -90,14 +89,13 @@ def cuts(p1, p2, event_error, region, metric, figures, style):
         axes.plot(values, curve, color=color, linewidth=1.8)
         axes.errorbar(values[::every], curve[::every], yerr=bars[::every], color=color,
                       marker=marker, **common.ERRORBAR)
-        # Sin linea ni franja en el optimo (el valor se escribe a mano en la
-        # diapositiva). Si el optimo no cae en uno de los puntos dibujados ni
-        # pegado a uno, se agrega su punto, con su barra, para que se vea.
+        # Sin linea ni franja: el optimo va como en el mapa, un punto blanco
+        # con borde, y con su entrada en la leyenda.
         index = int(np.argmin(np.abs(values - best)))
-        nearest = min(abs(index - k) for k in range(0, len(values), every))
-        if nearest > 1:
-            axes.errorbar([values[index]], [curve[index]], yerr=[bars[index]], color=color,
-                          marker=marker, **common.ERRORBAR)
+        axes.plot([values[index]], [curve[index]], linestyle="none", marker="o",
+                  markersize=10, markerfacecolor="white", markeredgecolor="#1a1a1a",
+                  markeredgewidth=1.0, zorder=6, label="óptimo")
+        axes.legend(loc="upper right", fontsize=plt.rcParams["legend.fontsize"])
         axes.set_xlabel(label)
         axes.set_ylabel(common.METRIC_AVERAGE[metric])
     axesrow[0].set_title(f"$d_s = {common.math_decimal(p2[j], 3)}$ m",

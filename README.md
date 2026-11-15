@@ -396,7 +396,7 @@ informó el motor, para que el camino corto esté verificado contra el largo.
 | `trajectory.py` | a | por evento: trayectorias medidas y simuladas superpuestas, el observable primario `e(t)` de las dos métricas con su promedio temporal, y la distancia entre los dos peatones con `2r` y `D` marcados |
 | `animate.py` | a | animación del evento (un cuadro por instante medido: a 15 cuadros por segundo corre en tiempo real) y cuadro fijo con `--cruce`, congelado en el último instante en conflicto antes del cruce simulado |
 | `mosaico.py` | a | los 19 eventos animados a la vez, un panel por evento: la verificación a ojo de que cada ventana es el cruce y no la fila |
-| `population.py` | b | mapa de `<E>(t_a,d_s)` (escala logarítmica, con el óptimo marcado y nada más); los dos cortes por el óptimo con barras de error (sin línea ni franja en el óptimo; se agrega su punto si no coincide con uno dibujado); el barrido largo de `t_a` |
+| `population.py` | b | mapa de `<E>(t_a,d_s)` (escala logarítmica, con el óptimo marcado y nada más); los dos cortes por el óptimo con barras de error (el óptimo, un punto blanco como en el mapa); el barrido largo de `t_a` |
 | `individual.py` | c | histograma de los 19 óptimos individuales de cada parámetro con una línea vertical en el óptimo global, y el error de cada evento con los parámetros poblacionales contra los propios |
 | `pares.py` | c opcional | histograma de los 38 óptimos por peatón con la línea del óptimo global, y el error de cada evento con uno, dos y cuatro juegos de parámetros |
 | `residual.py` | c | de dónde viene el error que queda: `E(1)_m` abierto en la componente a lo largo del camino nominal (ritmo) y la perpendicular (forma), y el desvío lateral en el cruce medido contra simulado, que dice si el modelo eludió por el mismo lado |
@@ -472,10 +472,9 @@ Los dos óptimos coinciden en `d_s` y difieren en `t_a`. Usar el óptimo de la
 métrica 2 cuesta un 1,9 % de `<E(1)>`; al revés, un 18 % de `<E(2)>`.
 
 La figura de los cortes no lleva línea vertical ni franja en el óptimo (el
-valor se escribe en la diapositiva): son la curva y sus barras de error. Sólo
-se agrega el punto del óptimo cuando no coincide con ninguno de los dibujados
-ni queda pegado a uno (el de `t_a = 2,15 s` con la métrica 1 y el de
-`d_s = 0,14 m` con la 2). Los `d_s` que empatan con el óptimo según la
+valor se escribe en la diapositiva): son la curva, sus barras de error y el
+óptimo marcado con un punto blanco, igual que en el mapa, con su entrada en la
+leyenda. Los `d_s` que empatan con el óptimo según la
 diferencia pareada se informan por consola.
 
 `t_a` queda determinado **sólo por abajo**: `<E(1)>` cae de 0,87 a 0,07 m²
