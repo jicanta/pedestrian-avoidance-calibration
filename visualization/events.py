@@ -33,8 +33,8 @@ def read_table(path):
 
 def trajectories(events: list[dict], tracks: dict, x_range, figures, style: str):
     """Las trayectorias medidas de todos los eventos en el plano, SOLO sobre
-    la ventana con la que se simula cada uno: el tramo del corredor entre las
-    dos verticales. Lo que queda afuera (la fila de cada lado, el codo con el
+    la ventana con la que se simula cada uno (el tramo x_range del corredor),
+    sin las verticales que lo marcaban. Lo que queda afuera (la fila de cada lado, el codo con el
     que cada peaton entra y sale de ella) no se dibuja: asi lo pidio la
     catedra el 13/11, mostrar solo el trayecto seleccionado."""
     common.use_style(style)
@@ -47,9 +47,6 @@ def trajectories(events: list[dict], tracks: dict, x_range, figures, style: str)
             axes.plot(used[:, 0], used[:, 1], color=common.EXPERIMENT_COLOR[side],
                       linewidth=1.2, alpha=0.75,
                       label=f"sale por la {name}" if index == 0 else None)
-    for k, edge in enumerate(x_range):
-        axes.axvline(edge, color="#1a1a1a", linestyle="--", linewidth=1.6,
-                     label="tramo simulado" if k == 0 else None)
     axes.set_xlabel(common.AXIS_X)
     axes.set_ylabel(common.AXIS_Y)
     axes.set_aspect("equal")
@@ -58,7 +55,7 @@ def trajectories(events: list[dict], tracks: dict, x_range, figures, style: str)
     axes.set_yticks([1, 2, 3])
     axes.set_ylim(0.9, 3.1)
     handles, names = axes.get_legend_handles_labels()
-    figure.legend(handles, names, loc="upper center", ncol=3, frameon=False,
+    figure.legend(handles, names, loc="upper center", ncol=2, frameon=False,
                   fontsize=plt.rcParams["legend.fontsize"], bbox_to_anchor=(0.5, 1.0))
     figure.tight_layout(rect=(0, 0, 1, 0.9))
     common.save(figure, common.folder("datos", figures) / f"eventos_trayectorias_{style}.png")
