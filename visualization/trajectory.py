@@ -81,8 +81,7 @@ def primary(run: Path, figures, style: str, name: str):
             curves.append(same if metric == 1 else closest)
         curve = np.nanmean(np.vstack(curves), axis=0)
         scalars[metric] = float(np.nanmean(curve))
-        detail = common.METRIC_LABEL[metric].split(" ", 2)[2]
-        axes.plot(time, curve, color=color, label=f"$E^{{({metric})}}(t)$ {detail}")
+        axes.plot(time, curve, color=color, label=f"$E^{{({metric})}}(t)$")
     axes.set_xlabel(common.AXIS_TIME)
     axes.set_ylabel("$e(t)$ (m$^2$)")
     axes.set_ylim(0.0, None)
