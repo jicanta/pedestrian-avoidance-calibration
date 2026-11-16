@@ -81,13 +81,12 @@ def primary(run: Path, figures, style: str, name: str):
             curves.append(same if metric == 1 else closest)
         curve = np.nanmean(np.vstack(curves), axis=0)
         scalars[metric] = float(np.nanmean(curve))
-        axes.plot(time, curve, color=color, label=common.METRIC_LABEL[metric])
-        axes.axhline(scalars[metric], color=color, linestyle="--", linewidth=1.4,
-                     label=f"$E^{{({metric})}}_m$, su promedio")
+        detail = common.METRIC_LABEL[metric].split(" ", 2)[2]
+        axes.plot(time, curve, color=color, label=f"$E^{{({metric})}}(t)$ {detail}")
     axes.set_xlabel(common.AXIS_TIME)
     axes.set_ylabel("$e(t)$ (m$^2$)")
     axes.set_ylim(0.0, None)
-    common.legend_inside(axes, ncol=2)
+    common.legend_inside(axes)
     common.save(figure, common.folder("a", figures) / f"{name}_observable_{style}.png")
     plt.close(figure)
     return scalars
